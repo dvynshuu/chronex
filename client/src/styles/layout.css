@@ -1,0 +1,29 @@
+/* Global Layout */
+.app-container {
+    display: flex;
+    min-height: 100vh;
+    transition: var(--transition-main);
+}
+
+.app-container__content {
+    flex: 1;
+    padding: 2.5rem;
+    margin-left: var(--sidebar-width);
+    transition: var(--transition-main);
+}
+
+.app-container--sidebar-collapsed .app-container__content {
+    margin-left: var(--sidebar-width-collapsed);
+}
+
+@media (max-width: 992px) {
+    .app-container__content {
+        margin-left: 0 !important;
+        padding: 1.5rem;
+    }
+
+    .app-container__sidebar-wrapper {
+        display: none;
+        /* Mobile nav would be a separate task, keeping it simple for desktop refactor */
+    }
+}

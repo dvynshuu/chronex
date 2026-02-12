@@ -1,0 +1,17 @@
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-12T06:35:33.988Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-12T06:35:34.127Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-12T06:35:34.131Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-12T06:38:30.265Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-12T06:38:30.307Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-12T06:38:30.310Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-12T06:49:51.965Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-12T06:49:52.017Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-12T06:50:00.682Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-12T06:50:00.867Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-12T06:50:00.881Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-12T06:50:02.033Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-12T06:50:02.143Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-12T06:50:02.147Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-12T06:50:40.473Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-12T06:50:40.972Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-12T06:50:41.070Z"}

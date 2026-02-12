@@ -1,0 +1,63 @@
+.clock-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.clock-card__header {
+    margin-bottom: 2rem;
+}
+
+.clock-card__city {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.clock-card__zone {
+    font-size: 0.85rem;
+    color: var(--color-text-dim);
+}
+
+.clock-card__time-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+.clock-card__main-time {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    line-height: 1;
+}
+
+.clock-card__date {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-dim);
+    font-size: 1rem;
+}
+
+.clock-card__status {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--status-color, var(--color-edge));
+    transition: border-color 0.3s ease;
+}
+
+.clock-card__status-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.clock-card__status-indicator {
+    font-weight: 600;
+}
+
+.clock-card__status-range {
+    color: var(--color-text-dim);
+}

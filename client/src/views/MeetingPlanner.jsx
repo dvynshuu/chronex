@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import VisualHeatmap from '../components/VisualHeatmap';
+import VisualHeatmap from '../components/VisualHeatmap/VisualHeatmap';
 import './MeetingPlanner.css';
-import './TeamDashboard.css'; // For shared insight-box style
 
 const MeetingPlanner = () => {
     const [participants] = useState([
@@ -19,52 +18,56 @@ const MeetingPlanner = () => {
     }));
 
     return (
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            <h1 className="u-bold u-margin-b">Meeting Planner</h1>
+        <motion.div
+            className="planner"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+        >
+            <h1 className="planner__title">Meeting Planner</h1>
 
-            <div className="u-grid">
-                <div className="u-col-8">
-                    <div className="u-glass u-margin-b">
-                        <h5 className="u-bold u-margin-b">Optimal Overlap Finder</h5>
+            <div className="planner__grid">
+                <div className="planner__main">
+                    <div className="planner__card glass-panel">
+                        <h5 className="planner__card-title">Optimal Overlap Finder</h5>
                         <VisualHeatmap data={heatmapData} />
-                        <div className="insight-box">
-                            <p className="u-dim u-m-0">
+                        <div className="planner__insight">
+                            <p className="planner__insight-text">
                                 💡 <strong>Insight:</strong> The best time for this group is **14:00 - 15:00 UTC**.
                             </p>
                         </div>
                     </div>
 
-                    <div className="u-glass">
-                        <h5 className="u-bold u-margin-b">Suggested Slots</h5>
-                        <div className="slot-list">
+                    <div className="planner__card glass-panel">
+                        <h5 className="planner__card-title">Suggested Slots</h5>
+                        <div className="planner__slots">
                             {[14, 15, 13].map(h => (
-                                <div key={h} className="slot-item">
-                                    <div>
-                                        <div className="u-bold">{h}:00 UTC</div>
-                                        <small className="u-dim">All participants active</small>
+                                <div key={h} className="planner__slot-item">
+                                    <div className="planner__slot-info">
+                                        <div className="planner__slot-time">{h}:00 UTC</div>
+                                        <small className="planner__slot-meta">All participants active</small>
                                     </div>
-                                    <button className="u-btn u-btn-p">Select</button>
+                                    <button className="primary-button">Select</button>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                <div className="u-col-4">
-                    <div className="u-glass">
-                        <h5 className="u-bold u-margin-b">Participants</h5>
-                        <div className="planner-participants">
+                <div className="planner__side">
+                    <div className="planner__card glass-panel">
+                        <h5 className="planner__card-title">Participants</h5>
+                        <div className="planner__participants">
                             {participants.map((p, i) => (
-                                <div key={i} className="participant-item">
-                                    <div className="participant-avatar"></div>
-                                    <div>
-                                        <div className="u-bold">{p.name}</div>
-                                        <div className="u-dim" style={{ fontSize: '0.75rem' }}>{p.zone}</div>
+                                <div key={i} className="planner__participant-item">
+                                    <div className="planner__participant-avatar"></div>
+                                    <div className="planner__participant-info">
+                                        <div className="planner__participant-name">{p.name}</div>
+                                        <div className="planner__participant-zone">{p.zone}</div>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                        <button className="btn-add-participant">+ Add Participant</button>
+                        <button className="planner__btn-add">+ Add Participant</button>
                     </div>
                 </div>
             </div>

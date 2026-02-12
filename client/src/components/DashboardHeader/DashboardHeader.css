@@ -1,0 +1,36 @@
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.dashboard-header__welcome {
+    color: var(--color-text-dim);
+    margin: 0;
+}
+
+.dashboard-header__title {
+    margin: 0;
+    font-weight: 700;
+}
+
+.dashboard-header__status {
+    text-align: right;
+    padding: 1rem 2.5rem !important;
+    /* Overriding base glass-panel padding for this specific scale */
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-header__label {
+    color: var(--color-text-dim);
+    font-size: 0.75rem;
+    margin-bottom: 0.2rem;
+}
+
+.dashboard-header__time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+}

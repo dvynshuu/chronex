@@ -1,0 +1,128 @@
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: rgba(15, 23, 42, 0.98);
+    border-right: 1px solid var(--color-edge);
+    padding: 2rem 1rem;
+    z-index: 1000;
+    transition: var(--transition-main);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.sidebar--collapsed {
+    width: var(--sidebar-width-collapsed);
+}
+
+.sidebar__logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 0.5rem;
+    margin-bottom: 3.5rem;
+    height: 40px;
+}
+
+.sidebar__brand {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    letter-spacing: 0.1em;
+    text-shadow: 0 0 10px var(--color-primary-glow);
+}
+
+.sidebar--collapsed .sidebar__logo {
+    justify-content: center;
+    padding: 0;
+}
+
+.sidebar__nav {
+    flex: 1;
+}
+
+.sidebar__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar__link {
+    color: var(--color-text-dim);
+    text-decoration: none;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.sidebar__link:hover,
+.sidebar__link--active {
+    background: rgba(56, 189, 248, 0.1);
+    color: var(--color-primary);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.1);
+}
+
+.sidebar__link--active::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 3px;
+    background: var(--color-primary);
+    border-radius: 3px 0 0 3px;
+    box-shadow: 0 0 10px var(--color-primary);
+}
+
+.sidebar__icon {
+    font-size: 1.25rem;
+    min-width: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.sidebar__text {
+    white-space: nowrap;
+}
+
+.sidebar__tooltip {
+    position: absolute;
+    left: 100%;
+    margin-left: 1rem;
+    background: var(--color-bg-panel);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--color-edge);
+}
+
+.sidebar__link:hover .sidebar__tooltip {
+    opacity: 1;
+}
+
+.sidebar__footer {
+    margin-top: auto;
+    padding: 1.5rem 1rem;
+    border-top: 1px solid var(--color-edge);
+}
+
+.sidebar__version {
+    color: var(--color-text-dim);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}

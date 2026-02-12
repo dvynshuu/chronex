@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;600;700&display=swap');
+@import './variables.css';
+@import './animations.css';
+@import './layout.css';
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-main);
+    background-color: var(--color-bg-deep);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+/* Base Semantic Classes (replacing the old u- classes with non-utility semantic names) */
+.glass-panel {
+    background: var(--color-bg-glass);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    transition: var(--transition-elastic);
+}
+
+.glass-panel:hover {
+    transform: translateY(-8px) scale(1.01);
+    border-color: var(--color-edge-active);
+    background: rgba(30, 41, 59, 0.8);
+    box-shadow: var(--shadow-lg);
+}
+
+.primary-button {
+    padding: 0.8rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    color: white;
+}
+
+.primary-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+}
+
+.status-pill {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+}

@@ -1,0 +1,36 @@
+:root {
+    /* Colors - Core Palette */
+    --color-primary: #38bdf8;
+    --color-primary-glow: rgba(56, 189, 248, 0.4);
+    --color-bg-deep: #0f172a;
+    --color-bg-panel: #1e293b;
+    --color-bg-glass: rgba(30, 41, 59, 0.7);
+
+    /* Text Colors */
+    --color-text-primary: #f8fafc;
+    --color-text-dim: #94a3b8;
+
+    /* Semantic Colors */
+    --color-success: #4ade80;
+    --color-warning: #facc15;
+    --color-danger: #fb7185;
+
+    /* Borders & Edges */
+    --color-edge: rgba(255, 255, 255, 0.1);
+    --color-edge-active: rgba(56, 189, 248, 0.4);
+
+    /* Layout */
+    --sidebar-width: 260px;
+    --sidebar-width-collapsed: 80px;
+
+    /* Typography */
+    --font-main: 'Outfit', 'Inter', sans-serif;
+
+    /* Effects */
+    --glass-blur: blur(16px);
+    --radius-lg: 20px;
+    --radius-md: 12px;
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.3);
+    --transition-main: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-elastic: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

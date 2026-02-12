@@ -1,5 +1,5 @@
 {
-    "name": "time-intelligence-platform-server",
+    "name": "chronex-server",
     "version": "1.0.0",
     "description": "Backend for Global Time Intelligence Platform",
     "main": "src/server.js",

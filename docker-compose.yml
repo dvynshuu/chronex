@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017/time-iq
+      - MONGODB_URI=mongodb://mongo:27017/chronex
       - REDIS_URL=redis://redis:6379
     depends_on:
       - mongo
