@@ -1,0 +1,90 @@
+.timeline-container {
+    width: 100%;
+    position: relative;
+    padding: 2rem 0;
+}
+
+.timeline-track {
+    height: 6px;
+    background: var(--edge);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+}
+
+.timeline-highlight {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    opacity: 0.3;
+}
+
+.timeline-highlight.work-zone {
+    background: var(--clr-ok);
+}
+
+.timeline-handle {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    cursor: grab;
+    z-index: 10;
+}
+
+.timeline-handle:active {
+    cursor: grabbing;
+}
+
+.timeline-knob {
+    width: 24px;
+    height: 24px;
+    background: var(--p-text);
+    border-radius: 50%;
+    border: 3px solid white;
+    box-shadow: 0 0 15px var(--p-glow);
+    transition: transform 0.2s ease;
+    position: relative;
+}
+
+.timeline-tooltip {
+    position: absolute;
+    background: var(--bg-panel);
+    border: 1px solid var(--p-text);
+    padding: 1rem;
+    border-radius: 12px;
+    width: 180px;
+    pointer-events: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    margin-bottom: 0.4rem;
+}
+
+.tooltip-row:last-child {
+    margin-bottom: 0;
+}
+
+.tooltip-city {
+    color: var(--txt-dim);
+}
+
+.tooltip-time {
+    font-weight: 700;
+}
+
+.timeline-handle:hover .timeline-knob {
+    transform: scale(1.1);
+}
+
+.timeline-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    color: var(--txt-dim);
+    font-size: 0.75rem;
+}

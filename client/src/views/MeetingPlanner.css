@@ -1,0 +1,52 @@
+.planner-participants {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.participant-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: var(--bg-panel);
+    padding: 1rem;
+    border-radius: 12px;
+}
+
+.participant-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--p-text);
+    border-radius: 50%;
+}
+
+.slot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.slot-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--edge);
+}
+
+.btn-add-participant {
+    background: transparent;
+    border: 1px dashed var(--edge);
+    width: 100%;
+    padding: 0.8rem;
+    margin-top: 1.5rem;
+    color: var(--txt-dim);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-add-participant:hover {
+    border-color: var(--p-text);
+    color: var(--p-text);
+}

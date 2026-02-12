@@ -1,0 +1,18 @@
+.dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: var(--u-margin-b);
+}
+
+.dash-header-info {
+    text-align: right;
+}
+
+.dash-scrubber-section {
+    margin-top: 2rem;
+}
+
+.dash-scrubber-content {
+    margin-top: 2rem;
+}

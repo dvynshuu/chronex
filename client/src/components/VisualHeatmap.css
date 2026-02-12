@@ -1,0 +1,19 @@
+.heatmap-container {
+    display: flex;
+    gap: 4px;
+    height: 60px;
+    width: 100%;
+    align-items: flex-end;
+}
+
+.heatmap-bar {
+    flex: 1;
+    min-height: 4px;
+    border-radius: 4px 4px 0 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.heatmap-bar:hover {
+    transform: scaleY(1.1);
+    opacity: 0.8;
+}
