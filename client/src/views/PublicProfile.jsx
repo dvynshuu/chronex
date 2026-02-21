@@ -142,10 +142,6 @@ const PublicProfile = () => {
     );
 };
 
-function fmtHr(h) {
-    const ampm = h >= 12 ? 'PM' : 'AM';
-    const display = h > 12 ? h - 12 : (h === 0 ? 12 : h);
-    return `${display} ${ampm}`;
-}
+import { fmtHr } from '../utils/timeUtils';
 
 export default PublicProfile;

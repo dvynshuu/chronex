@@ -33,13 +33,17 @@ const TeamDashboard = () => {
         ];
     }, [org]);
 
-    const activityData = [
-        { day: 'Mon', usage: 40 },
-        { day: 'Tue', usage: 30 },
-        { day: 'Wed', usage: 60 },
-        { day: 'Thu', usage: 80 },
-        { day: 'Fri', usage: 50 }
-    ];
+    // Synthetic activity data based on seat count
+    const activityData = React.useMemo(() => {
+        const total = org?.stats?.total || 3;
+        return [
+            { day: 'Mon', usage: Math.min(100, (total * 15)) },
+            { day: 'Tue', usage: Math.min(100, (total * 12)) },
+            { day: 'Wed', usage: Math.min(100, (total * 22)) },
+            { day: 'Thu', usage: Math.min(100, (total * 25)) },
+            { day: 'Fri', usage: Math.min(100, (total * 18)) }
+        ];
+    }, [org]);
 
     const COLORS = ['#4ade80', '#facc15', '#fb7185'];
 
