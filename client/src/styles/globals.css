@@ -5,6 +5,7 @@
 
 * {
     box-sizing: border-box;
+    cursor: default;
 }
 
 body {
@@ -14,47 +15,92 @@ body {
     color: var(--color-text-primary);
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    line-height: 1.6;
 }
 
-/* Base Semantic Classes (replacing the old u- classes with non-utility semantic names) */
+/* Glassmorphism System */
 .glass-panel {
     background: var(--color-bg-glass);
     backdrop-filter: var(--glass-blur);
-    border: 1px solid var(--color-edge);
+    border: var(--glass-border);
     border-radius: var(--radius-lg);
-    padding: 2rem;
-    transition: var(--transition-elastic);
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-main);
+}
+
+.glass-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+    pointer-events: none;
 }
 
 .glass-panel:hover {
-    transform: translateY(-8px) scale(1.01);
+    transform: translateY(-8px);
     border-color: var(--color-edge-active);
-    background: rgba(30, 41, 59, 0.8);
-    box-shadow: var(--shadow-lg);
+    background: rgba(15, 23, 42, 0.75);
+    box-shadow: var(--shadow-premium);
 }
 
+/* Premium Button System */
 .primary-button {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2rem;
     border-radius: var(--radius-md);
     font-weight: 600;
-    cursor: pointer;
-    border: none;
     font-family: inherit;
-    transition: all 0.2s ease;
-    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    border: none;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
     color: white;
+    cursor: pointer;
+    transition: var(--transition-main);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    letter-spacing: 0.02em;
 }
 
 .primary-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.3);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+    filter: brightness(1.1);
 }
 
+.primary-button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Status Indicators */
 .status-pill {
-    padding: 0.4rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
     display: inline-flex;
     align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-edge);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--color-bg-panel);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary);
 }

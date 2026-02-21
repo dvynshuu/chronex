@@ -1,45 +1,66 @@
+/* ═══════════════════════════════════════════ */
+/* VisualHeatmap — Overlap Visualization      */
+/* ═══════════════════════════════════════════ */
+
 .visual-heatmap {
-    display: flex;
-    flex-direction: column;
+    width: 100%;
 }
 
 .visual-heatmap__tracks {
     display: flex;
     align-items: flex-end;
-    gap: 4px;
-    height: 60px;
-    padding-bottom: 4px;
-    border-bottom: 1px solid var(--color-edge);
+    gap: 2px;
+    height: 100px;
+    padding: 0.25rem 0;
 }
 
 .visual-heatmap__bar {
     flex: 1;
-    min-height: 4px;
-    height: var(--bar-height);
-    background-color: var(--bar-color);
-    border-radius: 4px 4px 0 0;
-    transition: var(--transition-elastic);
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 3px 3px 0 0;
+    transition: transform 0.2s ease;
+    cursor: default;
 }
 
 .visual-heatmap__bar:hover {
-    transform: scaleY(1.1);
-    filter: brightness(1.2);
+    transform: scaleY(1.08);
+}
+
+.visual-heatmap__bar-fill {
+    width: 100%;
+    height: var(--bar-height, 6%);
+    border-radius: 3px 3px 0 0;
+    transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+    min-height: 3px;
+}
+
+/* Status coloring */
+.visual-heatmap__bar--perfect .visual-heatmap__bar-fill {
+    background: linear-gradient(to top, #10b981, #34d399);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+}
+
+.visual-heatmap__bar--good .visual-heatmap__bar-fill {
+    background: linear-gradient(to top, #fbbf24, #fcd34d);
+}
+
+.visual-heatmap__bar--partial .visual-heatmap__bar-fill {
+    background: linear-gradient(to top, #f97316, #fb923c);
+}
+
+.visual-heatmap__bar--avoid .visual-heatmap__bar-fill {
+    background: linear-gradient(to top, #ef4444, #f87171);
+    opacity: 0.4;
 }
 
 .visual-heatmap__labels {
     display: flex;
     justify-content: space-between;
-    margin-top: 0.5rem;
     font-size: 0.7rem;
     color: var(--color-text-dim);
-}
-
-/* Status Colors for Visualization */
-:root {
-    --status-perfect: var(--color-success);
-    --status-good: var(--color-warning);
-    --status-avoid: var(--color-danger);
-    --status-sleeping: var(--color-danger);
-    --status-off-hours: var(--color-warning);
-    --status-in-office: var(--color-success);
+    font-weight: 500;
+    padding-top: 0.4rem;
+    font-variant-numeric: tabular-nums;
 }

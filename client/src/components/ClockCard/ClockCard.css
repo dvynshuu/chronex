@@ -1,50 +1,250 @@
+/* ═══════════════════════════════════════════════ */
+/* ClockCard — Premium Time Intelligence Card     */
+/* ═══════════════════════════════════════════════ */
+
 .clock-card {
     display: flex;
     flex-direction: column;
     height: 100%;
+    background: var(--card-gradient, var(--color-bg-glass));
+    position: relative;
+    transition: var(--transition-elastic);
+    overflow: hidden;
 }
 
+/* Inner gradient for depth */
+.clock-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.06), transparent 60%),
+        radial-gradient(circle at bottom left, rgba(0, 0, 0, 0.15), transparent 70%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.clock-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5), 0 0 40px -10px var(--status-color, rgba(56, 189, 248, 0.15));
+}
+
+/* Breathing glow for local timezone card */
+.clock-card--local {
+    animation: breathingGlow 3s ease-in-out infinite;
+}
+
+@keyframes breathingGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.12), var(--shadow-premium); }
+    50% { box-shadow: 0 0 35px rgba(56, 189, 248, 0.25), var(--shadow-premium); }
+}
+
+/* Invalid timezone warning */
+.clock-card__warning {
+    background: rgba(251, 191, 36, 0.15);
+    color: var(--color-warning);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* Header */
 .clock-card__header {
-    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.clock-card__city-group {
+    display: flex;
+    flex-direction: column;
 }
 
 .clock-card__city {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .clock-card__zone {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--color-text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.2rem;
 }
 
-.clock-card__time-display {
+.clock-card__dst-badge {
+    background: rgba(251, 191, 36, 0.2);
+    color: var(--color-warning);
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+/* Body: progress ring + time */
+.clock-card__body {
     flex: 1;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-bottom: 2rem;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+    z-index: 2;
 }
 
-.clock-card__main-time {
-    font-size: 3.5rem;
+/* Day Progress Ring */
+.clock-card__progress-ring {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+.clock-card__ring-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.clock-card__ring-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 3;
+}
+
+.clock-card__ring-fill {
+    fill: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease, stroke 0.5s ease;
+}
+
+.clock-card__progress-pct {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
     font-weight: 700;
-    color: var(--color-primary);
+    color: var(--color-text-dim);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Flip Clock Display */
+.clock-card__time-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.clock-card__flip-clock {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.clock-card__digit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
     line-height: 1;
+    letter-spacing: -0.03em;
+    font-family: 'Inter', 'Outfit', sans-serif;
+    font-variant-numeric: tabular-nums;
+    position: relative;
+    min-width: 0.65em;
+}
+
+.clock-card__digit--colon {
+    font-size: 2.8rem;
+    min-width: 0.35em;
+    animation: colonPulse 1s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+@keyframes colonPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+}
+
+.clock-card__digit-inner {
+    display: inline-block;
+    animation: digitSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes digitSlideIn {
+    from {
+        transform: translateY(-8px);
+        opacity: 0.3;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 .clock-card__date {
     margin: 0.5rem 0 0;
     color: var(--color-text-dim);
-    font-size: 1rem;
+    font-size: 0.95rem;
+    font-weight: 500;
 }
 
+/* Weekday Mini Bar */
+.clock-card__weekday-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+.clock-card__weekday-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--color-text-dim);
+    background: rgba(255, 255, 255, 0.04);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0;
+}
+
+.clock-card__weekday-dot--active {
+    background: var(--color-primary);
+    color: var(--color-bg-deep);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+}
+
+/* Status Footer */
 .clock-card__status {
     margin-top: auto;
-    padding-top: 1.5rem;
-    border-top: 2px solid var(--status-color, var(--color-edge));
-    transition: border-color 0.3s ease;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    position: relative;
+    z-index: 2;
 }
 
 .clock-card__status-info {
@@ -55,9 +255,16 @@
 }
 
 .clock-card__status-indicator {
-    font-weight: 600;
+    font-weight: 700;
+    color: var(--status-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 .clock-card__status-range {
     color: var(--color-text-dim);
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
 }

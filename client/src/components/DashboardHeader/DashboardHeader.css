@@ -1,36 +1,55 @@
 .dashboard-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2.5rem;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-edge);
 }
 
 .dashboard-header__welcome {
     color: var(--color-text-dim);
-    margin: 0;
+    margin: 0 0 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-size: 0.75rem;
 }
 
 .dashboard-header__title {
     margin: 0;
+    font-size: 2.5rem;
     font-weight: 700;
+    letter-spacing: -0.03em;
+    background: linear-gradient(to right, #fff, var(--color-text-dim));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .dashboard-header__status {
     text-align: right;
-    padding: 1rem 2.5rem !important;
-    /* Overriding base glass-panel padding for this specific scale */
+    padding: 1.2rem 2rem !important;
     display: flex;
     flex-direction: column;
+    gap: 0.4rem;
+    border-radius: var(--radius-md) !important;
+    background: rgba(56, 189, 248, 0.05) !important;
+    border-color: var(--color-edge-active) !important;
 }
 
 .dashboard-header__label {
     color: var(--color-text-dim);
-    font-size: 0.75rem;
-    margin-bottom: 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
 }
 
 .dashboard-header__time {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--color-primary);
+    font-family: 'Inter', sans-serif;
+    font-variant-numeric: tabular-nums;
 }

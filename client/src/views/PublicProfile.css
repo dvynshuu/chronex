@@ -1,0 +1,220 @@
+/* ═══════════════════════════════════════════════ */
+/* PublicProfile — Shared Link Page               */
+/* ═══════════════════════════════════════════════ */
+
+.public-profile {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: var(--color-bg-deep);
+}
+
+.public-profile__container {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Header Card */
+.public-profile__header {
+    text-align: center;
+    padding: 3rem 2rem 2.5rem;
+}
+
+.public-profile__avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 auto 1.25rem;
+    box-shadow: 0 12px 32px rgba(56, 189, 248, 0.25);
+}
+
+.public-profile__name {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.public-profile__tz {
+    margin: 0.3rem 0 1.5rem;
+    color: var(--color-text-dim);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.public-profile__time-display {
+    font-size: 4rem;
+    font-weight: 700;
+    font-family: 'Inter', 'Outfit', sans-serif;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    background: linear-gradient(to right, var(--color-text-primary), var(--color-primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.public-profile__date {
+    margin: 0.75rem 0 1.5rem;
+    color: var(--color-text-dim);
+    font-size: 0.9rem;
+}
+
+.public-profile__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 100px;
+    background: color-mix(in srgb, var(--status-color, #64748b) 12%, transparent);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.public-profile__status-icon {
+    font-size: 1rem;
+}
+
+.public-profile__status-label {
+    color: var(--status-color, var(--color-text-primary));
+}
+
+/* Cards */
+.public-profile__card {
+    padding: 1.75rem;
+}
+
+.public-profile__card-title {
+    margin: 0 0 1.25rem;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 700;
+    color: var(--color-text-dim);
+}
+
+/* Next Availability */
+.public-profile__next-avail {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+}
+
+.public-profile__next-time {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.public-profile__next-hours {
+    font-size: 0.9rem;
+    color: var(--color-accent);
+    font-weight: 600;
+}
+
+/* Overlap Calculator */
+.public-profile__overlap-input {
+    margin-bottom: 1.25rem;
+}
+
+.public-profile__label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.public-profile__input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-md);
+    color: var(--color-text-primary);
+    font-size: 0.85rem;
+    font-family: var(--font-main);
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.public-profile__input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.public-profile__overlap-summary {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.public-profile__overlap-count {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-success);
+    line-height: 1;
+}
+
+.public-profile__overlap-label {
+    font-size: 0.85rem;
+    color: var(--color-text-dim);
+}
+
+/* Overlap Track */
+.public-profile__overlap-track {
+    display: flex;
+    gap: 2px;
+    height: 32px;
+    align-items: stretch;
+}
+
+.public-profile__overlap-bar {
+    flex: 1;
+    border-radius: 3px;
+    background: rgba(239, 68, 68, 0.3);
+    transition: background 0.3s ease;
+    cursor: default;
+}
+
+.public-profile__overlap-bar--overlap {
+    background: linear-gradient(to top, #10b981, #34d399);
+    box-shadow: 0 0 6px rgba(16, 185, 129, 0.3);
+}
+
+.public-profile__overlap-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.65rem;
+    color: var(--color-text-dim);
+    margin-top: 0.35rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Branding */
+.public-profile__branding {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+    padding: 1rem 0;
+}
+
+.public-profile__branding strong {
+    color: var(--color-primary);
+}

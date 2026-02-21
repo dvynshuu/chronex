@@ -28,6 +28,27 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'UTC'
     },
+    workSchedule: {
+        workStart: { type: Number, default: 9, min: 0, max: 23 },
+        workEnd: { type: Number, default: 17, min: 0, max: 23 },
+        workDays: { type: [Number], default: [1, 2, 3, 4, 5] } // 1=Mon, 7=Sun
+    },
+    statusOverride: {
+        label: { type: String, default: null },
+        expiry: { type: Date, default: null }
+    },
+    publicProfile: {
+        enabled: { type: Boolean, default: false },
+        showStatus: { type: Boolean, default: true },
+        showOverlap: { type: Boolean, default: true }
+    },
+    slug: {
+        type: String,
+        unique: true,
+        sparse: true,
+        lowercase: true,
+        trim: true
+    },
     favorites: [{
         city: String,
         timezone: String,

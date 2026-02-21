@@ -1,4 +1,5 @@
 const timezoneService = require('../services/timezoneService');
+const availabilityService = require('../services/availabilityService');
 const cache = require('../utils/cache');
 
 class TimeController {
@@ -49,6 +50,31 @@ class TimeController {
             next(err);
         }
     }
+
+    async getOverlapHeatmap(req, res, next) {
+        try {
+            const { participants } = req.body;
+            if (!participants || !Array.isArray(participants)) {
+                return res.status(400).json({ message: 'Participants array is required' });
+            }
+            const heatmap = timezoneService.getOverlapHeatmap(participants);
+            res.status(200).json(heatmap);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    async getAvailability(req, res, next) {
+        try {
+            const { workSchedule, timezone, statusOverride } = req.body;
+            const status = availabilityService.getStatus(workSchedule, timezone, statusOverride);
+            const nextWindow = availabilityService.getNextAvailability(workSchedule, timezone);
+            res.status(200).json({ status, nextAvailability: nextWindow });
+        } catch (err) {
+            next(err);
+        }
+    }
 }
 
 module.exports = new TimeController();
+

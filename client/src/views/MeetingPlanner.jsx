@@ -1,21 +1,44 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import VisualHeatmap from '../components/VisualHeatmap/VisualHeatmap';
+import OverlapSlider from '../components/OverlapSlider/OverlapSlider';
+import { computeOverlapData } from '../hooks/useAvailability';
 import './MeetingPlanner.css';
 
 const MeetingPlanner = () => {
-    const [participants] = useState([
-        { name: 'Alice', zone: 'America/New_York' },
-        { name: 'Bob', zone: 'Europe/London' },
-        { name: 'Charlie', zone: 'Asia/Tokyo' }
+    const [participants, setParticipants] = useState([
+        { name: 'Alice', zone: 'America/New_York', workStart: 9, workEnd: 17 },
+        { name: 'Bob', zone: 'Europe/London', workStart: 9, workEnd: 18 },
+        { name: 'Charlie', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
     ]);
 
-    const heatmapData = Array.from({ length: 24 }, (_, i) => ({
-        hour: i,
-        score: i > 9 && i < 17 ? 3 : (i > 7 && i < 22 ? 1.5 : 0.5),
-        maxScore: 3,
-        status: i > 13 && i < 16 ? 'Perfect' : (i > 8 && i < 20 ? 'Good' : 'Avoid')
-    }));
+    const [newName, setNewName] = useState('');
+    const [newZone, setNewZone] = useState('');
+    const [newWorkStart, setNewWorkStart] = useState(9);
+    const [newWorkEnd, setNewWorkEnd] = useState(17);
+
+    const overlapData = useMemo(() => computeOverlapData(participants), [participants]);
+
+    // Find best slots
+    const bestSlots = useMemo(() => {
+        return overlapData
+            .filter(d => d.status === 'perfect' || d.status === 'good')
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 3);
+    }, [overlapData]);
+
+    const addParticipant = () => {
+        if (!newName.trim() || !newZone.trim()) return;
+        setParticipants(prev => [...prev, { name: newName.trim(), zone: newZone.trim(), workStart: newWorkStart, workEnd: newWorkEnd }]);
+        setNewName('');
+        setNewZone('');
+        setNewWorkStart(9);
+        setNewWorkEnd(17);
+    };
+
+    const removeParticipant = (idx) => {
+        setParticipants(prev => prev.filter((_, i) => i !== idx));
+    };
 
     return (
         <motion.div
@@ -27,35 +50,44 @@ const MeetingPlanner = () => {
 
             <div className="planner__grid">
                 <div className="planner__main">
+                    {/* Overlap Heatmap */}
                     <div className="planner__card glass-panel">
-                        <h5 className="planner__card-title">Optimal Overlap Finder</h5>
-                        <VisualHeatmap data={heatmapData} />
-                        <div className="planner__insight">
-                            <p className="planner__insight-text">
-                                💡 <strong>Insight:</strong> The best time for this group is **14:00 - 15:00 UTC**.
-                            </p>
-                        </div>
+                        <h5 className="planner__card-title">Overlap Intelligence</h5>
+                        <p className="planner__card-subtitle">Green = all working, Red = no overlap</p>
+                        <OverlapSlider participants={participants} />
                     </div>
 
+                    {/* Visual Heatmap */}
                     <div className="planner__card glass-panel">
-                        <h5 className="planner__card-title">Suggested Slots</h5>
+                        <h5 className="planner__card-title">24h Availability Matrix</h5>
+                        <VisualHeatmap data={overlapData} />
+                    </div>
+
+                    {/* Best Slots */}
+                    <div className="planner__card glass-panel">
+                        <h5 className="planner__card-title">Best Meeting Slots</h5>
                         <div className="planner__slots">
-                            {[14, 15, 13].map(h => (
-                                <div key={h} className="planner__slot-item">
+                            {bestSlots.length > 0 ? bestSlots.map((slot, i) => (
+                                <div key={i} className={`planner__slot-item planner__slot-item--${slot.status}`}>
                                     <div className="planner__slot-info">
-                                        <div className="planner__slot-time">{h}:00 UTC</div>
-                                        <small className="planner__slot-meta">All participants active</small>
+                                        <div className="planner__slot-time">{slot.utcHour}:00 UTC</div>
+                                        <small className="planner__slot-meta">
+                                            {slot.workingCount}/{slot.totalParticipants} participants available
+                                        </small>
                                     </div>
                                     <button className="primary-button">Select</button>
                                 </div>
-                            ))}
+                            )) : (
+                                <p className="planner__no-slots">No ideal overlap found. Try adjusting work hours.</p>
+                            )}
                         </div>
                     </div>
                 </div>
 
                 <div className="planner__side">
+                    {/* Participants */}
                     <div className="planner__card glass-panel">
-                        <h5 className="planner__card-title">Participants</h5>
+                        <h5 className="planner__card-title">Participants ({participants.length})</h5>
                         <div className="planner__participants">
                             {participants.map((p, i) => (
                                 <div key={i} className="planner__participant-item">
@@ -63,11 +95,41 @@ const MeetingPlanner = () => {
                                     <div className="planner__participant-info">
                                         <div className="planner__participant-name">{p.name}</div>
                                         <div className="planner__participant-zone">{p.zone}</div>
+                                        <div className="planner__participant-hours">{p.workStart}:00 – {p.workEnd}:00</div>
                                     </div>
+                                    <button className="planner__remove-btn" onClick={() => removeParticipant(i)} title="Remove">×</button>
                                 </div>
                             ))}
                         </div>
-                        <button className="planner__btn-add">+ Add Participant</button>
+
+                        {/* Add Participant Form */}
+                        <div className="planner__add-form">
+                            <input
+                                type="text"
+                                className="planner__input"
+                                placeholder="Name"
+                                value={newName}
+                                onChange={e => setNewName(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                className="planner__input"
+                                placeholder="Timezone (e.g. US/Pacific)"
+                                value={newZone}
+                                onChange={e => setNewZone(e.target.value)}
+                            />
+                            <div className="planner__hours-row">
+                                <label className="planner__hours-label">
+                                    Start
+                                    <input type="number" className="planner__input planner__input--small" min="0" max="23" value={newWorkStart} onChange={e => setNewWorkStart(+e.target.value)} />
+                                </label>
+                                <label className="planner__hours-label">
+                                    End
+                                    <input type="number" className="planner__input planner__input--small" min="0" max="23" value={newWorkEnd} onChange={e => setNewWorkEnd(+e.target.value)} />
+                                </label>
+                            </div>
+                            <button className="primary-button planner__btn-add" onClick={addParticipant}>+ Add Participant</button>
+                        </div>
                     </div>
                 </div>
             </div>

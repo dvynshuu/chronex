@@ -7,6 +7,17 @@
 
 .dashboard__card-item {
     min-width: 0;
+    cursor: grab;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dashboard__card-item:active {
+    cursor: grabbing;
+}
+
+.dashboard__card-item--dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
 }
 
 .dashboard__scrubber-section {

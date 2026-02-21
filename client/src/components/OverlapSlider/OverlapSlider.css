@@ -1,0 +1,209 @@
+/* ═══════════════════════════════════════════ */
+/* OverlapSlider — Interactive Overlap Heatmap */
+/* ═══════════════════════════════════════════ */
+
+.overlap-slider {
+    position: relative;
+}
+
+.overlap-slider__track {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 120px;
+    padding: 0.5rem 0;
+}
+
+.overlap-slider__bar {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+    border-radius: 4px 4px 0 0;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    position: relative;
+}
+
+.overlap-slider__bar:hover {
+    transform: scaleY(1.05);
+}
+
+.overlap-slider__bar--selected {
+    transform: scaleY(1.08);
+}
+
+.overlap-slider__bar-fill {
+    width: 100%;
+    height: var(--bar-height, 8%);
+    border-radius: 3px 3px 0 0;
+    transition: height 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease;
+    min-height: 4px;
+}
+
+.overlap-slider__bar--perfect .overlap-slider__bar-fill {
+    background: linear-gradient(to top, #10b981, #34d399);
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+}
+
+.overlap-slider__bar--good .overlap-slider__bar-fill {
+    background: linear-gradient(to top, #fbbf24, #fcd34d);
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.2);
+}
+
+.overlap-slider__bar--partial .overlap-slider__bar-fill {
+    background: linear-gradient(to top, #f97316, #fb923c);
+    box-shadow: 0 0 8px rgba(249, 115, 22, 0.2);
+}
+
+.overlap-slider__bar--avoid .overlap-slider__bar-fill {
+    background: linear-gradient(to top, #ef4444, #f87171);
+    opacity: 0.5;
+}
+
+.overlap-slider__labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--color-text-dim);
+    font-weight: 500;
+    padding-top: 0.5rem;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Legend */
+.overlap-slider__legend {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.overlap-slider__legend-item {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.overlap-slider__legend-item::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+}
+
+.overlap-slider__legend-item--perfect::before {
+    background: #34d399;
+}
+
+.overlap-slider__legend-item--good::before {
+    background: #fbbf24;
+}
+
+.overlap-slider__legend-item--partial::before {
+    background: #f97316;
+}
+
+.overlap-slider__legend-item--avoid::before {
+    background: #ef4444;
+    opacity: 0.5;
+}
+
+/* Detail tooltip */
+.overlap-slider__detail {
+    margin-top: 1rem;
+    padding: 1rem 1.25rem;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.overlap-slider__detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--color-text-primary);
+}
+
+.overlap-slider__detail-badge {
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.overlap-slider__detail-badge--perfect {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34d399;
+}
+
+.overlap-slider__detail-badge--good {
+    background: rgba(251, 191, 36, 0.2);
+    color: #fbbf24;
+}
+
+.overlap-slider__detail-badge--partial {
+    background: rgba(249, 115, 22, 0.2);
+    color: #f97316;
+}
+
+.overlap-slider__detail-badge--avoid {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+}
+
+.overlap-slider__detail-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.overlap-slider__detail-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+}
+
+.overlap-slider__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    flex-shrink: 0;
+}
+
+.overlap-slider__dot--working {
+    background: #34d399;
+    box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+}
+
+.overlap-slider__detail-name {
+    color: var(--color-text-primary);
+    font-weight: 600;
+    flex: 1;
+}
+
+.overlap-slider__detail-time {
+    color: var(--color-text-dim);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+}

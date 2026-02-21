@@ -1,21 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { DateTime } from 'luxon';
+import useAnimationClock from '../hooks/useAnimationClock';
 import ClockCard from '../components/ClockCard/ClockCard';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import TimeScrubber from '../components/TimeScrubber/TimeScrubber';
 import './Dashboard.css';
 
 const Dashboard = () => {
-    const [baseTime, setBaseTime] = useState(DateTime.utc());
-    const [favoriteZones] = useState([
-        { city: 'New York', zone: 'America/New_York' },
-        { city: 'London', zone: 'Europe/London' },
-        { city: 'Tokyo', zone: 'Asia/Tokyo' }
+    const liveClock = useAnimationClock(1000);
+    const [scrubOffset, setScrubOffset] = useState(0);
+    const [favoriteZones, setFavoriteZones] = useState([
+        { city: 'New York', zone: 'America/New_York', workStart: 9, workEnd: 17 },
+        { city: 'London', zone: 'Europe/London', workStart: 9, workEnd: 18 },
+        { city: 'Tokyo', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
     ]);
 
-    const handleTimeChange = (hour) => {
-        setBaseTime(prev => prev.set({ hour, minute: 0, second: 0 }));
+    const [draggedIndex, setDraggedIndex] = useState(null);
+
+    const baseTime = scrubOffset !== 0
+        ? liveClock.set({ hour: scrubOffset, minute: 0, second: 0 })
+        : liveClock;
+
+    const handleTimeChange = useCallback((hour) => {
+        setScrubOffset(hour);
+    }, []);
+
+    // Detect user's local timezone for "isLocal" flag
+    const localZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+    // --- Drag to Reorder ---
+    const handleDragStart = (e, idx) => {
+        setDraggedIndex(idx);
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', idx);
+    };
+
+    const handleDragOver = (e, idx) => {
+        e.preventDefault();
+        if (draggedIndex === null || draggedIndex === idx) return;
+
+        const updated = [...favoriteZones];
+        const [dragged] = updated.splice(draggedIndex, 1);
+        updated.splice(idx, 0, dragged);
+        setDraggedIndex(idx);
+        setFavoriteZones(updated);
+    };
+
+    const handleDragEnd = () => {
+        setDraggedIndex(null);
     };
 
     return (
@@ -27,16 +59,26 @@ const Dashboard = () => {
             <DashboardHeader
                 title="Global Overview"
                 welcomeMessage="Welcome back,"
-                timeDisplay={baseTime.toFormat('HH:mm')}
+                timeDisplay={baseTime.toFormat('HH:mm:ss')}
             />
 
             <section className="dashboard__grid">
                 {favoriteZones.map((z, idx) => (
-                    <div key={idx} className="dashboard__card-item">
+                    <div
+                        key={z.zone}
+                        className={`dashboard__card-item ${draggedIndex === idx ? 'dashboard__card-item--dragging' : ''}`}
+                        draggable
+                        onDragStart={(e) => handleDragStart(e, idx)}
+                        onDragOver={(e) => handleDragOver(e, idx)}
+                        onDragEnd={handleDragEnd}
+                    >
                         <ClockCard
                             city={z.city}
                             zone={z.zone}
                             utcTime={baseTime}
+                            workStart={z.workStart}
+                            workEnd={z.workEnd}
+                            isLocal={z.zone === localZone}
                         />
                     </div>
                 ))}
