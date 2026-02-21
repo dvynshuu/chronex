@@ -112,7 +112,7 @@ const MeetingPlanner = () => {
                             {bestSlots.length > 0 ? bestSlots.map((slot, i) => (
                                 <div key={i} className={`planner__slot-item planner__slot-item--${slot.status}`}>
                                     <div className="planner__slot-info">
-                                        <div className="planner__slot-time">{fmtHr(slot.utcHour)} UTC</div>
+                                        <div className="planner__slot-time">{fmtHr(slot.utcHour)}</div>
                                         <small className="planner__slot-meta">
                                             {slot.workingCount}/{slot.totalParticipants} participants available
                                         </small>

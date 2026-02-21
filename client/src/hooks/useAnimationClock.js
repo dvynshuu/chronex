@@ -6,14 +6,14 @@ import { DateTime } from 'luxon';
  * Replaces multiple setInterval calls for better perf & sync.
  */
 export const useAnimationClock = (intervalMs = 1000) => {
-    const [now, setNow] = useState(() => DateTime.utc());
+    const [now, setNow] = useState(() => DateTime.local());
     const lastTickRef = useRef(performance.now());
     const rafRef = useRef(null);
 
     const tick = useCallback((timestamp) => {
         if (timestamp - lastTickRef.current >= intervalMs) {
             if (!document.hidden) {
-                setNow(DateTime.utc());
+                setNow(DateTime.local());
             }
             lastTickRef.current = timestamp;
         }
@@ -25,7 +25,7 @@ export const useAnimationClock = (intervalMs = 1000) => {
 
         const handleVisibility = () => {
             if (!document.hidden) {
-                setNow(DateTime.utc());
+                setNow(DateTime.local());
                 lastTickRef.current = performance.now();
             }
         };

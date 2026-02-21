@@ -6,7 +6,7 @@ const OverlapSlider = ({ participants = [] }) => {
     const [selectedHour, setSelectedHour] = useState(null);
 
     const overlapData = useMemo(() => {
-        const now = DateTime.utc().startOf('day');
+        const now = DateTime.local().startOf('day');
         return Array.from({ length: 24 }, (_, h) => {
             const utcHour = now.plus({ hours: h });
             let workingCount = 0;
@@ -48,18 +48,18 @@ const OverlapSlider = ({ participants = [] }) => {
                         className={`overlap-slider__bar overlap-slider__bar--${d.status} ${selectedHour === i ? 'overlap-slider__bar--selected' : ''}`}
                         style={{ '--bar-height': `${Math.max(d.score * 100, 8)}%` }}
                         onClick={() => setSelectedHour(i === selectedHour ? null : i)}
-                        title={`${i}:00 UTC — ${d.status}`}
+                        title={`${fmtHr(i)} — ${d.status}`}
                     >
                         <span className="overlap-slider__bar-fill"></span>
                     </button>
                 ))}
             </div>
             <div className="overlap-slider__labels">
-                <span>00:00</span>
-                <span>06:00</span>
-                <span>12:00</span>
-                <span>18:00</span>
-                <span>23:00</span>
+                <span>12 AM</span>
+                <span>6 AM</span>
+                <span>12 PM</span>
+                <span>6 PM</span>
+                <span>11 PM</span>
             </div>
 
             {/* Legend */}
@@ -74,7 +74,7 @@ const OverlapSlider = ({ participants = [] }) => {
             {selected && (
                 <div className="overlap-slider__detail glass-panel">
                     <div className="overlap-slider__detail-header">
-                        <strong>{selected.hour}:00 UTC</strong>
+                        <strong>{fmtHr(selected.hour)}</strong>
                         <span className={`overlap-slider__detail-badge overlap-slider__detail-badge--${selected.status}`}>
                             {selected.workingCount}/{participants.length} available
                         </span>
@@ -93,5 +93,11 @@ const OverlapSlider = ({ participants = [] }) => {
         </div>
     );
 };
+
+function fmtHr(h) {
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const display = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return `${display} ${ampm}`;
+}
 
 export default OverlapSlider;

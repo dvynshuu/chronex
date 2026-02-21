@@ -48,7 +48,7 @@ const PublicProfile = () => {
     // Overlap for 24h
     const overlapData = useMemo(() => {
         if (!user || !user.workSchedule) return [];
-        const now = DateTime.utc().startOf('day');
+        const now = DateTime.local().startOf('day');
         const { workStart, workEnd } = user.workSchedule;
 
         return Array.from({ length: 24 }, (_, h) => {
@@ -122,14 +122,14 @@ const PublicProfile = () => {
                             <div
                                 key={i}
                                 className={`public-profile__overlap-bar ${d.overlap ? 'public-profile__overlap-bar--overlap' : ''}`}
-                                title={`${fmtHr(d.hour)} UTC — ${d.uWorking ? '✅' : '❌'} ${user.name} / ${d.vWorking ? '✅' : '❌'} You`}
+                                title={`${fmtHr(d.hour)} — ${d.uWorking ? '✅' : '❌'} ${user.name} / ${d.vWorking ? '✅' : '❌'} You`}
                             ></div>
                         ))}
                     </div>
                     <div className="public-profile__overlap-labels">
-                        <span>12 AM UTC</span>
-                        <span>12 PM UTC</span>
-                        <span>11 PM UTC</span>
+                        <span>12 AM</span>
+                        <span>12 PM</span>
+                        <span>11 PM</span>
                     </div>
                 </div>
 

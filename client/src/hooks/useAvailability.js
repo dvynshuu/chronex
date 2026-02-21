@@ -9,10 +9,10 @@ export const useAvailability = (timezone, workStart = 9, workEnd = 17, workDays 
     return useMemo(() => {
         let localNow;
         try {
-            localNow = DateTime.utc().setZone(timezone);
-            if (!localNow.isValid) localNow = DateTime.utc();
+            localNow = DateTime.local().setZone(timezone);
+            if (!localNow.isValid) localNow = DateTime.local();
         } catch {
-            localNow = DateTime.utc();
+            localNow = DateTime.local();
         }
 
         const hour = localNow.hour;
@@ -39,7 +39,7 @@ export const useAvailability = (timezone, workStart = 9, workEnd = 17, workDays 
  * Compute 24h overlap data for multiple participants (client-side)
  */
 export const computeOverlapData = (participants) => {
-    const now = DateTime.utc().startOf('day');
+    const now = DateTime.local().startOf('day');
     const result = [];
 
     for (let h = 0; h < 24; h++) {
