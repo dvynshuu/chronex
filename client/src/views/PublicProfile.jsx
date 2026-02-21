@@ -44,7 +44,7 @@ const PublicProfile = () => {
             const start = day.set({ hour: user.workStart, minute: 0, second: 0 });
             if (start > userLocalTime) {
                 const diff = start.diff(userLocalTime, 'hours').hours;
-                return { text: start.toFormat('EEE HH:mm'), hoursUntil: diff.toFixed(1) };
+                return { text: start.toFormat('EEE hh:mm a'), hoursUntil: diff.toFixed(1) };
             }
         }
         return { text: 'No upcoming availability', hoursUntil: null };
@@ -76,7 +76,7 @@ const PublicProfile = () => {
                     <p className="public-profile__tz">{user.timezone}</p>
 
                     <div className="public-profile__time-display">
-                        {userLocalTime.toFormat('HH:mm:ss')}
+                        {userLocalTime.toFormat('hh:mm:ss a')}
                     </div>
                     <p className="public-profile__date">{userLocalTime.toFormat('EEEE, MMMM dd, yyyy')}</p>
 

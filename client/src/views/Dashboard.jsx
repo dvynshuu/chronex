@@ -103,7 +103,7 @@ const Dashboard = () => {
             <DashboardHeader
                 title="Global Overview"
                 welcomeMessage="Welcome back,"
-                timeDisplay={baseTime.toFormat('HH:mm:ss')}
+                timeDisplay={baseTime.toFormat('hh:mm:ss a')}
             />
 
             <section className="dashboard__grid">

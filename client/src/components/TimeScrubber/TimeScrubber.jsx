@@ -129,7 +129,7 @@ const TimeScrubber = ({ onTimeChange, baseTime }) => {
                 minutes: i,
                 position,
                 type: isMajor ? 'major' : isMedium ? 'medium' : 'minor',
-                label: isMajor ? `${i / 60}:00`.padStart(5, '0') : null
+                label: isMajor ? DateTime.fromMillis(0).startOf('day').plus({ minutes: i }).toFormat('h a') : null
             });
         }
         return t;
@@ -137,11 +137,7 @@ const TimeScrubber = ({ onTimeChange, baseTime }) => {
 
     // Tooltip formatting
     const displayTime = useMemo(() => {
-        const h = Math.floor(minutes / 60);
-        const m = minutes % 60;
-        const hourStr = h.toString().padStart(2, '0');
-        const minStr = m.toString().padStart(2, '0');
-        return `${hourStr}:${minStr}`;
+        return DateTime.fromMillis(0).startOf('day').plus({ minutes }).toFormat('hh:mm a');
     }, [minutes]);
 
     // Sync from props (external change)

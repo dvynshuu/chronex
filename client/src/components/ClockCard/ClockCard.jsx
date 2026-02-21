@@ -47,7 +47,7 @@ const ClockCard = memo(({ city, zone, utcTime, workStart = 9, workEnd = 17, isLo
     const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     // Minute digits for flip animation
-    const timeStr = localTime.toFormat('HH:mm');
+    const timeStr = localTime.toFormat('hh:mm a');
     const isDST = localTime.isInDST;
 
     return (

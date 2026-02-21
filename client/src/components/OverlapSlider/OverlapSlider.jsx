@@ -23,7 +23,7 @@ const OverlapSlider = ({ participants = [] }) => {
                 const localHour = local.hour;
                 const isWorking = localHour >= workStart && localHour < workEnd;
                 if (isWorking) workingCount++;
-                details.push({ name: name || zone, localTime: local.toFormat('HH:mm'), isWorking });
+                details.push({ name: name || zone, localTime: local.toFormat('hh:mm a'), isWorking });
             });
 
             const score = participants.length > 0 ? workingCount / participants.length : 0;

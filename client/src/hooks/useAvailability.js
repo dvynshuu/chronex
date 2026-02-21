@@ -61,7 +61,7 @@ export const computeOverlapData = (participants) => {
             const isWorking = localHour >= workStart && localHour < workEnd;
             if (isWorking) workingCount++;
 
-            details.push({ zone, localHour, localTime: local.toFormat('HH:mm'), isWorking, name: p.name || zone });
+            details.push({ zone, localHour, localTime: local.toFormat('hh:mm a'), isWorking, name: p.name || zone });
         });
 
         const score = participants.length > 0 ? workingCount / participants.length : 0;
