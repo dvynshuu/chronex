@@ -112,7 +112,7 @@ const MeetingPlanner = () => {
                             {bestSlots.length > 0 ? bestSlots.map((slot, i) => (
                                 <div key={i} className={`planner__slot-item planner__slot-item--${slot.status}`}>
                                     <div className="planner__slot-info">
-                                        <div className="planner__slot-time">{slot.utcHour}:00 UTC</div>
+                                        <div className="planner__slot-time">{fmtHr(slot.utcHour)} UTC</div>
                                         <small className="planner__slot-meta">
                                             {slot.workingCount}/{slot.totalParticipants} participants available
                                         </small>
@@ -137,7 +137,7 @@ const MeetingPlanner = () => {
                                     <div className="planner__participant-info">
                                         <div className="planner__participant-name">{p.name}</div>
                                         <div className="planner__participant-zone">{p.zone}</div>
-                                        <div className="planner__participant-hours">{p.workStart}:00 – {p.workEnd}:00</div>
+                                        <div className="planner__participant-hours">{fmtHr(p.workStart)} – {fmtHr(p.workEnd)}</div>
                                     </div>
                                     <button className="planner__remove-btn" onClick={() => removeParticipant(i)} title="Remove">×</button>
                                 </div>
@@ -178,5 +178,11 @@ const MeetingPlanner = () => {
         </motion.div>
     );
 };
+
+function fmtHr(h) {
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const display = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return `${display} ${ampm}`;
+}
 
 export default MeetingPlanner;

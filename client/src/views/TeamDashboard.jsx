@@ -77,13 +77,13 @@ const TeamDashboard = () => {
                             <tr>
                                 <td>Sarah Chen</td>
                                 <td>Singapore</td>
-                                <td>22:05</td>
+                                <td>10:05 PM</td>
                                 <td><span className="status-pill status-pill--sleeping">Sleeping</span></td>
                             </tr>
                             <tr>
                                 <td>James Wilson</td>
                                 <td>London</td>
-                                <td>14:05</td>
+                                <td>2:05 PM</td>
                                 <td><span className="status-pill status-pill--office">In Office</span></td>
                             </tr>
                         </tbody>

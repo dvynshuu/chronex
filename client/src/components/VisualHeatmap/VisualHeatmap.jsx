@@ -16,7 +16,7 @@ const VisualHeatmap = ({ data }) => {
                             key={i}
                             className={`visual-heatmap__bar visual-heatmap__bar--${status}`}
                             style={{ '--bar-height': height }}
-                            title={`${h.utcHour ?? h.hour}:00 — ${h.status}${h.workingCount !== undefined ? ` (${h.workingCount}/${h.totalParticipants})` : ''}`}
+                            title={`${fmtHr(h.utcHour ?? h.hour)} — ${h.status}${h.workingCount !== undefined ? ` (${h.workingCount}/${h.totalParticipants})` : ''}`}
                         >
                             <span className="visual-heatmap__bar-fill"></span>
                         </div>
@@ -24,14 +24,20 @@ const VisualHeatmap = ({ data }) => {
                 })}
             </div>
             <div className="visual-heatmap__labels">
-                <span>00:00</span>
-                <span>06:00</span>
-                <span>12:00</span>
-                <span>18:00</span>
-                <span>23:59</span>
+                <span>12 AM</span>
+                <span>6 AM</span>
+                <span>12 PM</span>
+                <span>6 PM</span>
+                <span>11 PM</span>
             </div>
         </div>
     );
 };
+
+function fmtHr(h) {
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const display = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return `${display} ${ampm}`;
+}
 
 export default VisualHeatmap;

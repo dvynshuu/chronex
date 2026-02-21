@@ -122,14 +122,14 @@ const PublicProfile = () => {
                             <div
                                 key={i}
                                 className={`public-profile__overlap-bar ${d.overlap ? 'public-profile__overlap-bar--overlap' : ''}`}
-                                title={`${d.hour}:00 UTC — ${d.uWorking ? '✅' : '❌'} ${user.name} / ${d.vWorking ? '✅' : '❌'} You`}
+                                title={`${fmtHr(d.hour)} UTC — ${d.uWorking ? '✅' : '❌'} ${user.name} / ${d.vWorking ? '✅' : '❌'} You`}
                             ></div>
                         ))}
                     </div>
                     <div className="public-profile__overlap-labels">
-                        <span>00:00 UTC</span>
-                        <span>12:00 UTC</span>
-                        <span>23:00 UTC</span>
+                        <span>12 AM UTC</span>
+                        <span>12 PM UTC</span>
+                        <span>11 PM UTC</span>
                     </div>
                 </div>
 
@@ -141,5 +141,11 @@ const PublicProfile = () => {
         </motion.div>
     );
 };
+
+function fmtHr(h) {
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const display = h > 12 ? h - 12 : (h === 0 ? 12 : h);
+    return `${display} ${ampm}`;
+}
 
 export default PublicProfile;
