@@ -51,8 +51,9 @@ const userSchema = new mongoose.Schema({
     },
     favorites: [{
         city: String,
-        timezone: String,
-        country: String
+        zone: String,
+        workStart: { type: Number, default: 9 },
+        workEnd: { type: Number, default: 17 }
     }],
     refreshToken: String
 }, {

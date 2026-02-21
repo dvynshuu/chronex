@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import useAnimationClock from '../hooks/useAnimationClock';
 import ClockCard from '../components/ClockCard/ClockCard';
@@ -9,13 +9,56 @@ import './Dashboard.css';
 const Dashboard = () => {
     const liveClock = useAnimationClock(1000);
     const [scrubOffset, setScrubOffset] = useState(null); // total minutes offset from start of day
-    const [favoriteZones, setFavoriteZones] = useState([
-        { city: 'New York', zone: 'America/New_York', workStart: 9, workEnd: 17 },
-        { city: 'London', zone: 'Europe/London', workStart: 9, workEnd: 18 },
-        { city: 'Tokyo', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
-    ]);
-
+    const [favoriteZones, setFavoriteZones] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [draggedIndex, setDraggedIndex] = useState(null);
+
+    // Fetch favorites from MongoDB on mount
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const res = await fetch('/api/v1/users/me');
+                const data = await res.json();
+
+                if (data.favorites && data.favorites.length > 0) {
+                    setFavoriteZones(data.favorites);
+                } else {
+                    // Seed defaults if empty
+                    const defaults = [
+                        { city: 'New York', zone: 'America/New_York', workStart: 9, workEnd: 17 },
+                        { city: 'London', zone: 'Europe/London', workStart: 9, workEnd: 18 },
+                        { city: 'Tokyo', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
+                    ];
+                    setFavoriteZones(defaults);
+
+                    // Sync defaults to DB so they persist
+                    fetch('/api/v1/users/me/favorites', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ favorites: defaults })
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to fetch user data:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchUserData();
+    }, []);
+
+    // Helper to sync reordered list to DB
+    const syncFavorites = async (updatedList) => {
+        try {
+            await fetch('/api/v1/users/me/favorites', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ favorites: updatedList })
+            });
+        } catch (err) {
+            console.error('Failed to sync favorites:', err);
+        }
+    };
 
     const baseTime = scrubOffset !== null
         ? liveClock.startOf('day').plus({ minutes: scrubOffset })
@@ -48,6 +91,7 @@ const Dashboard = () => {
 
     const handleDragEnd = () => {
         setDraggedIndex(null);
+        syncFavorites(favoriteZones); // Persist order to DB
     };
 
     return (
