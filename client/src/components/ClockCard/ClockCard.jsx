@@ -2,14 +2,14 @@ import React, { useMemo, memo } from 'react';
 import { DateTime } from 'luxon';
 import './ClockCard.css';
 
-const ClockCard = memo(({ city, zone, utcTime, workStart = 9, workEnd = 17, isLocal = false, onRemove }) => {
+const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isLocal = false, onRemove }) => {
     let localTime;
     let isInvalidZone = false;
     try {
-        localTime = utcTime.setZone(zone);
+        localTime = baseTime.setZone(zone);
         if (!localTime.isValid) throw new Error();
     } catch {
-        localTime = utcTime; // Fallback to UTC
+        localTime = baseTime; // Fallback to current zone reference
         isInvalidZone = true;
     }
 

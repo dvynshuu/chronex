@@ -87,3 +87,8 @@
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 17.092 ms - 518\u001b[0m","timestamp":"2026-02-21T08:33:27.424Z"}
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 19.787 ms - -\u001b[0m","timestamp":"2026-02-21T08:33:27.456Z"}
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 4.927 ms - -\u001b[0m","timestamp":"2026-02-21T08:34:54.130Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 12.573 ms - -\u001b[0m","timestamp":"2026-02-21T08:38:45.320Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 5.288 ms - -\u001b[0m","timestamp":"2026-02-21T08:38:45.336Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 13.030 ms - -\u001b[0m","timestamp":"2026-02-21T08:38:57.807Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 6.460 ms - -\u001b[0m","timestamp":"2026-02-21T08:38:57.825Z"}
+{"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 99.584 ms - 322\u001b[0m","timestamp":"2026-02-21T08:39:07.192Z"}

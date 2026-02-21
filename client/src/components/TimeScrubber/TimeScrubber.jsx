@@ -129,7 +129,7 @@ const TimeScrubber = ({ onTimeChange, baseTime }) => {
                 minutes: i,
                 position,
                 type: isMajor ? 'major' : isMedium ? 'medium' : 'minor',
-                label: isMajor ? DateTime.fromMillis(0).startOf('day').plus({ minutes: i }).toFormat('h a') : null
+                label: isMajor ? DateTime.local().startOf('day').plus({ minutes: i }).toFormat('h a') : null
             });
         }
         return t;

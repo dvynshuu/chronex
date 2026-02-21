@@ -134,7 +134,7 @@ const Dashboard = () => {
                         <ClockCard
                             city={z.city}
                             zone={z.zone}
-                            utcTime={baseTime}
+                            baseTime={baseTime}
                             workStart={z.workStart}
                             workEnd={z.workEnd}
                             isLocal={z.zone === localZone}
