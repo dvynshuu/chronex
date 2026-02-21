@@ -8,6 +8,23 @@ const protect = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
         }
 
+        // --- DEV BYPASS ---
+        if (!token && process.env.NODE_ENV !== 'production') {
+            const User = require('../models/User');
+            let mockUser = await User.findOne({ email: 'demo@chronex.app' });
+            if (!mockUser) {
+                mockUser = await User.create({
+                    email: 'demo@chronex.app',
+                    password: 'password123',
+                    profile: { name: 'Demo User' },
+                    slug: 'demo-user'
+                });
+            }
+            req.user = mockUser;
+            return next();
+        }
+        // ------------------
+
         if (!token) {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }

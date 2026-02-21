@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import VisualHeatmap from '../components/VisualHeatmap/VisualHeatmap';
 import OverlapSlider from '../components/OverlapSlider/OverlapSlider';
@@ -6,16 +6,58 @@ import { computeOverlapData } from '../hooks/useAvailability';
 import './MeetingPlanner.css';
 
 const MeetingPlanner = () => {
-    const [participants, setParticipants] = useState([
-        { name: 'Alice', zone: 'America/New_York', workStart: 9, workEnd: 17 },
-        { name: 'Bob', zone: 'Europe/London', workStart: 9, workEnd: 18 },
-        { name: 'Charlie', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
-    ]);
+    const [participants, setParticipants] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     const [newName, setNewName] = useState('');
     const [newZone, setNewZone] = useState('');
     const [newWorkStart, setNewWorkStart] = useState(9);
     const [newWorkEnd, setNewWorkEnd] = useState(17);
+
+    // Fetch from MongoDB on mount
+    useEffect(() => {
+        const fetchParticipants = async () => {
+            try {
+                const res = await fetch('/api/v1/meetings');
+                const data = await res.json();
+                if (data.participants && data.participants.length > 0) {
+                    setParticipants(data.participants);
+                } else {
+                    // Fallback to defaults only if DB is empty
+                    setParticipants([
+                        { name: 'Alice', zone: 'America/New_York', workStart: 9, workEnd: 17 },
+                        { name: 'Bob', zone: 'Europe/London', workStart: 9, workEnd: 18 },
+                        { name: 'Charlie', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
+                    ]);
+                }
+            } catch (err) {
+                console.error('Failed to fetch participants:', err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchParticipants();
+    }, []);
+
+    // Sync with MongoDB whenever participants change
+    useEffect(() => {
+        if (loading) return;
+
+        const syncWithDB = async () => {
+            try {
+                await fetch('/api/v1/meetings/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ participants })
+                });
+            } catch (err) {
+                console.error('Sync failed:', err);
+            }
+        };
+
+        const timer = setTimeout(syncWithDB, 500); // Debounce sync
+        return () => clearTimeout(timer);
+    }, [participants, loading]);
 
     const overlapData = useMemo(() => computeOverlapData(participants), [participants]);
 

@@ -35,6 +35,7 @@ app.use('/api/v1/auth', require('./routes/authRoutes'));
 app.use('/api/v1/time', require('./routes/timeRoutes'));
 app.use('/api/v1/orgs', require('./routes/orgRoutes'));
 app.use('/api/v1/public', require('./routes/publicRoutes'));
+app.use('/api/v1/meetings', require('./routes/meetingRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {
