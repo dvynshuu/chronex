@@ -72,6 +72,42 @@ const userController = {
         } catch (err) {
             next(err);
         }
+    },
+
+    /**
+     * GET /api/v1/users/search
+     * Search for users by name or email
+     */
+    async searchUsers(req, res, next) {
+        try {
+            const { q } = req.query;
+            if (!q || q.length < 2) {
+                return res.status(200).json([]);
+            }
+
+            const regex = new RegExp(q, 'i');
+            const users = await User.find({
+                $or: [
+                    { 'profile.name': regex },
+                    { email: regex }
+                ],
+                _id: { $ne: req.user.id } // Exclude current user
+            })
+                .select('profile.name email baseTimezone workSchedule')
+                .limit(10);
+
+            const results = users.map(u => ({
+                id: u._id,
+                name: u.profile?.name || u.email,
+                email: u.email,
+                timezone: u.baseTimezone,
+                workSchedule: u.workSchedule
+            }));
+
+            res.status(200).json(results);
+        } catch (err) {
+            next(err);
+        }
     }
 };
 

@@ -5,39 +5,91 @@ import OverlapSlider from '../components/OverlapSlider/OverlapSlider';
 import { computeOverlapData } from '../hooks/useAvailability';
 import './MeetingPlanner.css';
 
+const CITY_DATABASE = [
+    { city: 'London', zone: 'Europe/London', country: 'UK' },
+    { city: 'New York', zone: 'America/New_York', country: 'USA' },
+    { city: 'Tokyo', zone: 'Asia/Tokyo', country: 'Japan' },
+    { city: 'Singapore', zone: 'Asia/Singapore', country: 'Singapore' },
+    { city: 'Dubai', zone: 'Asia/Dubai', country: 'UAE' },
+    { city: 'Paris', zone: 'Europe/Paris', country: 'France' },
+    { city: 'Berlin', zone: 'Europe/Berlin', country: 'Germany' },
+    { city: 'Mumbai', zone: 'Asia/Kolkata', country: 'India' },
+    { city: 'Sydney', zone: 'Australia/Sydney', country: 'Australia' },
+    { city: 'San Francisco', zone: 'America/Los_Angeles', country: 'USA' },
+    { city: 'Los Angeles', zone: 'America/Los_Angeles', country: 'USA' },
+    { city: 'Chicago', zone: 'America/Chicago', country: 'USA' },
+    { city: 'Hong Kong', zone: 'Asia/Hong_Kong', country: 'China' },
+    { city: 'Seoul', zone: 'Asia/Seoul', country: 'South Korea' }
+];
+
 const MeetingPlanner = () => {
     const [participants, setParticipants] = useState([]);
+    const [team, setTeam] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const [newName, setNewName] = useState('');
     const [newZone, setNewZone] = useState('');
+    const [searchZone, setSearchZone] = useState('');
+    const [searchUser, setSearchUser] = useState('');
+    const [userResults, setUserResults] = useState([]);
     const [newWorkStart, setNewWorkStart] = useState(9);
     const [newWorkEnd, setNewWorkEnd] = useState(17);
+    const [isSearching, setIsSearching] = useState(false);
+    const [isSearchingUser, setIsSearchingUser] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
-    // Fetch from MongoDB on mount
+    // Fetch from MongoDB and Organization on mount
     useEffect(() => {
-        const fetchParticipants = async () => {
+        const initData = async () => {
             try {
-                const res = await fetch('/api/v1/meetings');
-                const data = await res.json();
-                if (data.participants && data.participants.length > 0) {
-                    setParticipants(data.participants);
-                } else {
-                    // Fallback to defaults only if DB is empty
-                    setParticipants([
-                        { name: 'Alice', zone: 'America/New_York', workStart: 9, workEnd: 17 },
-                        { name: 'Bob', zone: 'Europe/London', workStart: 9, workEnd: 18 },
-                        { name: 'Charlie', zone: 'Asia/Tokyo', workStart: 10, workEnd: 19 }
-                    ]);
+                // Fetch participants
+                const pRes = await fetch('/api/v1/meetings');
+                const pData = await pRes.json();
+                if (pData.participants && pData.participants.length > 0) {
+                    setParticipants(pData.participants);
+                }
+
+                // Fetch current user for "Add Me"
+                const meRes = await fetch('/api/v1/users/me');
+                if (meRes.ok) {
+                    const meData = await meRes.json();
+                    setCurrentUser(meData);
+                }
+
+                // Fetch team members
+                const tRes = await fetch('/api/v1/orgs/me');
+                if (tRes.ok) {
+                    const tData = await tRes.json();
+                    if (tData && tData.members) {
+                        setTeam(tData.members);
+                    }
                 }
             } catch (err) {
-                console.error('Failed to fetch participants:', err);
+                console.error('Failed to fetch data:', err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchParticipants();
+        initData();
     }, []);
+
+    // User Search Logic
+    useEffect(() => {
+        if (!searchUser || searchUser.length < 2) {
+            setUserResults([]);
+            return;
+        }
+        const timer = setTimeout(async () => {
+            try {
+                const res = await fetch(`/api/v1/users/search?q=${encodeURIComponent(searchUser)}`);
+                const data = await res.json();
+                setUserResults(data);
+            } catch (err) {
+                console.error('User search failed:', err);
+            }
+        }, 300);
+        return () => clearTimeout(timer);
+    }, [searchUser]);
 
     // Sync with MongoDB whenever participants change
     useEffect(() => {
@@ -69,13 +121,27 @@ const MeetingPlanner = () => {
             .slice(0, 3);
     }, [overlapData]);
 
-    const addParticipant = () => {
-        if (!newName.trim() || !newZone.trim()) return;
-        setParticipants(prev => [...prev, { name: newName.trim(), zone: newZone.trim(), workStart: newWorkStart, workEnd: newWorkEnd }]);
-        setNewName('');
-        setNewZone('');
-        setNewWorkStart(9);
-        setNewWorkEnd(17);
+    const filteredZones = useMemo(() => {
+        if (!searchZone) return [];
+        return CITY_DATABASE.filter(c =>
+            c.city.toLowerCase().includes(searchZone.toLowerCase()) ||
+            c.country.toLowerCase().includes(searchZone.toLowerCase())
+        ).slice(0, 5);
+    }, [searchZone]);
+
+    const addParticipant = (pData) => {
+        const p = pData || { name: newName.trim(), zone: newZone.trim(), workStart: newWorkStart, workEnd: newWorkEnd };
+        if (!p.name || !p.zone) return;
+
+        setParticipants(prev => [...prev, p]);
+
+        if (!pData) {
+            setNewName('');
+            setNewZone('');
+            setSearchZone('');
+            setNewWorkStart(9);
+            setNewWorkEnd(17);
+        }
     };
 
     const removeParticipant = (idx) => {
@@ -127,13 +193,79 @@ const MeetingPlanner = () => {
                 </div>
 
                 <div className="planner__side">
-                    {/* Participants */}
+                    {/* Real User Discovery */}
+                    <div className="planner__card glass-panel">
+                        <h5 className="planner__card-title">Discover Participants</h5>
+
+                        <div className="planner__discovery-actions">
+                            {currentUser && !participants.some(p => p.name === currentUser.profile?.name) && (
+                                <button
+                                    className="planner__add-me-btn"
+                                    onClick={() => addParticipant({
+                                        name: currentUser.profile?.name || currentUser.email,
+                                        zone: currentUser.baseTimezone || 'UTC',
+                                        workStart: currentUser.workSchedule?.workStart || 9,
+                                        workEnd: currentUser.workSchedule?.workEnd || 17
+                                    })}
+                                >
+                                    <span>👤</span> Add Me ({currentUser.profile?.name || 'Self'})
+                                </button>
+                            )}
+                        </div>
+
+                        <div className="planner__user-search">
+                            <input
+                                type="text"
+                                className="planner__input"
+                                placeholder="Search real users by name or email..."
+                                value={searchUser}
+                                onChange={e => {
+                                    setSearchUser(e.target.value);
+                                    setIsSearchingUser(true);
+                                }}
+                                onFocus={() => setIsSearchingUser(true)}
+                            />
+                            {isSearchingUser && userResults.length > 0 && (
+                                <div className="planner__user-results">
+                                    {userResults.map(user => (
+                                        <button
+                                            key={user.id}
+                                            className="planner__user-result-item"
+                                            onClick={() => {
+                                                addParticipant({
+                                                    name: user.name,
+                                                    zone: user.timezone || 'UTC',
+                                                    workStart: user.workSchedule?.workStart || 9,
+                                                    workEnd: user.workSchedule?.workEnd || 17
+                                                });
+                                                setSearchUser('');
+                                                setIsSearchingUser(false);
+                                            }}
+                                            disabled={participants.some(p => p.name === user.name)}
+                                        >
+                                            <div className="planner__result-avatar">{user.name.charAt(0)}</div>
+                                            <div className="planner__result-info">
+                                                <div className="planner__result-name">{user.name}</div>
+                                                <div className="planner__result-meta">{user.email} • {user.timezone}</div>
+                                            </div>
+                                            <span className="planner__result-add">+</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                            {isSearchingUser && searchUser.length >= 2 && userResults.length === 0 && (
+                                <div className="planner__search-empty">No results for "{searchUser}"</div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Participants List */}
                     <div className="planner__card glass-panel">
                         <h5 className="planner__card-title">Participants ({participants.length})</h5>
                         <div className="planner__participants">
                             {participants.map((p, i) => (
                                 <div key={i} className="planner__participant-item">
-                                    <div className="planner__participant-avatar"></div>
+                                    <div className="planner__participant-avatar">{p.name.charAt(0)}</div>
                                     <div className="planner__participant-info">
                                         <div className="planner__participant-name">{p.name}</div>
                                         <div className="planner__participant-zone">{p.zone}</div>
@@ -146,6 +278,7 @@ const MeetingPlanner = () => {
 
                         {/* Add Participant Form */}
                         <div className="planner__add-form">
+                            <h6 className="planner__form-label">Add Guest</h6>
                             <input
                                 type="text"
                                 className="planner__input"
@@ -153,24 +286,55 @@ const MeetingPlanner = () => {
                                 value={newName}
                                 onChange={e => setNewName(e.target.value)}
                             />
-                            <input
-                                type="text"
-                                className="planner__input"
-                                placeholder="Timezone (e.g. US/Pacific)"
-                                value={newZone}
-                                onChange={e => setNewZone(e.target.value)}
-                            />
+
+                            <div className="planner__zone-search">
+                                <input
+                                    type="text"
+                                    className="planner__input"
+                                    placeholder="Search timezone (e.g. India, USA...)"
+                                    value={searchZone}
+                                    onChange={e => {
+                                        setSearchZone(e.target.value);
+                                        setIsSearching(true);
+                                    }}
+                                    onFocus={() => setIsSearching(true)}
+                                />
+                                {isSearching && filteredZones.length > 0 && (
+                                    <div className="planner__zone-results">
+                                        {filteredZones.map((z, idx) => (
+                                            <button
+                                                key={idx}
+                                                className="planner__zone-result-item"
+                                                onClick={() => {
+                                                    setNewZone(z.zone);
+                                                    setSearchZone(`${z.city} (${z.zone})`);
+                                                    setIsSearching(false);
+                                                }}
+                                            >
+                                                <strong>{z.city}</strong>, {z.country} <small>{z.zone}</small>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="planner__hours-row">
                                 <label className="planner__hours-label">
-                                    Start
-                                    <input type="number" className="planner__input planner__input--small" min="0" max="23" value={newWorkStart} onChange={e => setNewWorkStart(+e.target.value)} />
+                                    Start (0-23)
+                                    <input type="number" className="planner__input" min="0" max="23" value={newWorkStart} onChange={e => setNewWorkStart(+e.target.value)} />
                                 </label>
                                 <label className="planner__hours-label">
-                                    End
-                                    <input type="number" className="planner__input planner__input--small" min="0" max="23" value={newWorkEnd} onChange={e => setNewWorkEnd(+e.target.value)} />
+                                    End (0-23)
+                                    <input type="number" className="planner__input" min="0" max="23" value={newWorkEnd} onChange={e => setNewWorkEnd(+e.target.value)} />
                                 </label>
                             </div>
-                            <button className="primary-button planner__btn-add" onClick={addParticipant}>+ Add Participant</button>
+                            <button
+                                className="primary-button planner__btn-submit"
+                                onClick={() => addParticipant()}
+                                disabled={!newName || !newZone}
+                            >
+                                + Add to Meeting
+                            </button>
                         </div>
                     </div>
                 </div>

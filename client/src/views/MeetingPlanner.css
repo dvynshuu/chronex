@@ -276,6 +276,185 @@
     padding: 2rem 0;
 }
 
-.planner__participant-info {
+/* Discovery Actions */
+.planner__discovery-actions {
+    margin-bottom: 1.25rem;
+}
+
+.planner__add-me-btn {
+    width: 100%;
+    padding: 0.85rem;
+    background: rgba(56, 189, 248, 0.1);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.planner__add-me-btn:hover {
+    background: var(--color-primary);
+    color: var(--color-bg-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+/* User Search Discovery */
+.planner__user-search {
+    position: relative;
+    width: 100%;
+}
+
+.planner__user-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.98);
+    backdrop-filter: blur(16px);
+    border: 1px solid var(--color-edge-active);
+    border-radius: var(--radius-md);
+    margin-top: 0.75rem;
+    z-index: 110;
+    box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.planner__user-result-item {
+    width: 100%;
+    padding: 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    text-align: left;
+}
+
+.planner__user-result-item:hover:not(:disabled) {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.planner__user-result-item:disabled {
+    opacity: 0.5;
+    cursor: default;
+}
+
+.planner__result-avatar {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--color-bg-panel), var(--color-bg-deep));
+    border: 1px solid var(--color-edge);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--color-primary);
+    font-size: 1rem;
+}
+
+.planner__result-info {
     flex: 1;
+}
+
+.planner__result-name {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--color-text-primary);
+}
+
+.planner__result-meta {
+    font-size: 0.7rem;
+    color: var(--color-text-dim);
+    margin-top: 0.1rem;
+}
+
+.planner__result-add {
+    font-size: 1.5rem;
+    color: var(--color-primary);
+    font-weight: 300;
+}
+
+.planner__search-empty {
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--color-text-dim);
+    font-size: 0.85rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+}
+
+/* Quick Add Team (OLD) - Removed styles replaced by discovery */
+
+/* Zone Search Dropdown */
+.planner__zone-search {
+    position: relative;
+    width: 100%;
+}
+
+.planner__zone-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--color-edge-active);
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+    z-index: 100;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+}
+
+.planner__zone-result-item {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--color-text-primary);
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: background 0.2s ease;
+}
+
+.planner__zone-result-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.planner__zone-result-item small {
+    display: block;
+    color: var(--color-text-dim);
+    margin-top: 0.1rem;
+}
+
+/* Form Polish */
+.planner__form-label {
+    margin: 0.5rem 0 0.25rem;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-dim);
+    font-weight: 700;
+}
+
+.planner__btn-submit {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
 }

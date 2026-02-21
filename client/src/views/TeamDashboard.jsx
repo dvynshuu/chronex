@@ -1,3 +1,6 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis } from 'recharts';
 import useAnimationClock from '../hooks/useAnimationClock';
 import { DateTime } from 'luxon';
 import './TeamDashboard.css';

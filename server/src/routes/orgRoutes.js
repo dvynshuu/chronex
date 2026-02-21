@@ -21,6 +21,13 @@ const getMyOrg = async (req, res, next) => {
     } catch (err) { next(err); }
 };
 
+const getOrg = async (req, res, next) => {
+    try {
+        const org = await organizationService.getOrgDashboard(req.params.id);
+        res.status(200).json(org);
+    } catch (err) { next(err); }
+};
+
 router.post('/', protect, createOrg);
 router.get('/me', protect, getMyOrg);
 router.get('/:id', protect, getOrg);
