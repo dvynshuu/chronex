@@ -1,14 +1,37 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts';
+import useAnimationClock from '../hooks/useAnimationClock';
+import { DateTime } from 'luxon';
 import './TeamDashboard.css';
 
 const TeamDashboard = () => {
-    const teamStats = [
-        { name: 'Active', value: 12 },
-        { name: 'Away', value: 3 },
-        { name: 'Sleeping', value: 5 }
-    ];
+    const liveClock = useAnimationClock(10000); // 10s is enough for team updates
+    const [org, setOrg] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(null);
+
+    React.useEffect(() => {
+        const fetchTeamData = async () => {
+            try {
+                const res = await fetch('/api/v1/orgs/me');
+                if (!res.ok) throw new Error('Failed to fetch team data');
+                const data = await res.json();
+                setOrg(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchTeamData();
+    }, []);
+
+    const teamStats = React.useMemo(() => {
+        if (!org) return [];
+        return [
+            { name: 'Active', value: org.stats.active },
+            { name: 'Away', value: org.stats.away },
+            { name: 'Sleeping', value: org.stats.sleeping }
+        ];
+    }, [org]);
 
     const activityData = [
         { day: 'Mon', usage: 40 },
@@ -19,6 +42,10 @@ const TeamDashboard = () => {
     ];
 
     const COLORS = ['#4ade80', '#facc15', '#fb7185'];
+
+    if (loading) return <div className="team-dash-loading">Loading Team Insights...</div>;
+    if (error) return <div className="team-dash-error">Error: {error}</div>;
+    if (!org) return <div className="team-dash-empty">No Organization Found. Create one in Settings to begin.</div>;
 
     return (
         <motion.div
@@ -74,18 +101,23 @@ const TeamDashboard = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>Sarah Chen</td>
-                                <td>Singapore</td>
-                                <td>10:05 PM</td>
-                                <td><span className="status-pill status-pill--sleeping">Sleeping</span></td>
-                            </tr>
-                            <tr>
-                                <td>James Wilson</td>
-                                <td>London</td>
-                                <td>2:05 PM</td>
-                                <td><span className="status-pill status-pill--office">In Office</span></td>
-                            </tr>
+                            {org.members.map((m) => {
+                                const localTime = liveClock.setZone(m.timezone);
+                                const statusClass = m.statusLabel.toLowerCase().replace(' ', '-');
+
+                                return (
+                                    <tr key={m.id}>
+                                        <td>{m.name}</td>
+                                        <td>{m.location}</td>
+                                        <td>{localTime.toFormat('hh:mm a')}</td>
+                                        <td>
+                                            <span className={`status-pill status-pill--${statusClass}`}>
+                                                {m.statusLabel}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                 </div>

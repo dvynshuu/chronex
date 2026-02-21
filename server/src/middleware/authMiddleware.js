@@ -21,6 +21,35 @@ const protect = async (req, res, next) => {
                 });
             }
             req.user = mockUser;
+
+            // --- SEED DEMO ORG ---
+            const Organization = require('../models/Organization');
+            let demoOrg = await Organization.findOne({ name: 'Chronex Core Team' });
+            if (!demoOrg) {
+                // Create some other users for the team
+                const sarah = await User.findOneAndUpdate(
+                    { email: 'sarah@chronex.app' },
+                    { profile: { name: 'Sarah Chen' }, baseTimezone: 'Asia/Singapore', workSchedule: { workStart: 9, workEnd: 18 } },
+                    { upsert: true, new: true }
+                );
+                const james = await User.findOneAndUpdate(
+                    { email: 'james@chronex.app' },
+                    { profile: { name: 'James Wilson' }, baseTimezone: 'Europe/London', workSchedule: { workStart: 9, workEnd: 17 } },
+                    { upsert: true, new: true }
+                );
+
+                demoOrg = await Organization.create({
+                    name: 'Chronex Core Team',
+                    admin: mockUser._id,
+                    members: [
+                        { user: mockUser._id, role: 'admin' },
+                        { user: sarah._id, role: 'member' },
+                        { user: james._id, role: 'member' }
+                    ]
+                });
+            }
+            // ---------------------
+
             return next();
         }
         // ------------------

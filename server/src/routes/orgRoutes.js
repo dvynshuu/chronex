@@ -11,14 +11,18 @@ const createOrg = async (req, res, next) => {
     } catch (err) { next(err); }
 };
 
-const getOrg = async (req, res, next) => {
+const getMyOrg = async (req, res, next) => {
     try {
-        const org = await organizationService.getOrgDashboard(req.params.id);
-        res.status(200).json(org);
+        const org = await organizationService.getUserOrganization(req.user._id);
+        if (!org) return res.status(200).json(null);
+
+        const dashboard = await organizationService.getOrgDashboard(org._id);
+        res.status(200).json(dashboard);
     } catch (err) { next(err); }
 };
 
 router.post('/', protect, createOrg);
+router.get('/me', protect, getMyOrg);
 router.get('/:id', protect, getOrg);
 
 module.exports = router;

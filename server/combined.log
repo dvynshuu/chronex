@@ -92,3 +92,24 @@
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 13.030 ms - -\u001b[0m","timestamp":"2026-02-21T08:38:57.807Z"}
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 6.460 ms - -\u001b[0m","timestamp":"2026-02-21T08:38:57.825Z"}
 {"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 99.584 ms - 322\u001b[0m","timestamp":"2026-02-21T08:39:07.192Z"}
+{"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 43.935 ms - 419\u001b[0m","timestamp":"2026-02-21T08:40:11.242Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 10.591 ms - -\u001b[0m","timestamp":"2026-02-21T08:40:28.471Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 7.091 ms - -\u001b[0m","timestamp":"2026-02-21T08:40:28.503Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 4.651 ms - 112\u001b[0m","timestamp":"2026-02-21T08:40:29.028Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 7.175 ms - 716\u001b[0m","timestamp":"2026-02-21T08:40:29.213Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 22.769 ms - -\u001b[0m","timestamp":"2026-02-21T08:40:29.265Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 13.064 ms - -\u001b[0m","timestamp":"2026-02-21T08:42:55.284Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 14.708 ms - -\u001b[0m","timestamp":"2026-02-21T08:42:55.334Z"}
+{"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 5.092 ms - 322\u001b[0m","timestamp":"2026-02-21T08:42:58.156Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 14.662 ms - -\u001b[0m","timestamp":"2026-02-21T08:43:29.284Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 12.887 ms - -\u001b[0m","timestamp":"2026-02-21T08:43:29.419Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 7.129 ms - 112\u001b[0m","timestamp":"2026-02-21T08:43:29.976Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 9.033 ms - 201\u001b[0m","timestamp":"2026-02-21T08:43:44.482Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 11.531 ms - 619\u001b[0m","timestamp":"2026-02-21T08:44:01.550Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 12.749 ms - -\u001b[0m","timestamp":"2026-02-21T08:44:01.620Z"}
+{"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 15.192 ms - 322\u001b[0m","timestamp":"2026-02-21T08:44:06.494Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[32m200\u001b[0m 18.150 ms - 201\u001b[0m","timestamp":"2026-02-21T08:44:16.258Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 16.854 ms - -\u001b[0m","timestamp":"2026-02-21T08:44:16.310Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-21T08:44:48.492Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-21T08:44:48.601Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-21T08:44:48.629Z"}
