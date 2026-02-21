@@ -35,8 +35,15 @@
 }
 
 @keyframes breathingGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(56, 189, 248, 0.12), var(--shadow-premium); }
-    50% { box-shadow: 0 0 35px rgba(56, 189, 248, 0.25), var(--shadow-premium); }
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.12), var(--shadow-premium);
+    }
+
+    50% {
+        box-shadow: 0 0 35px rgba(56, 189, 248, 0.25), var(--shadow-premium);
+    }
 }
 
 /* Invalid timezone warning */
@@ -83,6 +90,13 @@
     margin-top: 0.2rem;
 }
 
+.clock-card__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
 .clock-card__dst-badge {
     background: rgba(251, 191, 36, 0.2);
     color: var(--color-warning);
@@ -92,7 +106,30 @@
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    flex-shrink: 0;
+}
+
+.clock-card__remove {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--color-text-dim);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.clock-card__remove:hover {
+    background: var(--color-error);
+    border-color: var(--color-error);
+    color: #fff;
+    transform: scale(1.1);
 }
 
 /* Body: progress ring + time */
@@ -180,8 +217,15 @@
 }
 
 @keyframes colonPulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 1;
+    }
 }
 
 .clock-card__digit-inner {
@@ -194,6 +238,7 @@
         transform: translateY(-8px);
         opacity: 0.3;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;

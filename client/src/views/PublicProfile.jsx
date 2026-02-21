@@ -8,56 +8,54 @@ import './PublicProfile.css';
 const PublicProfile = () => {
     const { slug } = useParams();
     const liveClock = useAnimationClock(1000);
-
-    // Mock user data (would come from API in production)
-    const user = useMemo(() => ({
-        name: slug || 'User',
-        timezone: 'Asia/Kolkata',
-        workStart: 9,
-        workEnd: 18,
-        workDays: [1, 2, 3, 4, 5],
-        slug
-    }), [slug]);
-
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [visitorZone, setVisitorZone] = useState(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-    const userLocalTime = liveClock.setZone(user.timezone);
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await fetch(`/api/v1/public/${slug}`);
+                if (!res.ok) throw new Error('Profile not found or private');
+                const data = await res.json();
+                setUser(data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfile();
+    }, [slug]);
+
+    const userLocalTime = user ? liveClock.setZone(user.timezone) : liveClock;
     const visitorLocalTime = liveClock.setZone(visitorZone);
     const hour = userLocalTime.hour;
 
     const status = useMemo(() => {
-        const isWorkDay = user.workDays.includes(userLocalTime.weekday);
-        if (!isWorkDay) return { label: 'Day Off', icon: '🏖️', color: '#64748b' };
-        if (hour >= user.workStart && hour < user.workEnd) return { label: 'Available', icon: '🟢', color: '#34d399' };
-        if (hour >= 22 || hour < 5) return { label: 'Sleeping', icon: '🌙', color: '#6366f1' };
-        if (hour >= 5 && hour < user.workStart) return { label: 'Early Morning', icon: '🌅', color: '#fbbf24' };
-        return { label: 'Off Hours', icon: '🏠', color: '#f43f5e' };
-    }, [hour, userLocalTime.weekday, user]);
+        if (!user) return null;
+        // The API now returns the status directly
+        return user.status || { label: 'Unknown', icon: '❓', color: '#64748b' };
+    }, [user, hour]);
 
     // Next availability
     const nextAvail = useMemo(() => {
-        if (status.label === 'Available') return { text: 'Available now', hoursUntil: 0 };
-        let check = userLocalTime;
-        for (let d = 0; d < 7; d++) {
-            const day = check.plus({ days: d });
-            if (!user.workDays.includes(day.weekday)) continue;
-            const start = day.set({ hour: user.workStart, minute: 0, second: 0 });
-            if (start > userLocalTime) {
-                const diff = start.diff(userLocalTime, 'hours').hours;
-                return { text: start.toFormat('EEE hh:mm a'), hoursUntil: diff.toFixed(1) };
-            }
-        }
-        return { text: 'No upcoming availability', hoursUntil: null };
-    }, [userLocalTime, user, status]);
+        if (!user) return null;
+        return user.nextAvailability || { text: 'Unknown', hoursUntil: null };
+    }, [user]);
 
     // Overlap for 24h
     const overlapData = useMemo(() => {
+        if (!user || !user.workSchedule) return [];
         const now = DateTime.utc().startOf('day');
+        const { workStart, workEnd } = user.workSchedule;
+
         return Array.from({ length: 24 }, (_, h) => {
             const utcH = now.plus({ hours: h });
             const uLocal = utcH.setZone(user.timezone).hour;
             const vLocal = utcH.setZone(visitorZone).hour;
-            const uWorking = uLocal >= user.workStart && uLocal < user.workEnd;
+            const uWorking = uLocal >= workStart && uLocal < workEnd;
             const vWorking = vLocal >= 9 && vLocal < 17;
             const overlap = uWorking && vWorking;
             return { hour: h, overlap, uLocal, vLocal, uWorking, vWorking };
@@ -65,6 +63,10 @@ const PublicProfile = () => {
     }, [user, visitorZone]);
 
     const overlapHours = overlapData.filter(d => d.overlap).length;
+
+    if (loading) return <div className="public-profile-loading">Loading profile...</div>;
+    if (error) return <div className="public-profile-error">{error}</div>;
+    if (!user) return null;
 
     return (
         <motion.div className="public-profile" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>

@@ -2,7 +2,7 @@ import React, { useMemo, memo } from 'react';
 import { DateTime } from 'luxon';
 import './ClockCard.css';
 
-const ClockCard = memo(({ city, zone, utcTime, workStart = 9, workEnd = 17, isLocal = false }) => {
+const ClockCard = memo(({ city, zone, utcTime, workStart = 9, workEnd = 17, isLocal = false, onRemove }) => {
     let localTime;
     let isInvalidZone = false;
     try {
@@ -64,7 +64,18 @@ const ClockCard = memo(({ city, zone, utcTime, workStart = 9, workEnd = 17, isLo
                     <h3 className="clock-card__city">{city}</h3>
                     <span className="clock-card__zone">{zone}</span>
                 </div>
-                {isDST && <span className="clock-card__dst-badge">DST</span>}
+                <div className="clock-card__header-actions">
+                    {isDST && <span className="clock-card__dst-badge">DST</span>}
+                    {onRemove && (
+                        <button
+                            className="clock-card__remove"
+                            onClick={(e) => { e.stopPropagation(); onRemove(); }}
+                            title="Remove city"
+                        >
+                            ×
+                        </button>
+                    )}
+                </div>
             </div>
 
             <div className="clock-card__body">

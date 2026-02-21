@@ -6,12 +6,15 @@ import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import TimeScrubber from '../components/TimeScrubber/TimeScrubber';
 import './Dashboard.css';
 
+import AddCityModal from '../components/Dashboard/AddCityModal';
+
 const Dashboard = () => {
     const liveClock = useAnimationClock(1000);
     const [scrubOffset, setScrubOffset] = useState(null); // total minutes offset from start of day
     const [favoriteZones, setFavoriteZones] = useState([]);
     const [loading, setLoading] = useState(true);
     const [draggedIndex, setDraggedIndex] = useState(null);
+    const [showAddModal, setShowAddModal] = useState(false);
 
     // Fetch favorites from MongoDB on mount
     useEffect(() => {
@@ -47,7 +50,7 @@ const Dashboard = () => {
         fetchUserData();
     }, []);
 
-    // Helper to sync reordered list to DB
+    // Helper to sync reordered/updated list to DB
     const syncFavorites = async (updatedList) => {
         try {
             await fetch('/api/v1/users/me/favorites', {
@@ -58,6 +61,18 @@ const Dashboard = () => {
         } catch (err) {
             console.error('Failed to sync favorites:', err);
         }
+    };
+
+    const handleAddCity = (newCity) => {
+        const updated = [...favoriteZones, newCity];
+        setFavoriteZones(updated);
+        syncFavorites(updated);
+    };
+
+    const handleRemoveCity = (idx) => {
+        const updated = favoriteZones.filter((_, i) => i !== idx);
+        setFavoriteZones(updated);
+        syncFavorites(updated);
     };
 
     const baseTime = scrubOffset !== null
@@ -109,7 +124,7 @@ const Dashboard = () => {
             <section className="dashboard__grid">
                 {favoriteZones.map((z, idx) => (
                     <div
-                        key={z.zone}
+                        key={`${z.zone}-${idx}`}
                         className={`dashboard__card-item ${draggedIndex === idx ? 'dashboard__card-item--dragging' : ''}`}
                         draggable
                         onDragStart={(e) => handleDragStart(e, idx)}
@@ -123,6 +138,7 @@ const Dashboard = () => {
                             workStart={z.workStart}
                             workEnd={z.workEnd}
                             isLocal={z.zone === localZone}
+                            onRemove={() => handleRemoveCity(idx)}
                         />
                     </div>
                 ))}
@@ -135,8 +151,7 @@ const Dashboard = () => {
                         <p className="dashboard__scrubber-desc">Drag to compare times across regions.</p>
                     </div>
                     <div className="dashboard__scrubber-actions">
-                        <button className="primary-button">Create Meeting</button>
-                        <button className="dashboard__btn-secondary">Export</button>
+                        <button className="primary-button" onClick={() => setShowAddModal(true)}>Add City</button>
                     </div>
                 </div>
 
@@ -144,6 +159,12 @@ const Dashboard = () => {
                     <TimeScrubber onTimeChange={handleTimeChange} baseTime={baseTime} />
                 </div>
             </section>
+
+            <AddCityModal
+                isOpen={showAddModal}
+                onClose={() => setShowAddModal(false)}
+                onAdd={handleAddCity}
+            />
         </motion.div>
     );
 };
