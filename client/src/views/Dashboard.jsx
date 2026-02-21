@@ -8,7 +8,7 @@ import './Dashboard.css';
 
 const Dashboard = () => {
     const liveClock = useAnimationClock(1000);
-    const [scrubOffset, setScrubOffset] = useState(0);
+    const [scrubOffset, setScrubOffset] = useState(null); // total minutes offset from start of day
     const [favoriteZones, setFavoriteZones] = useState([
         { city: 'New York', zone: 'America/New_York', workStart: 9, workEnd: 17 },
         { city: 'London', zone: 'Europe/London', workStart: 9, workEnd: 18 },
@@ -17,12 +17,12 @@ const Dashboard = () => {
 
     const [draggedIndex, setDraggedIndex] = useState(null);
 
-    const baseTime = scrubOffset !== 0
-        ? liveClock.set({ hour: scrubOffset, minute: 0, second: 0 })
+    const baseTime = scrubOffset !== null
+        ? liveClock.startOf('day').plus({ minutes: scrubOffset })
         : liveClock;
 
-    const handleTimeChange = useCallback((hour) => {
-        setScrubOffset(hour);
+    const handleTimeChange = useCallback((totalMinutes) => {
+        setScrubOffset(totalMinutes);
     }, []);
 
     // Detect user's local timezone for "isLocal" flag

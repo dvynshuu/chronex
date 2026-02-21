@@ -1,121 +1,234 @@
-.time-scrubber {
+/* ═══════════════════════════════════════════════ */
+/* Enterprise Timezone Scrubber — Premium CSS     */
+/* ═══════════════════════════════════════════════ */
+
+:root {
+    --scrubber-height: 8px;
+    --scrubber-hit-area: 48px;
+    --scrubber-handle-size: 20px;
+}
+
+.scrubber-container {
+    padding-top: 60px;
+    /* Space for tooltip */
+    padding-bottom: 20px;
+    outline: none;
     position: relative;
-    padding: 3rem 0;
     user-select: none;
 }
 
-.time-scrubber__track {
-    height: 12px;
+.scrubber-track-area {
+    position: relative;
+    height: var(--scrubber-hit-area);
+    display: flex;
+    align-items: center;
+    cursor: crosshair;
+}
+
+/* Base Track */
+.scrubber-track {
+    width: 100%;
+    height: var(--scrubber-height);
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 99px;
+    border-radius: 10px;
     position: relative;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
-.time-scrubber__highlight {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    opacity: 0.2;
-    filter: blur(4px);
-}
-
-.time-scrubber__highlight--work {
-    background: var(--color-work);
-    left: 37.5%;
-    width: 33.3%;
-}
-
-.time-scrubber__handle {
-    position: absolute;
-    top: 50%;
-    left: var(--scrubber-progress);
-    transform: translateY(-50%) translateX(-50%);
-    cursor: grab;
-    z-index: 10;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.time-scrubber__handle:active {
-    cursor: grabbing;
-    transform: translateY(-50%) translateX(-50%) scale(1.1);
-}
-
-.time-scrubber__knob {
-    width: 32px;
-    height: 32px;
-    background: var(--color-primary);
-    border: 4px solid #fff;
-    border-radius: 50%;
-    box-shadow: 0 0 25px var(--color-primary-glow), 0 0 50px rgba(56, 189, 248, 0.2);
-    position: relative;
-}
-
-.time-scrubber__tooltip {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 20px);
-    transform: translateX(-50%);
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--color-edge-active);
-    border-radius: var(--radius-md);
-    padding: 1.25rem;
-    min-width: 180px;
-    box-shadow: var(--shadow-premium);
-    pointer-events: none;
-    z-index: 100;
-}
-
-.time-scrubber__tooltip::after {
+.scrubber-track::before {
     content: '';
     position: absolute;
-    top: 100%;
+    inset: -1px;
+    border-radius: 10px;
+    background: linear-gradient(to right, rgba(56, 189, 248, 0.1), transparent);
+    pointer-events: none;
+}
+
+/* Progress Fill */
+.scrubber-progress {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(to right, rgba(56, 189, 248, 0.15), var(--color-primary));
+    border-radius: 10px;
+    pointer-events: none;
+    transition: width 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Tick System */
+.scrubber-ticks {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.scrubber-tick {
+    position: absolute;
+    bottom: -1px;
+    width: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(-50%);
+}
+
+.scrubber-tick--major {
+    height: 18px;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.scrubber-tick--medium {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.scrubber-tick--minor {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.scrubber-tick-label {
+    position: absolute;
+    top: 24px;
     left: 50%;
     transform: translateX(-50%);
-    border-width: 8px;
-    border-style: solid;
-    border-color: var(--color-edge-active) transparent transparent transparent;
-}
-
-.time-scrubber__tooltip-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    margin-bottom: 0.75rem;
-    white-space: nowrap;
-}
-
-.time-scrubber__tooltip-row:last-child {
-    margin-bottom: 0;
-}
-
-.time-scrubber__tooltip-city {
-    color: var(--color-text-dim);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 600;
+    color: var(--color-text-dim);
+    letter-spacing: 0.05em;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Handle */
+.scrubber-handle {
+    position: absolute;
+    top: 50%;
+    width: var(--scrubber-handle-size);
+    height: var(--scrubber-handle-size);
+    background: #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.2), 0 4px 12px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+        left 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+    cursor: grab;
+    z-index: 10;
+}
+
+.scrubber-handle::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background: var(--color-primary);
+}
+
+.scrubber-handle-glow {
+    position: absolute;
+    inset: -20px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.scrubber-container:focus-within .scrubber-handle {
+    box-shadow: 0 0 0 6px rgba(56, 189, 248, 0.3), 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.scrubber--dragging .scrubber-handle {
+    transform: translate(-50%, -50%) scale(1.1);
+    box-shadow: 0 0 0 8px rgba(56, 189, 248, 0.4), 0 4px 20px rgba(0, 0, 0, 0.6);
+    cursor: grabbing;
+}
+
+.scrubber--dragging .scrubber-handle-glow,
+.scrubber-track-area:hover .scrubber-handle-glow {
+    opacity: 1;
+}
+
+/* Tooltip */
+.scrubber-tooltip {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px) scale(0.9);
+    background: var(--color-bg-panel);
+    border: 1px solid var(--color-edge-active);
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8), 0 0 15px rgba(56, 189, 248, 0.15);
+    min-width: 90px;
+    backdrop-filter: var(--glass-blur);
+}
+
+.scrubber-tooltip--visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.scrubber-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background: var(--color-bg-panel);
+    border-right: 1px solid var(--color-edge-active);
+    border-bottom: 1px solid var(--color-edge-active);
+}
+
+.scrubber-tooltip-time {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #fff;
+    font-family: inherit;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+}
+
+.scrubber-tooltip-day {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-text-dim);
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    flex-shrink: 0;
 }
 
-.time-scrubber__tooltip-time {
-    font-weight: 700;
-    font-size: 1rem;
-    color: var(--color-text-primary);
-    font-family: 'Inter', sans-serif;
-    white-space: nowrap;
-    text-align: right;
-}
-
-.time-scrubber__labels {
+/* Modifier Hints */
+.scrubber-hints {
     display: flex;
-    justify-content: space-between;
-    margin-top: 1.5rem;
-    font-size: 0.8rem;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 40px;
+    font-size: 0.7rem;
     color: var(--color-text-dim);
-    font-weight: 600;
-    letter-spacing: 0.02em;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+}
+
+.scrubber-container:hover .scrubber-hints {
+    opacity: 0.8;
+}
+
+.scrubber-hints b {
+    color: var(--color-primary);
+    padding: 1px 4px;
+    background: rgba(56, 189, 248, 0.1);
+    border-radius: 4px;
+}
+
+/* GPU Acceleration */
+.scrubber-handle,
+.scrubber-progress,
+.scrubber-tooltip {
+    will-change: transform, left, width;
 }
