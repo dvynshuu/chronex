@@ -1,6 +1,6 @@
 .dashboard__grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 1.5rem;
     margin-bottom: 2.5rem;
 }
@@ -8,7 +8,7 @@
 .dashboard__card-item {
     min-width: 0;
     cursor: grab;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .dashboard__card-item:active {
@@ -17,7 +17,7 @@
 
 .dashboard__card-item--dragging {
     opacity: 0.5;
-    transform: scale(0.95);
+    transform: scale(0.97);
 }
 
 .dashboard__scrubber-section {
@@ -60,22 +60,35 @@
 }
 
 .dashboard__btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: var(--color-primary);
+    background: rgba(15, 23, 42, 0.9);
+    border-color: var(--color-edge-active);
+    box-shadow: var(--shadow-premium);
 }
 
 .dashboard__scrubber-content {
     margin-top: 2rem;
 }
 
+/* Make dashboard panels feel like Focus (glass + glow) */
+.dashboard__scrubber-section.glass-panel {
+    padding: 2rem 2.2rem;
+    background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 60%),
+        var(--color-bg-glass);
+    box-shadow: var(--shadow-premium);
+}
+
+.dashboard__card-item .glass-panel {
+    box-shadow: var(--shadow-premium);
+}
+
 @media (max-width: 1200px) {
     .dashboard__grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
 @media (max-width: 768px) {
     .dashboard__grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
     }
 }

@@ -245,3 +245,324 @@
 {"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 55.256 ms - -\u001b[0m","timestamp":"2026-02-21T09:04:22.857Z"}
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 16.067 ms - -\u001b[0m","timestamp":"2026-02-21T09:04:49.400Z"}
 {"level":"info","message":"\u001b[0mPATCH /api/v1/users/me \u001b[32m200\u001b[0m 8.733 ms - 769\u001b[0m","timestamp":"2026-02-21T09:04:52.494Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-21T09:06:53.882Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-21T09:06:53.944Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-21T09:06:53.947Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-25T12:07:12.787Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-25T12:07:12.934Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-25T12:07:12.936Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-25T12:08:11.382Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-25T12:08:11.517Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-25T12:08:11.531Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 247.815 ms - 615\u001b[0m","timestamp":"2026-02-25T12:08:27.682Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 70.790 ms - -\u001b[0m","timestamp":"2026-02-25T12:08:27.998Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 72.410 ms - 615\u001b[0m","timestamp":"2026-02-25T12:08:43.753Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 27.618 ms - -\u001b[0m","timestamp":"2026-02-25T12:08:43.821Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 44.394 ms - -\u001b[0m","timestamp":"2026-02-25T12:09:07.434Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 101.075 ms - -\u001b[0m","timestamp":"2026-02-25T12:09:07.571Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 120.431 ms - -\u001b[0m","timestamp":"2026-02-25T12:09:07.586Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 57.414 ms - -\u001b[0m","timestamp":"2026-02-25T12:09:07.668Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[32m200\u001b[0m 313.191 ms - 671\u001b[0m","timestamp":"2026-02-25T12:09:07.919Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 17.187 ms - -\u001b[0m","timestamp":"2026-02-25T12:09:07.944Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 120.518 ms - 213\u001b[0m","timestamp":"2026-02-25T12:09:08.650Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-02-25T12:10:51.601Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-02-25T12:10:51.697Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-02-25T12:10:51.703Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 421.129 ms - -\u001b[0m","timestamp":"2026-02-25T12:11:02.776Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 128.955 ms - -\u001b[0m","timestamp":"2026-02-25T12:11:02.925Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 57.984 ms - -\u001b[0m","timestamp":"2026-02-25T12:11:30.262Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 59.298 ms - -\u001b[0m","timestamp":"2026-02-25T12:11:30.361Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 107.070 ms - -\u001b[0m","timestamp":"2026-02-25T12:23:13.035Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 29.496 ms - -\u001b[0m","timestamp":"2026-02-25T12:25:21.163Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 34.989 ms - -\u001b[0m","timestamp":"2026-02-25T12:25:21.224Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 58.294 ms - -\u001b[0m","timestamp":"2026-02-25T12:27:47.277Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 78.523 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:13.745Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 88.240 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:13.849Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 87.882 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:14.690Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 114.006 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:14.883Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 60.388 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:14.917Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 85.452 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:15.018Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 94.063 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:15.060Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 18.454 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:15.083Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 54.452 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:15.736Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 74.161 ms - 213\u001b[0m","timestamp":"2026-02-25T12:28:15.757Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 198.244 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:15.950Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 33.211 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:18.019Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 24.525 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:18.066Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 24.192 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:18.968Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 76.971 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.096Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 109.410 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.136Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 125.521 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.284Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 132.320 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.319Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 17.787 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.348Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 59.303 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.498Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 19.522 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:19.530Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 14.141 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.160Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 77.684 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.247Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 105.998 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.306Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 136.169 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.532Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 134.020 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.542Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 18.613 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.567Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 16.919 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.596Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 87.928 ms - -\u001b[0m","timestamp":"2026-02-25T12:28:20.700Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 60.682 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:26.185Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 74.001 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:26.341Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 22.875 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.098Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 46.615 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.230Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 50.773 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.254Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 52.140 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.339Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 128.488 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.412Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 31.949 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.468Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 18.116 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.606Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 16.660 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:33.633Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 29.435 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:34.604Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 99.120 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:34.756Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 98.840 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:34.831Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 62.555 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:34.963Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 57.580 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:34.984Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 26.122 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:35.033Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 11.691 ms - 213\u001b[0m","timestamp":"2026-02-25T12:30:35.533Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 29.479 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:39.187Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 21.232 ms - -\u001b[0m","timestamp":"2026-02-25T12:30:39.213Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 31.939 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.338Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 20.304 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.367Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 11.409 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.734Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 98.698 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.862Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 40.446 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.929Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 13.610 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.954Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 14.854 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:27.971Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 19.920 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:28.034Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 38.596 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:28.374Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 45.650 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:28.478Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 27.811 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:29.059Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 30.748 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:29.094Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 31.434 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:32.073Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 72.529 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:32.159Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 11.976 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:36.963Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 5.334 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:36.978Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 62.132 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:37.079Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 40.832 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:37.156Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 69.010 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:37.197Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 73.209 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:37.296Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 8.471 ms - 213\u001b[0m","timestamp":"2026-02-25T12:31:37.734Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 13.613 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:37.905Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 13.223 ms - -\u001b[0m","timestamp":"2026-02-25T12:31:37.925Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 39.035 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:03.630Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 316.380 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:03.996Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 13.042 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:05.351Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 13.416 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:05.372Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 28.902 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:06.281Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 46.206 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:06.346Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 21.204 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:06.917Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 105.787 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:07.061Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 26.300 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:07.099Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 40.828 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:07.161Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 61.511 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:07.216Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 27.199 ms - -\u001b[0m","timestamp":"2026-02-25T12:33:07.267Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 5.103 ms - 213\u001b[0m","timestamp":"2026-02-25T12:33:07.749Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-04T12:10:32.079Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-04T12:10:32.171Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-04T12:10:32.173Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 191.296 ms - -\u001b[0m","timestamp":"2026-03-04T12:10:42.476Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 49.684 ms - -\u001b[0m","timestamp":"2026-03-04T12:10:42.558Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 46.685 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:00.412Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 17.670 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:00.448Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 41.266 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:00.473Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 276.566 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:00.761Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 202.917 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:00.771Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 19.312 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:00.805Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 13.176 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:01.162Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.654 ms - -\u001b[0m","timestamp":"2026-03-04T12:11:01.185Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 19.518 ms - -\u001b[0m","timestamp":"2026-03-04T12:13:02.221Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.488 ms - -\u001b[0m","timestamp":"2026-03-04T12:13:02.243Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 251.366 ms - -\u001b[0m","timestamp":"2026-03-04T12:13:54.052Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 125.176 ms - -\u001b[0m","timestamp":"2026-03-04T12:13:54.271Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 42.324 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:46.008Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 50.892 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:46.088Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 90.443 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:46.173Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 21.514 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:46.210Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 111.900 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:46.303Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 23.119 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:46.342Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 24.012 ms - 213\u001b[0m","timestamp":"2026-03-04T12:14:46.870Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 52.970 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:54.153Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 24.676 ms - -\u001b[0m","timestamp":"2026-03-04T12:14:54.186Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 22.311 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:29.965Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 83.169 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.075Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 17.975 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.507Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 20.634 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.533Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 54.945 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.582Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 42.063 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.644Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 70.898 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.683Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 33.842 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:30.728Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 13.409 ms - 213\u001b[0m","timestamp":"2026-03-04T12:15:31.243Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.378 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:31.289Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 12.086 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:31.306Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 12.522 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:33.648Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 12.800 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:33.665Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 28.645 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:34.395Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 123.461 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:34.548Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 195.868 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:34.680Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 30.198 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:34.773Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 54.164 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:34.811Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 18.430 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:34.844Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 24.790 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:35.304Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 39.029 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:35.362Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 14.999 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:35.839Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 58.476 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:35.911Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 78.001 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:35.981Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 77.483 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:36.084Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 78.435 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:36.148Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 38.276 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:36.207Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 17.686 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:36.275Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 16.826 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:36.296Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 11.125 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:37.496Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 11.019 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:37.513Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 31.911 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:37.973Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 28.894 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.109Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 27.898 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.126Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 63.350 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.224Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 51.637 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.235Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 33.898 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.294Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 10.642 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.517Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 11.106 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:38.533Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 25.687 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:39.648Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 52.488 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:39.747Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 51.036 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:39.752Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 23.885 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:39.817Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 46.839 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:39.879Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 30.628 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:39.934Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 11.062 ms - 213\u001b[0m","timestamp":"2026-03-04T12:15:40.413Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 11.233 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:40.617Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 11.731 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:40.633Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 17.901 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.062Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 34.484 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.193Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 46.318 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.204Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 49.398 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.303Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 117.389 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.390Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 94.231 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.446Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 28.275 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.529Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 158.669 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.582Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 21.643 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:41.969Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 22.901 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:42.011Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 11.246 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:43.338Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 10.289 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:43.352Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 62.517 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:43.613Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 71.873 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:43.705Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 32.311 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:43.735Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 144.400 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:43.974Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 166.894 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.006Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 74.452 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.110Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 80.752 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.144Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 15.116 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.173Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 15.452 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.925Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 31.736 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.972Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 15.348 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:44.979Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 39.180 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:45.081Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 53.456 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:45.115Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 26.172 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:45.156Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 5.648 ms - 213\u001b[0m","timestamp":"2026-03-04T12:15:45.658Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 13.810 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:45.794Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 12.650 ms - -\u001b[0m","timestamp":"2026-03-04T12:15:45.812Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[33m429\u001b[0m 2.883 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:49.736Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[33m429\u001b[0m 0.446 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:49.799Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[33m429\u001b[0m 0.643 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:50.286Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.244 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:50.607Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.889 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:50.619Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.361 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:53.160Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.291 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:53.177Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.390 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:58.817Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.261 ms - 65\u001b[0m","timestamp":"2026-03-04T12:16:58.832Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.363 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:06.378Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.267 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:06.722Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.157 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:06.726Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.230 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:07.455Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.178 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:07.460Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.247 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:07.814Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.243 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:07.820Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.262 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:08.313Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[33m429\u001b[0m 0.432 ms - 65\u001b[0m","timestamp":"2026-03-04T12:17:08.322Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-04T12:19:21.765Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-04T12:19:21.824Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-04T12:19:21.828Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[32m200\u001b[0m 128.247 ms - 671\u001b[0m","timestamp":"2026-03-04T12:19:32.457Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 31.369 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:32.499Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 19.150 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:52.283Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.227 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:52.302Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[32m200\u001b[0m 11.147 ms - 213\u001b[0m","timestamp":"2026-03-04T12:19:59.262Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 72.596 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:59.447Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 128.142 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:59.549Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 70.183 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:59.643Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 84.118 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:59.670Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 14.761 ms - -\u001b[0m","timestamp":"2026-03-04T12:19:59.690Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 50.012 ms - 213\u001b[0m","timestamp":"2026-03-04T12:20:00.293Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 27.244 ms - -\u001b[0m","timestamp":"2026-03-04T12:20:05.166Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 17.643 ms - -\u001b[0m","timestamp":"2026-03-04T12:20:05.189Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 213.478 ms - -\u001b[0m","timestamp":"2026-03-04T12:20:08.493Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 31.486 ms - -\u001b[0m","timestamp":"2026-03-04T12:20:08.542Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 6.830 ms - -\u001b[0m","timestamp":"2026-03-04T12:20:13.774Z"}
+{"level":"info","message":"\u001b[0mPATCH /api/v1/users/me \u001b[32m200\u001b[0m 332.807 ms - 769\u001b[0m","timestamp":"2026-03-04T12:20:16.474Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-04T12:24:43.775Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-04T12:24:43.850Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-04T12:24:43.853Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-04T12:24:45.585Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-04T12:24:45.641Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-04T12:24:45.644Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-04T12:24:47.607Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-04T12:24:47.759Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-04T12:24:47.766Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-04T12:25:10.014Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-04T12:25:10.080Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-04T12:25:10.083Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 88.221 ms - 615\u001b[0m","timestamp":"2026-03-04T12:25:59.510Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 78.597 ms - -\u001b[0m","timestamp":"2026-03-04T12:25:59.608Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 27.972 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.292Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 45.755 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.395Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 102.083 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.435Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 221.999 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.689Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 190.894 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.694Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 25.483 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.755Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 18.279 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.778Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 31.227 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:00.824Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 27.313 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:01.393Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 35.549 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:12.102Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 25.230 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:12.135Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 42.764 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:12.755Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 168.947 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:12.988Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 159.462 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:13.091Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 35.205 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:13.144Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 48.243 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:13.171Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 14.737 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:13.202Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 77.413 ms - 213\u001b[0m","timestamp":"2026-03-04T12:26:13.851Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.549 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:14.345Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.037 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:14.368Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 75.478 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:29.963Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 52.554 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:30.041Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 40.419 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:30.070Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 18.759 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:30.112Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 51.277 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:30.149Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 36.546 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:30.192Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 8.626 ms - 213\u001b[0m","timestamp":"2026-03-04T12:26:30.687Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 14.996 ms - 305\u001b[0m","timestamp":"2026-03-04T12:26:33.846Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 12.532 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:39.652Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 15.033 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:39.672Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 45.512 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:44.258Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 48.360 ms - -\u001b[0m","timestamp":"2026-03-04T12:26:44.324Z"}
+{"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 32.449 ms - 322\u001b[0m","timestamp":"2026-03-04T12:26:56.478Z"}
+{"level":"info","message":"\u001b[0mPUT /api/v1/users/me/favorites \u001b[32m200\u001b[0m 22.036 ms - 216\u001b[0m","timestamp":"2026-03-04T12:26:57.956Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/auth/register \u001b[32m201\u001b[0m 383.662 ms - 644\u001b[0m","timestamp":"2026-03-04T12:28:52.537Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 16.212 ms - 509\u001b[0m","timestamp":"2026-03-04T12:28:52.619Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 20.094 ms - -\u001b[0m","timestamp":"2026-03-04T12:28:52.674Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 18.960 ms - -\u001b[0m","timestamp":"2026-03-04T12:28:59.602Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 16.918 ms - -\u001b[0m","timestamp":"2026-03-04T12:28:59.628Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[32m200\u001b[0m 16.358 ms - 305\u001b[0m","timestamp":"2026-03-04T12:29:02.504Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/meetings \u001b[36m304\u001b[0m 160.388 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:02.682Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 38.742 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:02.751Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 29.482 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:02.821Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 68.982 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:02.866Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/orgs/me \u001b[36m304\u001b[0m 21.118 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:02.904Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/meetings/sync \u001b[32m200\u001b[0m 14.485 ms - 305\u001b[0m","timestamp":"2026-03-04T12:29:03.420Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 34.306 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:05.505Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 64.504 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:05.619Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 5.731 ms - -\u001b[0m","timestamp":"2026-03-04T12:29:08.336Z"}
+{"level":"error","message":"Error: Invalid email or password\n    at AuthService.login (C:\\CodeBase\\Projects\\chronex\\server\\src\\services\\authService.js:60:27)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async login (C:\\CodeBase\\Projects\\chronex\\server\\src\\controllers\\authController.js:16:28)","timestamp":"2026-03-04T12:30:31.861Z"}
+{"level":"info","message":"\u001b[0mPOST /api/v1/auth/login \u001b[33m401\u001b[0m 3.159 ms - 62\u001b[0m","timestamp":"2026-03-04T12:30:31.862Z"}

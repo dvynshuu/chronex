@@ -4,7 +4,7 @@ import { useEffect } from 'react';
  * Global keyboard shortcuts for pro-level UX.
  * Ctrl+K → focus command palette (placeholder)
  * T → toggle theme
- * 1/2/3 → switch between Dashboard/Meetings/Team
+ * 1/2/3/4 → switch between Dashboard/Meetings/Team/Focus
  */
 export const useKeyboardShortcuts = ({ toggleTheme, navigate }) => {
     useEffect(() => {
@@ -33,6 +33,9 @@ export const useKeyboardShortcuts = ({ toggleTheme, navigate }) => {
                     break;
                 case '3':
                     navigate?.('/team');
+                    break;
+                case '4':
+                    navigate?.('/focus');
                     break;
                 default:
                     break;

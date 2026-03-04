@@ -58,7 +58,7 @@ const protect = async (req, res, next) => {
             return res.status(401).json({ message: 'Not authorized, no token' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'chronex-dev-secret-key');
         req.user = await userRepository.findById(decoded.id);
 
         if (!req.user) {

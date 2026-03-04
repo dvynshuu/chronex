@@ -11,7 +11,7 @@
 
 .planner__grid {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: minmax(0, 1.8fr) minmax(0, 1.2fr);
     gap: 2rem;
 }
 
@@ -40,13 +40,15 @@
 }
 
 .planner__insight {
-    background: rgba(56, 189, 248, 0.05);
+    background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.2), transparent 60%),
+        rgba(15, 23, 42, 0.9);
     border-radius: var(--radius-md);
     padding: 1.5rem;
     margin-top: 2rem;
     border: 1px solid var(--color-edge-active);
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow-premium);
 }
 
 .planner__insight::after {
@@ -77,14 +79,15 @@
     justify-content: space-between;
     align-items: center;
     padding: 1.25rem 1.5rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(15, 23, 42, 0.96);
     border-radius: var(--radius-md);
     border: 1px solid var(--color-edge);
     transition: var(--transition-main);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
 }
 
 .planner__slot-item:hover {
-    background: rgba(56, 189, 248, 0.05);
+    background: rgba(15, 23, 42, 1);
     border-color: var(--color-edge-active);
     transform: translateX(8px);
 }
@@ -112,7 +115,7 @@
 }
 
 .planner__participant-item:hover {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(15, 23, 42, 0.96);
 }
 
 .planner__participant-avatar {
@@ -317,6 +320,7 @@
     left: 0;
     right: 0;
     background: rgba(15, 23, 42, 0.98);
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     border: 1px solid var(--color-edge-active);
     border-radius: var(--radius-md);
@@ -411,6 +415,7 @@
     left: 0;
     right: 0;
     background: rgba(15, 23, 42, 0.95);
+    -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
     border: 1px solid var(--color-edge-active);
     border-radius: var(--radius-md);

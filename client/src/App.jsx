@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { AuthProvider } from './contexts/AuthContext';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
+import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './views/Dashboard';
 import MeetingPlanner from './views/MeetingPlanner';
 import TeamDashboard from './views/TeamDashboard';
+import FocusWorkspace from './views/FocusWorkspace';
 import PublicProfile from './views/PublicProfile';
+import Login from './views/Login';
+import Signup from './views/Signup';
 import Sidebar from './components/Sidebar/Sidebar';
 
 const AppShell = () => {
@@ -32,6 +37,7 @@ const AppShell = () => {
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/meetings" element={<MeetingPlanner />} />
                         <Route path="/team" element={<TeamDashboard />} />
+                        <Route path="/focus" element={<FocusWorkspace />} />
                     </Routes>
                 </AnimatePresence>
             </main>
@@ -42,16 +48,25 @@ const AppShell = () => {
 function App() {
     return (
         <ThemeProvider>
-            <Router>
-                <Routes>
-                    {/* Public profile — outside sidebar layout */}
-                    <Route path="/u/:slug" element={<PublicProfile />} />
-                    {/* Main app with sidebar */}
-                    <Route path="/*" element={<AppShell />} />
-                </Routes>
-            </Router>
+            <AuthProvider>
+                <Router>
+                    <Routes>
+                        {/* Public routes — outside sidebar layout */}
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/u/:slug" element={<PublicProfile />} />
+                        {/* Protected app with sidebar */}
+                        <Route path="/*" element={
+                            <ProtectedRoute>
+                                <AppShell />
+                            </ProtectedRoute>
+                        } />
+                    </Routes>
+                </Router>
+            </AuthProvider>
         </ThemeProvider>
     );
 }
 
 export default App;
+

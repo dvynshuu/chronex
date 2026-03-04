@@ -20,6 +20,15 @@ class AuthController {
         }
     }
 
+    async getMe(req, res, next) {
+        try {
+            const result = await authService.getMe(req.user._id || req.user.id);
+            res.status(200).json(result);
+        } catch (err) {
+            next(err);
+        }
+    }
+
     async refresh(req, res, next) {
         try {
             const { refreshToken } = req.body;

@@ -62,17 +62,50 @@ const TeamDashboard = () => {
         >
             <h1 className="team-dash__title">Team Intelligence</h1>
 
+            <svg width="0" height="0">
+                <defs>
+                    <linearGradient id="usageGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.9} />
+                        <stop offset="100%" stopColor="#818cf8" stopOpacity={0.6} />
+                    </linearGradient>
+                    <radialGradient id="pieGlow" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" stopColor="rgba(56, 189, 248, 0.2)" />
+                        <stop offset="100%" stopColor="transparent" />
+                    </radialGradient>
+                </defs>
+            </svg>
+
             <div className="team-dash__grid">
                 <div className="team-dash__col">
-                    <div className="team-dash__card glass-panel">
+                    <div className="team-dash__card">
                         <h6 className="team-dash__card-label">Global Availability</h6>
                         <div className="team-dash__chart-container">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
-                                    <Pie data={teamStats} innerRadius={60} outerRadius={80} paddingAngle={5} dataKey="value">
-                                        {teamStats.map((entry, index) => <Cell key={index} fill={COLORS[index % COLORS.length]} />)}
+                                    <Pie
+                                        data={teamStats}
+                                        innerRadius={65}
+                                        outerRadius={85}
+                                        paddingAngle={8}
+                                        dataKey="value"
+                                        stroke="none"
+                                    >
+                                        {teamStats.map((entry, index) => (
+                                            <Cell
+                                                key={index}
+                                                fill={COLORS[index % COLORS.length]}
+                                                style={{ filter: `drop-shadow(0 0 8px ${COLORS[index % COLORS.length]}44)` }}
+                                            />
+                                        ))}
                                     </Pie>
-                                    <Tooltip />
+                                    <Tooltip
+                                        contentStyle={{
+                                            background: 'rgba(15, 23, 42, 0.95)',
+                                            border: '1px solid rgba(56, 189, 248, 0.4)',
+                                            borderRadius: '8px',
+                                            backdropFilter: 'blur(8px)'
+                                        }}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
@@ -80,14 +113,22 @@ const TeamDashboard = () => {
                 </div>
 
                 <div className="team-dash__col">
-                    <div className="team-dash__card glass-panel">
-                        <h6 className="team-dash__card-label">API Usage Analytics</h6>
+                    <div className="team-dash__card">
+                        <h6 className="team-dash__card-label">System Activity</h6>
                         <div className="team-dash__chart-container">
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={activityData}>
-                                    <XAxis dataKey="day" hide />
-                                    <Tooltip contentStyle={{ borderRadius: '8px' }} className="team-dash__tooltip" />
-                                    <Bar dataKey="usage" fill="#38bdf8" radius={[4, 4, 0, 0]} />
+                                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} dy={10} />
+                                    <Tooltip
+                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                        contentStyle={{
+                                            background: 'rgba(15, 23, 42, 0.95)',
+                                            border: '1px solid rgba(56, 189, 248, 0.4)',
+                                            borderRadius: '8px',
+                                            boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
+                                        }}
+                                    />
+                                    <Bar dataKey="usage" fill="url(#usageGradient)" radius={[6, 6, 0, 0]} barSize={40} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -95,13 +136,13 @@ const TeamDashboard = () => {
                 </div>
             </div>
 
-            <div className="team-dash__table-section glass-panel">
+            <div className="team-dash__table-section">
                 <h5 className="team-dash__section-title">Shared Schedules</h5>
                 <div className="team-dash__table-wrapper">
                     <table className="team-dash__table">
                         <thead>
                             <tr>
-                                <th>Member</th>
+                                <th>Team Member</th>
                                 <th>Primary Location</th>
                                 <th>Local Time</th>
                                 <th>Status</th>
@@ -132,5 +173,6 @@ const TeamDashboard = () => {
         </motion.div>
     );
 };
+
 
 export default TeamDashboard;

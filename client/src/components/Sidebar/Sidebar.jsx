@@ -69,9 +69,36 @@ const Sidebar = ({ isCollapsed }) => {
 
                 <nav className="sidebar__nav">
                     <ul className="sidebar__list">
-                        <li><SidebarLink to="/" icon="📊" isCollapsed={isCollapsed} shortcut="1">Dashboard</SidebarLink></li>
-                        <li><SidebarLink to="/meetings" icon="📅" isCollapsed={isCollapsed} shortcut="2">Meetings</SidebarLink></li>
-                        <li><SidebarLink to="/team" icon="👥" isCollapsed={isCollapsed} shortcut="3">Team</SidebarLink></li>
+                        <li>
+                            <SidebarLink to="/" icon="📊" isCollapsed={isCollapsed} shortcut="1">
+                                Dashboard
+                            </SidebarLink>
+                        </li>
+                        <li>
+                            <SidebarLink
+                                to="/meetings"
+                                icon="📅"
+                                isCollapsed={isCollapsed}
+                                shortcut="2"
+                            >
+                                Meetings
+                            </SidebarLink>
+                        </li>
+                        <li>
+                            <SidebarLink to="/team" icon="👥" isCollapsed={isCollapsed} shortcut="3">
+                                Team
+                            </SidebarLink>
+                        </li>
+                        <li>
+                            <SidebarLink
+                                to="/focus"
+                                icon="🎯"
+                                isCollapsed={isCollapsed}
+                                shortcut="4"
+                            >
+                                Focus
+                            </SidebarLink>
+                        </li>
                     </ul>
                 </nav>
 
@@ -113,7 +140,7 @@ const Sidebar = ({ isCollapsed }) => {
                 {!isCollapsed && (
                     <div className="sidebar__footer">
                         <small className="sidebar__version">v2.0 Enterprise</small>
-                        <small className="sidebar__shortcuts-hint">Press keys 1-3 to navigate</small>
+                        <small className="sidebar__shortcuts-hint">Press keys 1-4 to navigate</small>
                     </div>
                 )}
             </aside>
