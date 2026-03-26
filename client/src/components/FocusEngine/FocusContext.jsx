@@ -351,6 +351,35 @@ function reducer(state, action) {
 export const FocusProvider = ({ children }) => {
     const [state, dispatch] = useReducer(reducer, initialState);
     const isHydratedRef = useRef(false);
+    const audioRef = useRef(null);
+
+    // Global "now" and timer completion logic
+    const now = useRafNow();
+
+    useEffect(() => {
+        if (state.timer.isRunning && state.timer.phaseEndTimestamp) {
+            if (now >= state.timer.phaseEndTimestamp) {
+                dispatch({ type: 'TIMER_COMPLETE_PHASE', payload: { now } });
+                
+                // Play completion sound globally
+                if (state.config.soundEnabled && audioRef.current) {
+                    try {
+                        audioRef.current.currentTime = 0;
+                        audioRef.current.volume = state.config.soundVolume;
+                        audioRef.current.play().catch(() => {});
+                    } catch {
+                        // ignore
+                    }
+                }
+            }
+        }
+    }, [
+        now, 
+        state.timer.isRunning, 
+        state.timer.phaseEndTimestamp, 
+        state.config.soundEnabled, 
+        state.config.soundVolume
+    ]);
 
     // Initial load from localStorage
     useEffect(() => {
@@ -413,7 +442,16 @@ export const FocusProvider = ({ children }) => {
         }
     }, [state]);
 
-    return <FocusContext.Provider value={{ state, dispatch }}>{children}</FocusContext.Provider>;
+    return (
+        <FocusContext.Provider value={{ state, dispatch }}>
+            {children}
+            <audio
+                ref={audioRef}
+                src="/sounds/chronex-focus-bell.mp3"
+                preload="auto"
+            />
+        </FocusContext.Provider>
+    );
 };
 
 export const useFocusContext = () => {

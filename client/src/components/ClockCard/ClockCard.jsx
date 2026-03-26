@@ -17,7 +17,7 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
     const minute = localTime.minute;
 
     const getTimeGradient = (h) => {
-        if (h >= 20 || h < 5) return 'linear-gradient(135deg, #1e1b4b 0%, #020617 100%)';
+        if (h >= 20 || h < 5) return 'linear-gradient(135deg, #1e1b4b 0%, #05070F 100%)';
         if (h >= 17) return 'linear-gradient(135deg, #f43f5e 0%, #1e1b4b 100%)';
         if (h >= 9) return 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)';
         return 'linear-gradient(135deg, #fbbf24 0%, #f43f5e 100%)';
@@ -46,8 +46,9 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
     const weekday = localTime.weekday;
     const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-    // Minute digits for flip animation
-    const timeStr = localTime.toFormat('hh:mm a');
+    // Time parts for separation
+    const timePart = localTime.toFormat('hh:mm');
+    const periodPart = localTime.toFormat('a');
     const isDST = localTime.isInDST;
 
     return (
@@ -98,15 +99,20 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
 
                 {/* Flip Clock Display */}
                 <div className="clock-card__time-display">
-                    <div className="clock-card__flip-clock">
-                        {timeStr.split('').map((char, i) => (
-                            <span
-                                key={`${i}-${char}`}
-                                className={`clock-card__digit ${char === ':' ? 'clock-card__digit--colon' : ''}`}
-                            >
-                                <span className="clock-card__digit-inner">{char}</span>
-                            </span>
-                        ))}
+                    <div className="clock-card__time-row">
+                        <div className="clock-card__flip-clock">
+                            {timePart.split('').map((char, i) => (
+                                <span
+                                    key={`${i}-${char}`}
+                                    className={`clock-card__digit ${char === ':' ? 'clock-card__digit--colon' : ''}`}
+                                >
+                                    <span className="clock-card__digit-inner">{char}</span>
+                                </span>
+                            ))}
+                        </div>
+                        <div className="clock-card__period">
+                            {periodPart}
+                        </div>
                     </div>
                     <p className="clock-card__date">{localTime.toFormat('EEE, MMM dd')}</p>
                 </div>

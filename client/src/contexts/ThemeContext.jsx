@@ -3,33 +3,17 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    const [theme, setTheme] = useState(() => {
-        const saved = localStorage.getItem('chronex-theme');
-        if (saved) return saved;
-        return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
-    });
+    const [theme, setTheme] = useState('dark');
 
     useEffect(() => {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('chronex-theme', theme);
-    }, [theme]);
-
-    // Listen for system theme changes
-    useEffect(() => {
-        const mq = window.matchMedia('(prefers-color-scheme: light)');
-        const handler = (e) => {
-            if (!localStorage.getItem('chronex-theme')) {
-                setTheme(e.matches ? 'light' : 'dark');
-            }
-        };
-        mq.addEventListener('change', handler);
-        return () => mq.removeEventListener('change', handler);
+        document.documentElement.setAttribute('data-theme', 'dark');
+        localStorage.setItem('chronex-theme', 'dark');
     }, []);
 
-    const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    const toggleTheme = () => {};
 
     return (
-        <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme: 'dark', setTheme: () => {}, toggleTheme }}>
             {children}
         </ThemeContext.Provider>
     );

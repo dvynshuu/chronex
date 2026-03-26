@@ -6,7 +6,8 @@ const { protect } = require('../middleware/authMiddleware');
 // Protect all meeting routes
 router.use(protect);
 
-router.get('/', meetingController.getParticipants);
+router.get('/team', meetingController.listByOrg);
 router.post('/sync', meetingController.syncParticipants);
+router.get('/', meetingController.getParticipants);
 
 module.exports = router;

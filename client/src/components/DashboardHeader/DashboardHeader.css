@@ -34,7 +34,7 @@
     flex-direction: column;
     gap: 0.4rem;
     border-radius: var(--radius-md) !important;
-    background: rgba(56, 189, 248, 0.05) !important;
+    background: rgba(77, 163, 255, 0.05) !important;
     border-color: var(--color-edge-active) !important;
 }
 

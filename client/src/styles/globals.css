@@ -26,7 +26,6 @@ body {
     border-radius: var(--radius-lg);
     padding: 2.5rem;
     position: relative;
-    overflow: hidden;
     transition: var(--transition-main);
 }
 
@@ -41,8 +40,8 @@ body {
 .glass-panel:hover {
     transform: translateY(-8px);
     border-color: var(--color-edge-active);
-    background: rgba(15, 23, 42, 0.75);
-    box-shadow: var(--shadow-premium);
+    background: rgba(11, 18, 32, 0.85);
+    box-shadow: var(--shadow-premium), var(--shadow-card-glow);
 }
 
 /* Premium Button System */
@@ -52,7 +51,7 @@ body {
     font-weight: 600;
     font-family: inherit;
     border: none;
-    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    background: var(--gradient-primary);
     color: white;
     cursor: pointer;
     transition: var(--transition-main);
@@ -64,7 +63,7 @@ body {
 
 .primary-button:hover {
     transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 10px 30px rgba(77, 163, 255, 0.3);
     filter: brightness(1.1);
 }
 

@@ -6,6 +6,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    padding: 1.25rem 1.4rem !important; /* Overriding default glass-panel 2.5rem */
     background: var(--card-gradient, var(--color-bg-glass));
     position: relative;
     transition: var(--transition-elastic);
@@ -26,7 +27,7 @@
 
 .clock-card:hover {
     transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5), 0 0 40px -10px var(--status-color, rgba(56, 189, 248, 0.15));
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.5), 0 0 40px -10px var(--status-color, rgba(77, 163, 255, 0.15));
 }
 
 /* Breathing glow for local timezone card */
@@ -38,11 +39,11 @@
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(56, 189, 248, 0.12), var(--shadow-premium);
+        box-shadow: 0 0 20px rgba(77, 163, 255, 0.12), var(--shadow-premium);
     }
 
     50% {
-        box-shadow: 0 0 35px rgba(56, 189, 248, 0.25), var(--shadow-premium);
+        box-shadow: 0 0 35px rgba(77, 163, 255, 0.25), var(--shadow-premium);
     }
 }
 
@@ -64,7 +65,7 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.8rem;
     position: relative;
     z-index: 2;
 }
@@ -76,13 +77,13 @@
 
 .clock-card__city {
     margin: 0;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     font-weight: 700;
     letter-spacing: -0.02em;
 }
 
 .clock-card__zone {
-    font-size: 0.8rem;
+    font-size: 0.725rem;
     color: var(--color-text-dim);
     font-weight: 600;
     text-transform: uppercase;
@@ -137,8 +138,8 @@
     flex: 1;
     display: flex;
     align-items: center;
-    gap: 1.25rem;
-    margin-bottom: 1.25rem;
+    gap: 1.1rem;
+    margin-bottom: 0.75rem;
     position: relative;
     z-index: 2;
 }
@@ -146,8 +147,8 @@
 /* Day Progress Ring */
 .clock-card__progress-ring {
     position: relative;
-    width: 48px;
-    height: 48px;
+    width: 42px;
+    height: 42px;
     flex-shrink: 0;
 }
 
@@ -188,17 +189,33 @@
     flex-direction: column;
 }
 
+.clock-card__time-row {
+    display: flex;
+    align-items: baseline;
+}
+
 .clock-card__flip-clock {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 0;
+}
+
+.clock-card__period {
+    margin-left: 0.4rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--color-text-dim);
+    letter-spacing: 0.02em;
+    opacity: 0.7;
+    position: relative;
+    top: -0.1em;
 }
 
 .clock-card__digit {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 3.2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     color: var(--color-text-primary);
     line-height: 1;
@@ -206,12 +223,12 @@
     font-family: 'Inter', 'Outfit', sans-serif;
     font-variant-numeric: tabular-nums;
     position: relative;
-    min-width: 0.65em;
+    min-width: 0.62em;
 }
 
 .clock-card__digit--colon {
-    font-size: 2.8rem;
-    min-width: 0.35em;
+    font-size: 2.2rem;
+    min-width: 0.25em;
     animation: colonPulse 1s ease-in-out infinite;
     opacity: 0.7;
 }
@@ -246,24 +263,25 @@
 }
 
 .clock-card__date {
-    margin: 0.5rem 0 0;
+    margin: 0.25rem 0 0;
     color: var(--color-text-dim);
-    font-size: 0.95rem;
+    font-size: 0.825rem;
     font-weight: 500;
+    letter-spacing: 0.01em;
 }
 
 /* Weekday Mini Bar */
 .clock-card__weekday-bar {
     display: flex;
     gap: 4px;
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     position: relative;
     z-index: 2;
 }
 
 .clock-card__weekday-dot {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     border-radius: 6px;
     display: flex;
     align-items: center;
@@ -280,13 +298,13 @@
 .clock-card__weekday-dot--active {
     background: var(--color-primary);
     color: var(--color-bg-deep);
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 12px rgba(77, 163, 255, 0.3);
 }
 
 /* Status Footer */
 .clock-card__status {
     margin-top: auto;
-    padding-top: 1.25rem;
+    padding-top: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.08);
     position: relative;
     z-index: 2;
@@ -296,7 +314,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.85rem;
+    font-size: 0.775rem;
 }
 
 .clock-card__status-indicator {

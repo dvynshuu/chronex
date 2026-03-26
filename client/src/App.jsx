@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
+import { FocusProvider } from './components/FocusEngine/FocusContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Dashboard from './views/Dashboard';
 import MeetingPlanner from './views/MeetingPlanner';
@@ -16,10 +17,9 @@ import Sidebar from './components/Sidebar/Sidebar';
 
 const AppShell = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const { toggleTheme } = useTheme();
     const navigate = useNavigate();
 
-    useKeyboardShortcuts({ toggleTheme, navigate });
+    useKeyboardShortcuts({ navigate });
 
     return (
         <div className={`app-container ${isCollapsed ? 'app-container--sidebar-collapsed' : ''}`}>
@@ -58,7 +58,9 @@ function App() {
                         {/* Protected app with sidebar */}
                         <Route path="/*" element={
                             <ProtectedRoute>
-                                <AppShell />
+                                <FocusProvider>
+                                    <AppShell />
+                                </FocusProvider>
                             </ProtectedRoute>
                         } />
                     </Routes>

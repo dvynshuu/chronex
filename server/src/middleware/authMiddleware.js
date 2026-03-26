@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const userRepository = require('../repositories/userRepository');
+const User = require('../models/User');
+const Organization = require('../models/Organization');
 
 const protect = async (req, res, next) => {
     try {
@@ -8,9 +10,22 @@ const protect = async (req, res, next) => {
             token = req.headers.authorization.split(' ')[1];
         }
 
-        // --- DEV BYPASS ---
-        if (!token && process.env.NODE_ENV !== 'production') {
-            const User = require('../models/User');
+        // 1. Attempt to verify token if present
+        if (token) {
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET || 'chronex-dev-secret-key');
+                req.user = await userRepository.findById(decoded.id);
+            } catch (err) {
+                // If token is invalid and we're NOT in dev, fail here
+                if (process.env.NODE_ENV === 'production') {
+                    return res.status(401).json({ message: 'Not authorized, token failed' });
+                }
+                // In dev, we can fall through to bypass
+            }
+        }
+
+        // 2. DEV BYPASS: If no user found and in dev mode, use/create demo user
+        if (!req.user && process.env.NODE_ENV !== 'production') {
             let mockUser = await User.findOne({ email: 'demo@chronex.app' });
             if (!mockUser) {
                 mockUser = await User.create({
@@ -21,53 +36,29 @@ const protect = async (req, res, next) => {
                 });
             }
             req.user = mockUser;
+        }
 
-            // --- SEED DEMO ORG ---
-            const Organization = require('../models/Organization');
-            let demoOrg = await Organization.findOne({ name: 'Chronex Core Team' });
-            if (!demoOrg) {
-                // Create some other users for the team
-                const sarah = await User.findOneAndUpdate(
-                    { email: 'sarah@chronex.app' },
-                    { profile: { name: 'Sarah Chen' }, baseTimezone: 'Asia/Singapore', workSchedule: { workStart: 9, workEnd: 18 } },
-                    { upsert: true, new: true }
-                );
-                const james = await User.findOneAndUpdate(
-                    { email: 'james@chronex.app' },
-                    { profile: { name: 'James Wilson' }, baseTimezone: 'Europe/London', workSchedule: { workStart: 9, workEnd: 17 } },
-                    { upsert: true, new: true }
-                );
+        // 3. Final check
+        if (!req.user) {
+            return res.status(401).json({ message: 'Not authorized, no user found' });
+        }
 
-                demoOrg = await Organization.create({
+        // 4. DEV AUTO-ORG: Ensure the user has an organization in development
+        if (process.env.NODE_ENV !== 'production') {
+            let userOrg = await Organization.findOne({ 'members.user': req.user._id });
+            if (!userOrg) {
+                await Organization.create({
                     name: 'Chronex Core Team',
-                    admin: mockUser._id,
-                    members: [
-                        { user: mockUser._id, role: 'admin' },
-                        { user: sarah._id, role: 'member' },
-                        { user: james._id, role: 'member' }
-                    ]
+                    admin: req.user._id,
+                    members: [{ user: req.user._id, role: 'admin' }]
                 });
             }
-            // ---------------------
-
-            return next();
-        }
-        // ------------------
-
-        if (!token) {
-            return res.status(401).json({ message: 'Not authorized, no token' });
-        }
-
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'chronex-dev-secret-key');
-        req.user = await userRepository.findById(decoded.id);
-
-        if (!req.user) {
-            return res.status(401).json({ message: 'User no longer exists' });
         }
 
         next();
     } catch (error) {
-        res.status(401).json({ message: 'Not authorized, token failed' });
+        console.error('Auth Middleware Error:', error);
+        res.status(500).json({ message: 'Internal Server Auth Error' });
     }
 };
 

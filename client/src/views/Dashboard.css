@@ -60,7 +60,7 @@
 }
 
 .dashboard__btn-secondary:hover {
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(11, 18, 32, 0.9);
     border-color: var(--color-edge-active);
     box-shadow: var(--shadow-premium);
 }
@@ -72,7 +72,7 @@
 /* Make dashboard panels feel like Focus (glass + glow) */
 .dashboard__scrubber-section.glass-panel {
     padding: 2rem 2.2rem;
-    background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 60%),
+    background: radial-gradient(circle at top left, rgba(77, 163, 255, 0.18), transparent 60%),
         var(--color-bg-glass);
     box-shadow: var(--shadow-premium);
 }

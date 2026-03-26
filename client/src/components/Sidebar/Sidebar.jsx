@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useTheme } from '../../contexts/ThemeContext';
 import Logo from '../Logo/Logo';
 import './Sidebar.css';
 
@@ -33,7 +32,6 @@ const SidebarLink = ({ to, children, icon, isCollapsed, shortcut }) => {
 import SettingsPanel from '../Settings/SettingsPanel';
 
 const Sidebar = ({ isCollapsed }) => {
-    const { theme, toggleTheme } = useTheme();
     const [showSharePanel, setShowSharePanel] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
     const [copySuccess, setCopySuccess] = useState(false);
@@ -110,12 +108,6 @@ const Sidebar = ({ isCollapsed }) => {
                             <span className="sidebar__action-text">Settings</span>
                         </button>
 
-                        {/* Theme Toggle */}
-                        <button className="sidebar__action-btn" onClick={toggleTheme} title="Toggle theme (T)">
-                            <span className="sidebar__action-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
-                            <span className="sidebar__action-text">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
-                            <span className="sidebar__shortcut">T</span>
-                        </button>
 
                         {/* Share Link */}
                         <button className="sidebar__action-btn" onClick={() => setShowSharePanel(!showSharePanel)}>

@@ -8,7 +8,6 @@ import './FocusEngine.css';
 
 const FocusEngineShell = () => {
     return (
-        <FocusProvider>
             <section className="dashboard__focus-section glass-panel">
                 <div className="dashboard__focus-header">
                     <div>
@@ -36,7 +35,6 @@ const FocusEngineShell = () => {
                     </div>
                 </div>
             </section>
-        </FocusProvider>
     );
 };
 

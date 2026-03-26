@@ -19,7 +19,7 @@
     left: -10%;
     width: 60%;
     height: 60%;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(77, 163, 255, 0.08) 0%, transparent 70%);
     pointer-events: none;
 }
 
@@ -39,7 +39,7 @@
 .auth-card {
     width: 100%;
     max-width: 440px;
-    background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.12), rgba(15, 23, 42, 0.95));
+    background: radial-gradient(circle at top left, rgba(30, 64, 175, 0.12), rgba(11, 18, 32, 0.95));
     backdrop-filter: blur(24px);
     border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 24px;
@@ -69,7 +69,7 @@
     position: absolute;
     inset: 0;
     border-radius: 24px;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.04) 0%, transparent 50%);
+    background: linear-gradient(135deg, rgba(77, 163, 255, 0.04) 0%, transparent 50%);
     pointer-events: none;
 }
 
@@ -146,7 +146,7 @@
     padding: 0.85rem 1rem;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(15, 23, 42, 0.6);
+    background: rgba(11, 18, 32, 0.6);
     color: var(--color-text-primary);
     font-size: 0.9rem;
     font-family: inherit;
@@ -160,8 +160,8 @@
 
 .auth-input:focus {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1);
-    background: rgba(15, 23, 42, 0.8);
+    box-shadow: 0 0 0 3px rgba(77, 163, 255, 0.1);
+    background: rgba(11, 18, 32, 0.8);
 }
 
 .auth-input.has-error {
@@ -292,7 +292,7 @@
     padding: 0.9rem;
     border: none;
     border-radius: 12px;
-    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    background: linear-gradient(135deg, #4DA3FF 0%, #6C63FF 100%);
     color: #fff;
     font-size: 0.9rem;
     font-weight: 600;
@@ -309,7 +309,7 @@
 
 .auth-submit:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 12px 32px rgba(77, 163, 255, 0.3);
 }
 
 .auth-submit:active:not(:disabled) {
@@ -410,7 +410,7 @@
 .auth-loading-spinner {
     width: 32px;
     height: 32px;
-    border: 3px solid rgba(56, 189, 248, 0.15);
+    border: 3px solid rgba(77, 163, 255, 0.15);
     border-top-color: var(--color-primary);
     border-radius: 50%;
     animation: authSpin 0.8s linear infinite;

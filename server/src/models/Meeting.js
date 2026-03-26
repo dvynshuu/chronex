@@ -15,9 +15,14 @@ const meetingSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        default: 'Meeting Overlap'
+        default: 'New Coordination'
     },
+    orgId: { type: mongoose.Schema.Types.ObjectId, ref: 'Organization' },
     participants: [participantSchema],
+    selectedSlot: {
+        type: Object,
+        default: null
+    },
     createdAt: {
         type: Date,
         default: Date.now

@@ -6,7 +6,7 @@ import { useEffect } from 'react';
  * T → toggle theme
  * 1/2/3/4 → switch between Dashboard/Meetings/Team/Focus
  */
-export const useKeyboardShortcuts = ({ toggleTheme, navigate }) => {
+export const useKeyboardShortcuts = ({ navigate }) => {
     useEffect(() => {
         const handler = (e) => {
             // Don't trigger when typing in inputs
@@ -22,9 +22,6 @@ export const useKeyboardShortcuts = ({ toggleTheme, navigate }) => {
             }
 
             switch (e.key.toLowerCase()) {
-                case 't':
-                    if (!e.ctrlKey && !e.metaKey) toggleTheme?.();
-                    break;
                 case '1':
                     navigate?.('/');
                     break;
@@ -44,7 +41,7 @@ export const useKeyboardShortcuts = ({ toggleTheme, navigate }) => {
 
         window.addEventListener('keydown', handler);
         return () => window.removeEventListener('keydown', handler);
-    }, [toggleTheme, navigate]);
+    }, [navigate]);
 };
 
 export default useKeyboardShortcuts;

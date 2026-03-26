@@ -89,19 +89,21 @@ const userController = {
             const users = await User.find({
                 $or: [
                     { 'profile.name': regex },
-                    { email: regex }
+                    { email: regex },
+                    { slug: regex }
                 ],
                 _id: { $ne: req.user.id } // Exclude current user
             })
-                .select('profile.name email baseTimezone workSchedule')
+                .select('profile.name email baseTimezone workSchedule slug')
                 .limit(10);
 
             const results = users.map(u => ({
                 id: u._id,
-                name: u.profile?.name || u.email,
+                name: u.profile?.name || u.slug || u.email,
                 email: u.email,
                 timezone: u.baseTimezone,
-                workSchedule: u.workSchedule
+                workSchedule: u.workSchedule,
+                slug: u.slug
             }));
 
             res.status(200).json(results);

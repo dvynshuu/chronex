@@ -11,7 +11,6 @@ const formatTime = (ms) => {
 const PomodoroEngine = () => {
     const { state, dispatch } = useFocusContext();
     const now = useRafNow();
-    const audioRef = useRef(null);
 
     const { timer, config, tasks } = state;
 
@@ -38,25 +37,12 @@ const PomodoroEngine = () => {
         return Math.min(1, Math.max(0, done / totalMs));
     }, [totalMs, remainingMs]);
 
-    // Tick + auto-completion with timestamp-based math
+    // Local-only sync for UI state (e.g. updating lastKnownRemainingMs during active session)
     useEffect(() => {
         if (timer.isRunning && timer.phaseEndTimestamp) {
-            if (now >= timer.phaseEndTimestamp) {
-                dispatch({ type: 'TIMER_COMPLETE_PHASE', payload: { now } });
-                if (config.soundEnabled && audioRef.current) {
-                    try {
-                        audioRef.current.currentTime = 0;
-                        audioRef.current.volume = config.soundVolume;
-                        audioRef.current.play().catch(() => {});
-                    } catch {
-                        // ignore
-                    }
-                }
-            } else {
-                dispatch({ type: 'TIMER_TICK', payload: { now } });
-            }
+            dispatch({ type: 'TIMER_TICK', payload: { now } });
         }
-    }, [now, timer.isRunning, timer.phaseEndTimestamp, dispatch, config.soundEnabled, config.soundVolume]);
+    }, [now, timer.isRunning, timer.phaseEndTimestamp, dispatch]);
 
     const handleStartPause = () => {
         const currentNow = Date.now();
@@ -148,8 +134,8 @@ const PomodoroEngine = () => {
                     <svg className="ce-timer-svg" viewBox="0 0 200 200">
                         <defs>
                             <radialGradient id="ceFocusGlow" cx="50%" cy="50%" r="65%">
-                                <stop offset="0%" stopColor="#38bdf8" stopOpacity="0.7" />
-                                <stop offset="70%" stopColor="#020617" stopOpacity="0" />
+                                <stop offset="0%" stopColor="#4DA3FF" stopOpacity="0.7" />
+                                <stop offset="70%" stopColor="#05070F" stopOpacity="0" />
                             </radialGradient>
                         </defs>
                         <circle
@@ -322,7 +308,7 @@ const PomodoroEngine = () => {
                                             ((activeTask.completedPomodoros || 0) /
                                                 Math.max(1, activeTask.estimatedPomodoros || 1)) *
                                             360
-                                        }deg, rgba(15,23,42,1) 0deg)`
+                                        }deg, rgba(11, 18, 32, 1) 0deg)`
                                     }}
                                 />
                             </div>
@@ -339,12 +325,6 @@ const PomodoroEngine = () => {
                 )}
             </div>
 
-            {/* Provide your own bell asset at /sounds/chronex-focus-bell.mp3 */}
-            <audio
-                ref={audioRef}
-                src="/sounds/chronex-focus-bell.mp3"
-                preload="auto"
-            />
         </div>
     );
 };

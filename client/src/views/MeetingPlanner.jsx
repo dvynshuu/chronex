@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import VisualHeatmap from '../components/VisualHeatmap/VisualHeatmap';
 import OverlapSlider from '../components/OverlapSlider/OverlapSlider';
 import { computeOverlapData } from '../hooks/useAvailability';
@@ -25,6 +26,8 @@ const CITY_DATABASE = [
 const MeetingPlanner = () => {
     const [participants, setParticipants] = useState([]);
     const [team, setTeam] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [userIdToInvite, setUserIdToInvite] = useState(searchParams.get('invite'));
     const [loading, setLoading] = useState(true);
 
     const [newName, setNewName] = useState('');
@@ -37,31 +40,53 @@ const MeetingPlanner = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [isSearchingUser, setIsSearchingUser] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [selectedSlot, setSelectedSlot] = useState(null);
 
     // Fetch from MongoDB and Organization on mount
     useEffect(() => {
         const initData = async () => {
             try {
+                const token = localStorage.getItem('chronex_token');
+                const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
                 // Fetch participants
-                const pRes = await fetch('/api/v1/meetings');
+                const pRes = await fetch('/api/v1/meetings', { headers });
                 const pData = await pRes.json();
                 if (pData.participants && pData.participants.length > 0) {
                     setParticipants(pData.participants);
                 }
+                if (pData.selectedSlot) {
+                    setSelectedSlot(pData.selectedSlot);
+                }
 
                 // Fetch current user for "Add Me"
-                const meRes = await fetch('/api/v1/users/me');
+                const meRes = await fetch('/api/v1/users/me', { headers });
                 if (meRes.ok) {
                     const meData = await meRes.json();
                     setCurrentUser(meData);
                 }
 
                 // Fetch team members
-                const tRes = await fetch('/api/v1/orgs/me');
+                const tRes = await fetch('/api/v1/orgs/me', { headers });
                 if (tRes.ok) {
                     const tData = await tRes.json();
                     if (tData && tData.members) {
                         setTeam(tData.members);
+                    }
+                    // If we have an invite ID, and team is loaded, find and add
+                    if (userIdToInvite) {
+                        const memberToInvite = tData.members.find(m => m.id === userIdToInvite);
+                        if (memberToInvite) {
+                            addParticipant({
+                                name: memberToInvite.name,
+                                zone: memberToInvite.timezone || 'UTC',
+                                workStart: memberToInvite.workSchedule?.workStart || 9,
+                                workEnd: memberToInvite.workSchedule?.workEnd || 17
+                            });
+                            // Clear the param
+                            setUserIdToInvite(null);
+                            setSearchParams({});
+                        }
                     }
                 }
             } catch (err) {
@@ -81,7 +106,10 @@ const MeetingPlanner = () => {
         }
         const timer = setTimeout(async () => {
             try {
-                const res = await fetch(`/api/v1/users/search?q=${encodeURIComponent(searchUser)}`);
+                const token = localStorage.getItem('chronex_token');
+                const res = await fetch(`/api/v1/users/search?q=${encodeURIComponent(searchUser)}`, {
+                    headers: token ? { Authorization: `Bearer ${token}` } : {}
+                });
                 const data = await res.json();
                 setUserResults(data);
             } catch (err) {
@@ -97,10 +125,14 @@ const MeetingPlanner = () => {
 
         const syncWithDB = async () => {
             try {
+                const token = localStorage.getItem('chronex_token');
                 await fetch('/api/v1/meetings/sync', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ participants })
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        ...(token ? { Authorization: `Bearer ${token}` } : {})
+                    },
+                    body: JSON.stringify({ participants, selectedSlot })
                 });
             } catch (err) {
                 console.error('Sync failed:', err);
@@ -109,9 +141,18 @@ const MeetingPlanner = () => {
 
         const timer = setTimeout(syncWithDB, 500); // Debounce sync
         return () => clearTimeout(timer);
-    }, [participants, loading]);
+    }, [participants, selectedSlot, loading]);
 
     const overlapData = useMemo(() => computeOverlapData(participants), [participants]);
+
+    const teamResults = useMemo(() => {
+        if (!searchUser || searchUser.length < 1) return [];
+        const search = searchUser.toLowerCase();
+        return team.filter(member => 
+            (member?.name?.toLowerCase().includes(search)) ||
+            (member?.email?.toLowerCase().includes(search))
+        ).slice(0, 5);
+    }, [team, searchUser]);
 
     // Find best slots
     const bestSlots = useMemo(() => {
@@ -133,9 +174,15 @@ const MeetingPlanner = () => {
         const p = pData || { name: newName.trim(), zone: newZone.trim(), workStart: newWorkStart, workEnd: newWorkEnd };
         if (!p.name || !p.zone) return;
 
-        setParticipants(prev => [...prev, p]);
+        setParticipants(prev => {
+            if (prev.some(existingP => existingP.name === p.name)) {
+                console.warn(`Participant with name "${p.name}" already exists.`);
+                return prev;
+            }
+            return [...prev, p];
+        });
 
-        if (!pData) {
+        if (!pData) { // Only clear form if it's a manual add
             setNewName('');
             setNewZone('');
             setSearchZone('');
@@ -146,6 +193,17 @@ const MeetingPlanner = () => {
 
     const removeParticipant = (idx) => {
         setParticipants(prev => prev.filter((_, i) => i !== idx));
+    };
+
+    const addMe = () => {
+        if (currentUser && !participants.some(p => p.name === currentUser.profile?.name)) {
+            addParticipant({
+                name: currentUser.profile?.name || currentUser.email,
+                zone: currentUser.baseTimezone || 'UTC',
+                workStart: currentUser.workSchedule?.workStart || 9,
+                workEnd: currentUser.workSchedule?.workEnd || 17
+            });
+        }
     };
 
     return (
@@ -175,17 +233,28 @@ const MeetingPlanner = () => {
                     <div className="planner__card glass-panel">
                         <h5 className="planner__card-title">Best Meeting Slots</h5>
                         <div className="planner__slots">
-                            {bestSlots.length > 0 ? bestSlots.map((slot, i) => (
-                                <div key={i} className={`planner__slot-item planner__slot-item--${slot.status}`}>
-                                    <div className="planner__slot-info">
-                                        <div className="planner__slot-time">{fmtHr(slot.utcHour)}</div>
-                                        <small className="planner__slot-meta">
-                                            {slot.workingCount}/{slot.totalParticipants} participants available
-                                        </small>
+                            {bestSlots.length > 0 ? bestSlots.map((slot, i) => {
+                                const isSelected = selectedSlot?.utcHour === slot.utcHour;
+                                return (
+                                    <div 
+                                        key={i} 
+                                        className={`planner__slot-item planner__slot-item--${slot.status} ${isSelected ? 'planner__slot-item--selected' : ''}`}
+                                    >
+                                        <div className="planner__slot-info">
+                                            <div className="planner__slot-time">{fmtHr(slot.utcHour)}</div>
+                                            <small className="planner__slot-meta">
+                                                {slot.workingCount}/{slot.totalParticipants} participants available
+                                            </small>
+                                        </div>
+                                        <button 
+                                            className={`primary-button ${isSelected ? 'primary-button--selected' : ''}`}
+                                            onClick={() => setSelectedSlot(isSelected ? null : slot)}
+                                        >
+                                            {isSelected ? 'Selected' : 'Select'}
+                                        </button>
                                     </div>
-                                    <button className="primary-button">Select</button>
-                                </div>
-                            )) : (
+                                );
+                            }) : (
                                 <p className="planner__no-slots">No ideal overlap found. Try adjusting work hours.</p>
                             )}
                         </div>
@@ -198,17 +267,28 @@ const MeetingPlanner = () => {
                         <h5 className="planner__card-title">Discover Participants</h5>
 
                         <div className="planner__discovery-actions">
-                            {currentUser && !participants.some(p => p.name === currentUser.profile?.name) && (
-                                <button
-                                    className="planner__add-me-btn"
-                                    onClick={() => addParticipant({
-                                        name: currentUser.profile?.name || currentUser.email,
-                                        zone: currentUser.baseTimezone || 'UTC',
-                                        workStart: currentUser.workSchedule?.workStart || 9,
-                                        workEnd: currentUser.workSchedule?.workEnd || 17
-                                    })}
-                                >
+                            {currentUser && (
+                                <button className="planner__add-btn" onClick={addMe}>
                                     <span>👤</span> Add Me ({currentUser.profile?.name || 'Self'})
+                                </button>
+                            )}
+                            {team.length > 0 && (
+                                <button 
+                                    className="planner__add-btn planner__add-btn--team" 
+                                    onClick={() => {
+                                        team.forEach(m => {
+                                            if (!participants.some(p => p.name === m.name)) {
+                                                addParticipant({
+                                                    name: m.name,
+                                                    zone: m.timezone || 'UTC',
+                                                    workStart: m.workSchedule?.workStart || 9,
+                                                    workEnd: m.workSchedule?.workEnd || 17
+                                                });
+                                            }
+                                        });
+                                    }}
+                                >
+                                    <span>👥</span> Add Team
                                 </button>
                             )}
                         </div>
@@ -225,9 +305,47 @@ const MeetingPlanner = () => {
                                 }}
                                 onFocus={() => setIsSearchingUser(true)}
                             />
-                            {isSearchingUser && userResults.length > 0 && (
-                                <div className="planner__user-results">
-                                    {userResults.map(user => (
+                            {(teamResults.length > 0 || userResults.length > 0) && (
+                                <motion.div 
+                                    className="planner__user-results"
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: 'auto', opacity: 1 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    {/* Team Results First */}
+                                    {teamResults.map(user => (
+                                        <button
+                                            key={`team-${user.id || user.email}`}
+                                            className="planner__user-result-item planner__user-result-item--team"
+                                            onClick={() => {
+                                                addParticipant({
+                                                    name: user.name,
+                                                    zone: user.timezone || 'UTC',
+                                                    workStart: user.workSchedule?.workStart || 9,
+                                                    workEnd: user.workSchedule?.workEnd || 17
+                                                });
+                                                setSearchUser('');
+                                                setIsSearchingUser(false);
+                                            }}
+                                            disabled={participants.some(p => p.name === user.name)}
+                                        >
+                                            <div className="planner__result-avatar planner__result-avatar--team">
+                                                {user.name?.charAt(0) || user.email?.charAt(0) || '?'}
+                                            </div>
+                                            <div className="planner__result-info">
+                                                <div className="planner__result-name">
+                                                    {user.name || user.email || 'Unknown'} <small className="planner__team-badge">Team</small>
+                                                </div>
+                                                <div className="planner__result-meta">{user.email} • {user.timezone}</div>
+                                            </div>
+                                            <span className="planner__result-add">+</span>
+                                        </button>
+                                    ))}
+
+                                    {/* Then User results (filter out duplicates if any) */}
+                                    {userResults
+                                        .filter(ur => !teamResults.some(tr => tr.id === ur.id || tr.email === ur.email))
+                                        .map(user => (
                                         <button
                                             key={user.id}
                                             className="planner__user-result-item"
@@ -243,15 +361,17 @@ const MeetingPlanner = () => {
                                             }}
                                             disabled={participants.some(p => p.name === user.name)}
                                         >
-                                            <div className="planner__result-avatar">{user.name.charAt(0)}</div>
+                                            <div className="planner__result-avatar">
+                                                {user.name?.charAt(0) || user.email?.charAt(0) || '?'}
+                                            </div>
                                             <div className="planner__result-info">
-                                                <div className="planner__result-name">{user.name}</div>
+                                                <div className="planner__result-name">{user.name || user.email || 'Unknown'}</div>
                                                 <div className="planner__result-meta">{user.email} • {user.timezone}</div>
                                             </div>
                                             <span className="planner__result-add">+</span>
                                         </button>
                                     ))}
-                                </div>
+                                </motion.div>
                             )}
                             {isSearchingUser && searchUser.length >= 2 && userResults.length === 0 && (
                                 <div className="planner__search-empty">No results for "{searchUser}"</div>
@@ -300,7 +420,12 @@ const MeetingPlanner = () => {
                                     onFocus={() => setIsSearching(true)}
                                 />
                                 {isSearching && filteredZones.length > 0 && (
-                                    <div className="planner__zone-results">
+                                    <motion.div 
+                                        className="planner__zone-results"
+                                        initial={{ height: 0, opacity: 0 }}
+                                        animate={{ height: 'auto', opacity: 1 }}
+                                        transition={{ duration: 0.2 }}
+                                    >
                                         {filteredZones.map((z, idx) => (
                                             <button
                                                 key={idx}
@@ -314,7 +439,7 @@ const MeetingPlanner = () => {
                                                 <strong>{z.city}</strong>, {z.country} <small>{z.zone}</small>
                                             </button>
                                         ))}
-                                    </div>
+                                    </motion.div>
                                 )}
                             </div>
 
