@@ -39,11 +39,23 @@ const userController = {
                 }
             });
 
-            const user = await User.findByIdAndUpdate(
-                req.user.id,
-                { $set: updates },
-                { new: true, runValidators: true }
-            );
+            let user;
+            try {
+                user = await User.findByIdAndUpdate(
+                    req.user.id,
+                    { $set: updates },
+                    { new: true, runValidators: true }
+                );
+            } catch (err) {
+                // Handle duplicate key error (11000) for sloth
+                if (err.code === 11000) {
+                    const field = Object.keys(err.keyValue)[0];
+                    return res.status(409).json({ 
+                        message: `The ${field} "${err.keyValue[field]}" is already in use. Please try another.` 
+                    });
+                }
+                throw err; // Let the global error handler catch other errors
+            }
 
             res.status(200).json(user);
         } catch (err) {

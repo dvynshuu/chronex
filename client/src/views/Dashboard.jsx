@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { fetchWithAuth } from '../utils/api';
 import useAnimationClock from '../hooks/useAnimationClock';
 import ClockCard from '../components/ClockCard/ClockCard';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
@@ -20,7 +21,7 @@ const Dashboard = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const res = await fetch('/api/v1/users/me');
+                const res = await fetchWithAuth('/api/v1/users/me');
                 const data = await res.json();
 
                 if (data.favorites && data.favorites.length > 0) {
@@ -35,9 +36,8 @@ const Dashboard = () => {
                     setFavoriteZones(defaults);
 
                     // Sync defaults to DB so they persist
-                    fetch('/api/v1/users/me/favorites', {
+                    await fetchWithAuth('/api/v1/users/me/favorites', {
                         method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ favorites: defaults })
                     });
                 }
@@ -53,9 +53,8 @@ const Dashboard = () => {
     // Helper to sync reordered/updated list to DB
     const syncFavorites = async (updatedList) => {
         try {
-            await fetch('/api/v1/users/me/favorites', {
+            await fetchWithAuth('/api/v1/users/me/favorites', {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ favorites: updatedList })
             });
         } catch (err) {

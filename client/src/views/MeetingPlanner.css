@@ -1,12 +1,5 @@
-.planner__title {
-    margin: 0 0 3rem;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    background: linear-gradient(to right, #fff, var(--color-text-dim));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+.planner {
+    padding: 0 1rem 2.5rem 1rem;
 }
 
 .planner__grid {

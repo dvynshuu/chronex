@@ -1,6 +1,9 @@
 import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
+import { DateTime } from 'luxon';
+import { fetchWithAuth } from '../utils/api';
+import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import VisualHeatmap from '../components/VisualHeatmap/VisualHeatmap';
 import OverlapSlider from '../components/OverlapSlider/OverlapSlider';
 import { computeOverlapData } from '../hooks/useAvailability';
@@ -46,11 +49,9 @@ const MeetingPlanner = () => {
     useEffect(() => {
         const initData = async () => {
             try {
-                const token = localStorage.getItem('chronex_token');
-                const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
                 // Fetch participants
-                const pRes = await fetch('/api/v1/meetings', { headers });
+                const pRes = await fetchWithAuth('/api/v1/meetings');
                 const pData = await pRes.json();
                 if (pData.participants && pData.participants.length > 0) {
                     setParticipants(pData.participants);
@@ -60,14 +61,14 @@ const MeetingPlanner = () => {
                 }
 
                 // Fetch current user for "Add Me"
-                const meRes = await fetch('/api/v1/users/me', { headers });
+                const meRes = await fetchWithAuth('/api/v1/users/me');
                 if (meRes.ok) {
                     const meData = await meRes.json();
                     setCurrentUser(meData);
                 }
 
                 // Fetch team members
-                const tRes = await fetch('/api/v1/orgs/me', { headers });
+                const tRes = await fetchWithAuth('/api/v1/orgs/me');
                 if (tRes.ok) {
                     const tData = await tRes.json();
                     if (tData && tData.members) {
@@ -106,10 +107,7 @@ const MeetingPlanner = () => {
         }
         const timer = setTimeout(async () => {
             try {
-                const token = localStorage.getItem('chronex_token');
-                const res = await fetch(`/api/v1/users/search?q=${encodeURIComponent(searchUser)}`, {
-                    headers: token ? { Authorization: `Bearer ${token}` } : {}
-                });
+                const res = await fetchWithAuth(`/api/v1/users/search?q=${encodeURIComponent(searchUser)}`);
                 const data = await res.json();
                 setUserResults(data);
             } catch (err) {
@@ -125,13 +123,8 @@ const MeetingPlanner = () => {
 
         const syncWithDB = async () => {
             try {
-                const token = localStorage.getItem('chronex_token');
-                await fetch('/api/v1/meetings/sync', {
+                await fetchWithAuth('/api/v1/meetings/sync', {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                        ...(token ? { Authorization: `Bearer ${token}` } : {})
-                    },
                     body: JSON.stringify({ participants, selectedSlot })
                 });
             } catch (err) {
@@ -156,8 +149,9 @@ const MeetingPlanner = () => {
 
     // Find best slots
     const bestSlots = useMemo(() => {
+        const currentHour = DateTime.local().hour;
         return overlapData
-            .filter(d => d.status === 'perfect' || d.status === 'good')
+            .filter(d => d.utcHour > currentHour && (d.status === 'perfect' || d.status === 'good'))
             .sort((a, b) => b.score - a.score)
             .slice(0, 3);
     }, [overlapData]);
@@ -212,7 +206,11 @@ const MeetingPlanner = () => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
         >
-            <h1 className="planner__title">Meeting Planner</h1>
+            <DashboardHeader 
+                title="Meeting Planner" 
+                welcomeMessage="GLOBAL COORDINATION ENGINE" 
+                timeDisplay={DateTime.local().toFormat('hh:mm a')}
+            />
 
             <div className="planner__grid">
                 <div className="planner__main">

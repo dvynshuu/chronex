@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const compression = require('compression');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const logger = require('./utils/logger');
@@ -9,6 +10,7 @@ const app = express();
 
 // Security Middlewares
 app.use(helmet());
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 

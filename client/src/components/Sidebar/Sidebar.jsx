@@ -29,33 +29,8 @@ const SidebarLink = ({ to, children, icon, isCollapsed, shortcut }) => {
     );
 };
 
-import SettingsPanel from '../Settings/SettingsPanel';
 
 const Sidebar = ({ isCollapsed }) => {
-    const [showSharePanel, setShowSharePanel] = useState(false);
-    const [showSettings, setShowSettings] = useState(false);
-    const [copySuccess, setCopySuccess] = useState(false);
-
-    // This will be dynamic once we fetch user data in App or Context
-    const shareLink = `${window.location.origin}/u/divyanshu`;
-
-    const handleCopy = async () => {
-        try {
-            await navigator.clipboard.writeText(shareLink);
-            setCopySuccess(true);
-            setTimeout(() => setCopySuccess(false), 2000);
-        } catch {
-            // fallback
-            const textArea = document.createElement('textarea');
-            textArea.value = shareLink;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            setCopySuccess(true);
-            setTimeout(() => setCopySuccess(false), 2000);
-        }
-    };
 
     return (
         <>
@@ -102,30 +77,9 @@ const Sidebar = ({ isCollapsed }) => {
 
                 {!isCollapsed && (
                     <div className="sidebar__actions">
-                        {/* Settings Button */}
-                        <button className="sidebar__action-btn" onClick={() => setShowSettings(true)}>
-                            <span className="sidebar__action-icon">⚙️</span>
-                            <span className="sidebar__action-text">Settings</span>
-                        </button>
-
-
-                        {/* Share Link */}
-                        <button className="sidebar__action-btn" onClick={() => setShowSharePanel(!showSharePanel)}>
-                            <span className="sidebar__action-icon">🔗</span>
-                            <span className="sidebar__action-text">Share Profile</span>
-                        </button>
-
-                        {showSharePanel && (
-                            <div className="sidebar__share-panel">
-                                <p className="sidebar__share-label">Your public link</p>
-                                <div className="sidebar__share-link-row">
-                                    <code className="sidebar__share-url">{shareLink}</code>
-                                    <button className="sidebar__share-copy" onClick={handleCopy}>
-                                        {copySuccess ? '✓' : '📋'}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
+                        <SidebarLink to="/settings" icon="⚙️" isCollapsed={isCollapsed} shortcut="5">
+                            Settings
+                        </SidebarLink>
                     </div>
                 )}
 
@@ -137,7 +91,6 @@ const Sidebar = ({ isCollapsed }) => {
                 )}
             </aside>
 
-            <SettingsPanel isOpen={showSettings} onClose={() => setShowSettings(false)} />
         </>
     );
 };

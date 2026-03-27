@@ -17,10 +17,14 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
     const minute = localTime.minute;
 
     const getTimeGradient = (h) => {
-        if (h >= 20 || h < 5) return 'linear-gradient(135deg, #1e1b4b 0%, #05070F 100%)';
-        if (h >= 17) return 'linear-gradient(135deg, #f43f5e 0%, #1e1b4b 100%)';
-        if (h >= 9) return 'linear-gradient(135deg, #0ea5e9 0%, #6366f1 100%)';
-        return 'linear-gradient(135deg, #fbbf24 0%, #f43f5e 100%)';
+        // Deep Night (10 PM – 5 AM)
+        if (h >= 22 || h < 5) return 'linear-gradient(135deg, #1e1b4b 0%, #05070F 100%)';
+        // Evening / Sunset (5 PM – 10 PM)
+        if (h >= 17) return 'linear-gradient(135deg, #881337 0%, #05070F 100%)';
+        // Work / Day (9 AM – 5 PM)
+        if (h >= 9) return 'linear-gradient(135deg, #075985 0%, #0c1527 100%)';
+        // Dawn / Early Morning (5 AM – 9 AM)
+        return 'linear-gradient(135deg, #92400e 0%, #0c1527 100%)';
     };
 
     const status = useMemo(() => {
