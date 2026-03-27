@@ -2256,3 +2256,7 @@
 {"level":"info","message":"\u001b[0mGET /api/v1/auth/me \u001b[36m304\u001b[0m 11.538 ms - -\u001b[0m","timestamp":"2026-03-27T05:51:56.329Z"}
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 6.394 ms - -\u001b[0m","timestamp":"2026-03-27T05:51:56.415Z"}
 {"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[36m304\u001b[0m 4.830 ms - -\u001b[0m","timestamp":"2026-03-27T05:51:56.423Z"}
+{"level":"info","message":"\u001b[0mGET /api/v1/users/me \u001b[32m200\u001b[0m 4.956 ms - 518\u001b[0m","timestamp":"2026-03-27T05:55:42.210Z"}
+{"level":"info","message":"Redis URL not found or development mode, using memory-only caching (Mock)","timestamp":"2026-03-27T05:55:55.841Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2026-03-27T05:55:55.911Z"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-03-27T05:55:55.919Z"}

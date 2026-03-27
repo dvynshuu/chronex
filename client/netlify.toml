@@ -1,0 +1,11 @@
+# Netlify configuration for Chronex Client (React SPA)
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Redirect all paths to index.html to support React Router
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
