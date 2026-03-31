@@ -20,6 +20,7 @@ app.use(compression());
 // CORS Configuration
 const allowedOrigins = [
     'http://localhost:3000',
+    'https://chronexx.netlify.app',
     process.env.FRONTEND_URL
 ].filter(Boolean);
 
