@@ -1,8 +1,0 @@
-{
-    "name": "chronex-monorepo",
-    "private": true,
-    "scripts": {
-        "client-build": "cd client && npm install && npm run build",
-        "server-install": "cd server && npm install"
-    }
-}

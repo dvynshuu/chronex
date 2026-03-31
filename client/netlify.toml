@@ -1,5 +1,5 @@
 [build]
-  command = "bash -c 'npm install && npm run build'"
+  command = "npm install && npm run build"
   publish = "dist"
 
 [[redirects]]
