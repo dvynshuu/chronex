@@ -8,6 +8,12 @@ const logger = require('./utils/logger');
 
 const app = express();
 
+// Global Request Logger for Debugging
+app.use((req, res, next) => {
+    logger.info(`[GLOBAL-DEBUG] ${req.method} ${req.originalUrl}`);
+    next();
+});
+
 // Security Middlewares
 app.use(helmet());
 app.use(compression());

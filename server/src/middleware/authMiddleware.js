@@ -16,30 +16,39 @@ const protect = async (req, res, next) => {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET || 'chronex-dev-secret-key');
                 req.user = await userRepository.findById(decoded.id);
             } catch (err) {
-                // If token is invalid and we're NOT in dev, fail here
-                if (process.env.NODE_ENV === 'production') {
+                if (process.env.NODE_ENV !== 'production') {
+                    console.log('Auth Bypass notice: Token verification failed in dev, falling through to demo user.');
+                } else {
                     return res.status(401).json({ message: 'Not authorized, token failed' });
                 }
-                // In dev, we can fall through to bypass
             }
         }
 
         // 2. DEV BYPASS: If no user found and in dev mode, use/create demo user
         if (!req.user && process.env.NODE_ENV !== 'production') {
-            let mockUser = await User.findOne({ email: 'demo@chronex.app' });
-            if (!mockUser) {
-                mockUser = await User.create({
-                    email: 'demo@chronex.app',
-                    password: 'password123',
-                    profile: { name: 'Demo User' },
-                    slug: 'demo-user'
-                });
+            try {
+                let mockUser = await User.findOne({ email: 'demo@chronex.app' });
+                if (!mockUser) {
+                    console.info('Auto-creating demo@chronex.app user for development mode...');
+                    mockUser = await User.create({
+                        email: 'demo@chronex.app',
+                        password: 'password123',
+                        profile: { name: 'Demo User' },
+                        slug: 'demo-user'
+                    });
+                }
+                req.user = mockUser;
+            } catch (mockErr) {
+                console.error('CRITICAL: Failed to create or find demo user in dev mode:', mockErr.message);
+                // We fall through and hope for the best, but line 42 will catch it
             }
-            req.user = mockUser;
         }
 
         // 3. Final check
         if (!req.user) {
+            if (process.env.NODE_ENV !== 'production') {
+                console.warn('Auth Warning: No user found even after dev bypass attempt.');
+            }
             return res.status(401).json({ message: 'Not authorized, no user found' });
         }
 

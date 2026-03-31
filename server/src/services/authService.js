@@ -55,7 +55,32 @@ class AuthService {
     }
 
     async login(email, password) {
-        const user = await userRepository.findByEmail(email);
+        const normalizedEmail = email?.toLowerCase().trim();
+        const user = await userRepository.findByEmail(normalizedEmail);
+        
+        if (process.env.NODE_ENV !== 'production') {
+            logger.info(`[DEBUG] Login attempt: email=[${normalizedEmail}], NODE_ENV=[${process.env.NODE_ENV}]`);
+        }
+
+        // DEV BYPASS: Allow demo user even if password or DB lookup fails in development
+        if (process.env.NODE_ENV !== 'production' && normalizedEmail === 'demo@chronex.app' && password === 'password123') {
+            logger.info(`Auth Bypass: Logging in as demo user [${normalizedEmail}]`);
+            let demoUser = user;
+            if (!demoUser) {
+                console.info('Auto-creating demo@chronex.app user for development mode...');
+                demoUser = await userRepository.create({
+                    email: 'demo@chronex.app',
+                    password: 'password123',
+                    profile: { name: 'Demo User' },
+                    slug: 'demo-user'
+                });
+            }
+            const { accessToken, refreshToken } = this.generateTokens(demoUser._id);
+            demoUser.refreshToken = refreshToken;
+            await demoUser.save();
+            return { user: this._formatUser(demoUser), accessToken, refreshToken };
+        }
+
         if (!user || !(await user.comparePassword(password, user.password))) {
             const error = new Error('Invalid email or password');
             error.status = 401;

@@ -1,4 +1,5 @@
 const authService = require('../services/authService');
+const logger = require('../utils/logger');
 
 class AuthController {
     async register(req, res, next) {
@@ -13,6 +14,7 @@ class AuthController {
     async login(req, res, next) {
         try {
             const { email, password } = req.body;
+            logger.info(`[DEBUG] AuthController.login: Received login request for [${email}]`);
             const result = await authService.login(email, password);
             res.status(200).json(result);
         } catch (err) {

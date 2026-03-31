@@ -29,12 +29,14 @@ export const AuthProvider = ({ children }) => {
                 if (res.ok) {
                     const data = await res.json();
                     setUser(data.user);
-                } else {
+                } else if (res.status === 401) {
                     // Token expired or invalid
+                    console.warn('Session restoration failed (401). Clearing stale tokens.');
                     localStorage.removeItem('chronex_token');
                     localStorage.removeItem('chronex_refresh_token');
                 }
-            } catch {
+            } catch (err) {
+                console.error('Session restoration error:', err);
                 localStorage.removeItem('chronex_token');
                 localStorage.removeItem('chronex_refresh_token');
             } finally {
@@ -52,6 +54,7 @@ export const AuthProvider = ({ children }) => {
         });
         const data = await res.json();
         if (!res.ok) {
+            console.error('[DEBUG] Login response failure:', res.status, data);
             throw new Error(data.message || data.error?.message || 'Login failed');
         }
         localStorage.setItem('chronex_token', data.accessToken);
