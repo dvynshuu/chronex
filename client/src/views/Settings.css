@@ -239,3 +239,60 @@
         white-space: nowrap;
     }
 }
+
+/* Logout Styling */
+.settings-nav-divider {
+    height: 1px;
+    background: var(--color-edge);
+    margin: 1rem 0;
+    opacity: 0.5;
+}
+
+.logout-btn {
+    margin-top: 1rem;
+    color: #fb7185;
+}
+
+.logout-btn:hover {
+    background: rgba(251, 113, 133, 0.1);
+    color: #f43f5e;
+    border-color: rgba(251, 113, 133, 0.2);
+}
+
+.settings-divider {
+    height: 1px;
+    background: var(--color-edge);
+    margin: 2.5rem 0;
+    opacity: 0.5;
+}
+
+.settings-account-actions h3 {
+    margin-bottom: 0.75rem;
+    color: #fb7185;
+}
+
+.settings-account-actions p {
+    color: var(--color-text-dim);
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.logout-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-md);
+    background: rgba(251, 113, 133, 0.1);
+    border: 1px solid rgba(251, 113, 133, 0.3);
+    color: #fb7185;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-main);
+}
+
+.logout-action-btn:hover {
+    background: #fb7185;
+    color: white;
+    box-shadow: 0 10px 20px -10px rgba(251, 113, 133, 0.5);
+}

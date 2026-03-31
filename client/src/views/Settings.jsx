@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchWithAuth } from '../utils/api';
+import { useAuth } from '../contexts/AuthContext';
 import './Settings.css';
 
 const Settings = () => {
@@ -9,6 +10,7 @@ const Settings = () => {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
     const [activeTab, setActiveTab] = useState('profile');
+    const { logout } = useAuth();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -102,6 +104,11 @@ const Settings = () => {
                             {tab.label}
                         </button>
                     ))}
+                    <div className="settings-nav-divider"></div>
+                    <button className="settings-nav-btn logout-btn" onClick={logout}>
+                        <span>🚪</span>
+                        Logout
+                    </button>
                 </aside>
 
                 <main className="settings-content">
@@ -192,6 +199,15 @@ const Settings = () => {
                                                 disabled
                                             />
                                             <p className="settings-field-hint">Email is linked to your authentication provider.</p>
+                                        </div>
+                                        <div className="settings-divider"></div>
+                                        <div className="settings-account-actions">
+                                            <h3>Session Management</h3>
+                                            <p>Signing out will end your current session and require you to sign back in next time.</p>
+                                            <button className="logout-action-btn" onClick={logout}>
+                                                <span>🚪</span>
+                                                Sign Out Now
+                                            </button>
                                         </div>
                                     </div>
                                 </section>
