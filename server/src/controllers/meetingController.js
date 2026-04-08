@@ -99,6 +99,34 @@ const meetingController = {
         } catch (err) {
             next(err);
         }
+    },
+
+    /**
+     * POST /api/v1/meetings/schedule
+     * Formalize the draft into a 'scheduled' meeting.
+     */
+    async scheduleMeeting(req, res, next) {
+        try {
+            const { participants, selectedSlot, title, duration, startTime } = req.body;
+
+            const org = await Organization.findOne({ 'members.user': req.user.id });
+            const orgId = org ? org._id : null;
+
+            const meeting = await Meeting.create({
+                user: req.user.id,
+                orgId,
+                participants,
+                selectedSlot,
+                title: title || 'Global Alignment Session',
+                duration: duration || 45,
+                startTime: startTime || new Date(),
+                status: 'scheduled'
+            });
+
+            res.status(201).json(meeting);
+        } catch (err) {
+            next(err);
+        }
     }
 };
 

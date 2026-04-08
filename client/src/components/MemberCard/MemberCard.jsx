@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { DateTime } from 'luxon';
-import { fmtHr } from '../../utils/timeUtils';
+import { useTimeFormatter } from '../../hooks/useTimeFormatter';
 import './MemberCard.css';
 
 const MemberCard = ({ member, liveClock, onInvite, isSelf }) => {
+    const { formatShortTime, fmtHr } = useTimeFormatter();
     const localTime = liveClock.setZone(member.timezone);
     const statusClass = member.statusLabel?.toLowerCase().replace(' ', '-') || 'offline';
     
@@ -26,7 +27,7 @@ const MemberCard = ({ member, liveClock, onInvite, isSelf }) => {
             className="member-card glass-panel"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            whileHover={{ y: -4, borderColor: 'rgba(77, 163, 255, 0.4)' }}
+            whileHover={{ y: -4, borderColor: 'rgba(0, 229, 255, 0.4)' }}
         >
             <div className="member-card__header">
                 <div className="member-card__avatar">
@@ -45,7 +46,7 @@ const MemberCard = ({ member, liveClock, onInvite, isSelf }) => {
             <div className="member-card__time-row">
                 <div className="member-card__local-time">
                     <span className="time-label">Local Time</span>
-                    <span className="time-value">{localTime.toFormat('hh:mm a')}</span>
+                    <span className="time-value">{formatShortTime(localTime)}</span>
                 </div>
                 <div className={`member-card__status status-pill--${statusClass}`}>
                     {member.statusLabel}

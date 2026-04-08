@@ -1,19 +1,20 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import useAnimationClock from '../hooks/useAnimationClock';
 import { DateTime } from 'luxon';
 import { useNavigate } from 'react-router-dom';
 import { fetchWithAuth } from '../utils/api';
 import { fmtHr } from '../utils/timeUtils';
-import MemberCard from '../components/MemberCard/MemberCard';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import './TeamDashboard.css';
 
+// Data is now fetched dynamically from the backend
 const TeamDashboard = () => {
-    const liveClock = useAnimationClock(10000); // 10s is enough for team updates
+    const liveClock = useAnimationClock(10000);
     const [org, setOrg] = React.useState(null);
     const [meetings, setMeetings] = React.useState([]);
+    const [teamStats, setTeamStats] = React.useState({ weeklyEnergy: [], temporalPulse: [] });
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
     const [isAddingMember, setIsAddingMember] = React.useState(false);
@@ -29,11 +30,16 @@ const TeamDashboard = () => {
                 const data = await res.json();
                 setOrg(data);
 
-                // Fetch team meetings
                 const mRes = await fetchWithAuth('/api/v1/meetings/team');
                 if (mRes.ok) {
                     const mData = await mRes.json();
                     setMeetings(mData);
+                }
+
+                const statsRes = await fetchWithAuth('/api/v1/dashboard/team-stats');
+                if (statsRes.ok) {
+                    const statsData = await statsRes.json();
+                    setTeamStats(statsData);
                 }
             } catch (err) {
                 setError(err.message);
@@ -54,16 +60,12 @@ const TeamDashboard = () => {
             });
             const data = await res.json();
             if (!res.ok) {
-                // Handle specific cases
                 if (res.status === 404) throw new Error(`User "${newMemberEmail}" not found. Have they registered for Chronex yet?`);
                 throw new Error(data.message || 'Failed to add member');
             }
-            
-            // Refresh team data
             const orgRes = await fetchWithAuth('/api/v1/orgs/me');
             const orgData = await orgRes.json();
             setOrg(orgData);
-            
             setNewMemberEmail('');
             setIsAddingMember(false);
         } catch (err) {
@@ -73,232 +75,215 @@ const TeamDashboard = () => {
         }
     };
 
-    // Real-time team status calculation
     const teamState = React.useMemo(() => {
-        if (!org || !org.members) return { stats: [], activePercent: 0, total: 0 };
-        
+        if (!org || !org.members) return { active: 0, dnd: 0, total: 0 };
         let active = 0;
-        let away = 0;
-        let sleeping = 0;
+        let dnd = 0;
 
         org.members.forEach(m => {
             const localH = liveClock.setZone(m.timezone).hour;
             const isWorking = localH >= (m.workSchedule?.workStart || 9) && localH < (m.workSchedule?.workEnd || 17);
-            const isSleeping = localH >= 22 || localH < 5;
-
             if (isWorking) active++;
-            else if (isSleeping) sleeping++;
-            else away++;
+            else dnd++;
         });
 
-        const total = org.members.length;
-        const stats = [
-            { name: 'Active', value: active },
-            { name: 'Away', value: away },
-            { name: 'Sleeping', value: sleeping }
-        ];
-
-        return {
-            stats,
-            activePercent: total > 0 ? Math.round((active / total) * 100) : 0,
-            total,
-            isPure: stats.filter(s => s.value > 0).length <= 1 // Only one category populated?
-        };
+        return { active, dnd, total: org.members.length };
     }, [org, liveClock]);
 
-    const teamStats = teamState.stats;
-    const activePercentage = teamState.activePercent;
-
-    // Coordination Pulse: Find next hour with max working people
     const nextPeakWindow = React.useMemo(() => {
         if (!org || !org.members) return null;
-        const currentHour = DateTime.local().hour;
         let maxCount = 0;
         let peakHour = DateTime.local();
 
-        // Check next 24 hours
         for (let offset = 1; offset <= 24; offset++) {
             const checkTime = DateTime.local().plus({ hours: offset });
-            
             let count = 0;
             org.members.forEach(m => {
                 const localH = checkTime.setZone(m.timezone).hour;
                 const isWorking = localH >= (m.workSchedule?.workStart || 9) && localH < (m.workSchedule?.workEnd || 17);
                 if (isWorking) count++;
             });
-
             if (count > maxCount) {
                 maxCount = count;
                 peakHour = checkTime;
-                if (count === org.members.length) break; // Perfect match found
+                if (count === org.members.length) break;
             }
         }
-
         return { time: peakHour, count: maxCount };
     }, [org]);
 
-    // Synthetic activity data based on seat count
-    const activityData = React.useMemo(() => {
-        const total = org?.stats?.total || 3;
-        return [
-            { day: 'Mon', usage: Math.min(100, (total * 15)) },
-            { day: 'Tue', usage: Math.min(100, (total * 12)) },
-            { day: 'Wed', usage: Math.min(100, (total * 22)) },
-            { day: 'Thu', usage: Math.min(100, (total * 25)) },
-            { day: 'Fri', usage: Math.min(100, (total * 18)) }
-        ];
-    }, [org]);
 
-    const COLORS = ['#4ade80', '#facc15', '#fb7185'];
 
-    if (loading) return <div className="team-dash-loading">Loading Team Insights...</div>;
-    if (error) return <div className="team-dash-error">Error: {error}</div>;
-    if (!org) return <div className="team-dash-empty">No Organization Found. Create one in Settings to begin.</div>;
+    if (loading) return <div className="team-loading">Loading Team Insights...</div>;
+    if (error) return <div className="team-error">Error: {error}</div>;
+    if (!org) return <div className="team-empty">No Organization Found. Create one in Settings to begin.</div>;
+
+    const featured = org.members[0];
+    const sideMember = org.members[1];
+    const compactMembers = org.members.slice(2, 5);
 
     return (
         <motion.div
             className="team-dash"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
         >
-            <DashboardHeader 
-                title="Team Intelligence" 
-                welcomeMessage="ORGANIZATION COMMAND CENTER" 
+            <DashboardHeader
+                title="Team Availability"
                 timeDisplay={liveClock.toFormat('hh:mm a')}
             />
 
-
-            <div className="team-dash__pulse">
-                <div className="pulse-icon">⚡</div>
-                <div className="pulse-meta">
-                    <h5>Coordination Pulse</h5>
-                    <p>Next peak team availability window detected.</p>
-                </div>
-                {nextPeakWindow && (
-                    <div className="pulse-window">
-                        {nextPeakWindow.time.toFormat('ccc @ hh:mm a')} • {nextPeakWindow.count}/{org.members.length} Present
+            <div className="team-dash__content">
+                {/* Page Header */}
+                <div className="team-dash__page-header">
+                    <div>
+                        <h1 className="team-dash__page-title">Team Availability</h1>
+                        <p className="team-dash__page-sub">Real-time pulse and temporal alignment across {teamState.total} time zones.</p>
                     </div>
-                )}
-            </div>
+                    <div className="team-dash__status-badges">
+                        <span className="team-dash__badge team-dash__badge--active">
+                            <span className="team-dash__badge-dot" style={{ background: 'var(--color-primary)' }} />
+                            {teamState.active} Active
+                        </span>
+                        <span className="team-dash__badge team-dash__badge--dnd">
+                            <span className="team-dash__badge-dot" style={{ background: 'var(--color-danger)' }} />
+                            {teamState.dnd} DND
+                        </span>
+                    </div>
+                </div>
 
-            <div className="team-dash__analytics">
-                <div className="team-dash__card glass-panel">
-                    <h6 className="team-dash__card-label">Global Availability</h6>
-                    <div className="team-dash__chart-container">
-                        <div className="chart-center-label">
-                            <span className="chart-center-val">{activePercentage}%</span>
-                            <span className="chart-center-text">Available</span>
-                        </div>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <PieChart>
-                                <Pie
-                                    data={[{ value: 1 }]}
-                                    innerRadius="70%"
-                                    outerRadius="90%"
-                                    dataKey="value"
-                                    stroke="none"
-                                    fill="rgba(255, 255, 255, 0.03)"
-                                    isAnimationActive={false}
-                                />
-                                <Pie
-                                    data={teamStats}
-                                    innerRadius="70%"
-                                    outerRadius="90%"
-                                    paddingAngle={teamState.isPure ? 0 : 8}
-                                    dataKey="value"
-                                    stroke="none"
-                                    animationBegin={0}
-                                    animationDuration={1500}
-                                >
-                                    {teamStats.map((entry, index) => (
-                                        <Cell
-                                            key={index}
-                                            fill={COLORS[index % COLORS.length]}
-                                            style={{ 
-                                                filter: entry.value > 0 ? `drop-shadow(0 0 12px ${COLORS[index % COLORS.length]}88)` : 'none' 
-                                            }}
-                                        />
+                {/* ═══ Top Row: Featured + Side Member ═══ */}
+                <div className="team-dash__top-row">
+                    {/* Featured Member Card */}
+                    {featured && (
+                        <div className="team-dash__featured-card">
+                            <div className="team-dash__featured-left">
+                                <div className="team-dash__featured-avatar">
+                                    {featured.name?.charAt(0) || '?'}
+                                    <span className="team-dash__online-dot" />
+                                </div>
+                                <h3 className="team-dash__featured-name">{featured.name}</h3>
+                                <p className="team-dash__featured-role">{featured.location || 'Engineering'}</p>
+                                <div className="team-dash__featured-time">
+                                    <span className="team-dash__featured-clock">{liveClock.setZone(featured.timezone).toFormat('hh:mm')}</span>
+                                    <span className="team-dash__featured-period">{liveClock.setZone(featured.timezone).toFormat('a')}</span>
+                                </div>
+                                <p className="team-dash__featured-tz">{featured.timezone?.split('/').pop().replace('_', ' ')} ({featured.timezone?.split('/')[0]})</p>
+                                <div className="team-dash__featured-actions">
+                                    <button className="team-dash__action-btn team-dash__action-btn--outline">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                        Sync Message
+                                    </button>
+                                    <button className="team-dash__action-btn team-dash__action-btn--primary" onClick={() => navigate(`/meetings?invite=${featured.id}`)}>
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                                        Schedule 1:1
+                                    </button>
+                                </div>
+                            </div>
+                            <div className="team-dash__featured-right">
+                                <div className="team-dash__pulse-header">
+                                    <span className="team-dash__pulse-label">TEMPORAL PULSE (7 DAYS)</span>
+                                    <span className="team-dash__pulse-metric text-cyan">ATTENDANCE 98%</span>
+                                </div>
+                                <div className="team-dash__pulse-bars">
+                                    {teamStats.temporalPulse.map((d, i) => (
+                                        <div key={i} className="team-dash__pulse-bar-wrapper">
+                                            <div
+                                                className="team-dash__pulse-bar"
+                                                style={{
+                                                    height: `${d.val}%`,
+                                                    background: d.val > 70 ? 'var(--color-primary)' :
+                                                                d.val > 40 ? 'var(--color-secondary)' : 'var(--color-text-muted)'
+                                                }}
+                                            />
+                                        </div>
                                     ))}
-                                </Pie>
-                                <Tooltip
-                                    contentStyle={{
-                                        background: 'rgba(11, 18, 32, 0.95)',
-                                        border: '1px solid rgba(77, 163, 255, 0.4)',
-                                        borderRadius: '8px',
-                                        backdropFilter: 'blur(8px)'
-                                    }}
-                                />
-                            </PieChart>
-                        </ResponsiveContainer>
-                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Side Member Card */}
+                    {sideMember && (
+                        <div className="team-dash__side-card">
+                            <div className="team-dash__side-header">
+                                <div className="team-dash__side-avatar">
+                                    {sideMember.name?.charAt(0) || '?'}
+                                    <span className="team-dash__online-dot" />
+                                </div>
+                                <div className="team-dash__side-info">
+                                    <span className="team-dash__side-name">{sideMember.name}</span>
+                                    <span className="team-dash__side-status text-cyan">ACTIVE NOW</span>
+                                </div>
+                                <div className="team-dash__side-time">
+                                    <span>{liveClock.setZone(sideMember.timezone).toFormat('hh:mm a')}</span>
+                                    <span className="team-dash__side-tz">{sideMember.timezone?.split('/').pop().replace('_', ' ')} ({sideMember.timezone?.split('/')[0]})</span>
+                                </div>
+                            </div>
+                            <div className="team-dash__workload">
+                                <div className="team-dash__workload-header">
+                                    <span>Work Load</span>
+                                    <span>Optimal</span>
+                                </div>
+                                <div className="team-dash__workload-bar">
+                                    <div className="team-dash__workload-fill" style={{ width: '65%' }} />
+                                </div>
+                            </div>
+                            <button className="team-dash__request-btn">Request Availability</button>
+                        </div>
+                    )}
                 </div>
 
-                <div className="team-dash__card glass-panel">
-                    <h6 className="team-dash__card-label">System Activity</h6>
-                    <div className="team-dash__chart-container">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={activityData}>
-                                <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10 }} dy={10} />
-                                <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    contentStyle={{
-                                        background: 'rgba(11, 18, 32, 0.95)',
-                                        border: '1px solid rgba(77, 163, 255, 0.4)',
-                                        borderRadius: '8px',
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.5)'
-                                    }}
-                                />
-                                <Bar dataKey="usage" fill="url(#usageGradient)" radius={[6, 6, 0, 0]} barSize={40} />
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
+                {/* ═══ Compact Member Cards Row ═══ */}
+                {compactMembers.length > 0 && (
+                    <div className="team-dash__compact-row">
+                        {compactMembers.map(m => {
+                            const localTime = liveClock.setZone(m.timezone);
+                            const localH = localTime.hour;
+                            const isWorking = localH >= (m.workSchedule?.workStart || 9) && localH < (m.workSchedule?.workEnd || 17);
+                            const isSleeping = localH >= 22 || localH < 5;
+                            const statusLabel = isWorking ? 'Active - Working' : isSleeping ? 'Sleeping' : 'Away';
+                            const statusColor = isWorking ? 'var(--color-primary)' : isSleeping ? 'var(--color-danger)' : 'var(--color-warning)';
 
-                <div className="team-dash__card glass-panel">
-                    <h6 className="team-dash__card-label">Latest Team Meetings</h6>
-                    <div className="team-dash__meetings-list">
-                        {meetings.length === 0 ? (
-                            <div className="team-dash__no-meetings">No team meetings planned.</div>
-                        ) : (
-                            meetings.map(m => (
-                                <div key={m._id} className="team-dash__meeting-item" onClick={() => navigate('/meetings')}>
-                                    <div className="team-dash__meeting-info">
-                                        <span className="team-dash__meeting-title">{m.title}</span>
-                                        <span className="team-dash__meeting-meta">{m.participants.length} participants</span>
+                            return (
+                                <div key={m.id} className="team-dash__compact-card">
+                                    <div className="team-dash__compact-top">
+                                        <div className="team-dash__compact-avatar">
+                                            {m.name?.charAt(0) || '?'}
+                                        </div>
+                                        <div className="team-dash__compact-info">
+                                            <span className="team-dash__compact-name">{m.name}</span>
+                                            <span className="team-dash__compact-status" style={{ color: statusColor }}>{statusLabel}</span>
+                                        </div>
+                                        <button className="team-dash__compact-menu" title="More">⋮</button>
                                     </div>
-                                    <div className="team-dash__meeting-time">
-                                        {m.selectedSlot && m.selectedSlot.utcHour !== undefined ? `Today @ ${fmtHr(m.selectedSlot.utcHour)}` : 'Planning...'}
+                                    <div className="team-dash__compact-bottom">
+                                        <span className="team-dash__compact-time">{localTime.toFormat('hh:mm a')}</span>
+                                        <div className="team-dash__compact-actions">
+                                            {isSleeping && <span className="team-dash__dnd-badge">DO NOT DISTURB</span>}
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-dim)" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-text-dim)" strokeWidth="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/></svg>
+                                        </div>
                                     </div>
                                 </div>
-                            ))
-                        )}
+                            );
+                        })}
                     </div>
-                </div>
-            </div>
+                )}
 
-            <div className="team-dash__members-section">
-                <div className="team-dash__section-header">
-                    <h3 className="team-dash__section-title">Team Coordination Grid</h3>
-                    <button 
-                        className={`team-dash__add-member-toggle ${isAddingMember ? 'active' : ''}`}
-                        onClick={() => setIsAddingMember(!isAddingMember)}
-                    >
-                        {isAddingMember ? '✕ Cancel' : '+ Add Member'}
-                    </button>
-                </div>
-
+                {/* Add member toggle */}
                 <AnimatePresence>
                     {isAddingMember && (
-                        <motion.form 
+                        <motion.form
                             className="team-dash__add-form"
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: 'auto', opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
                             onSubmit={handleAddMember}
                         >
-                            <input 
-                                type="email" 
-                                placeholder="Colleague's email..." 
+                            <input
+                                type="email"
+                                placeholder="Colleague's email..."
                                 className="team-dash__add-input"
                                 value={newMemberEmail}
                                 onChange={(e) => setNewMemberEmail(e.target.value)}
@@ -311,34 +296,58 @@ const TeamDashboard = () => {
                     )}
                 </AnimatePresence>
 
-                <div className="team-dash__member-grid">
-                    {org.members.map((m) => (
-                        <MemberCard 
-                            key={m.id} 
-                            member={m} 
-                            liveClock={liveClock}
-                            isSelf={m.id === org.admin}
-                            onInvite={(id) => navigate(`/meetings?invite=${id}`)}
-                        />
-                    ))}
+                {/* ═══ Bottom Row: Weekly Velocity + Cross-Region Energy ═══ */}
+                <div className="team-dash__bottom-row">
+                    {/* Weekly Velocity */}
+                    <div className="team-dash__velocity-card">
+                        <h3 className="team-dash__card-title">Weekly Velocity</h3>
+                        <p className="team-dash__velocity-desc">Overall team sync efficiency has improved by <strong className="text-cyan">16%</strong> this week due to adjusted stand-up times.</p>
+                        <div className="team-dash__velocity-stats">
+                            <div className="team-dash__velocity-stat">
+                                <span className="team-dash__velocity-label">PEAK PULSE</span>
+                                <span className="team-dash__velocity-value">{nextPeakWindow ? nextPeakWindow.time.toFormat('HH:mm') : '14:00'} <small className="text-dim">UTC</small></span>
+                            </div>
+                            <div className="team-dash__velocity-stat">
+                                <span className="team-dash__velocity-label">OVERLAP WINDOW</span>
+                                <span className="team-dash__velocity-value">3.5<small className="text-dim">h</small></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Cross-Region Energy Output */}
+                    <div className="team-dash__energy-card">
+                        <div className="team-dash__energy-header">
+                            <h3 className="team-dash__card-title">Cross-Region Energy Output</h3>
+                            <div className="team-dash__energy-legend">
+                                <span className="team-dash__energy-legend-item"><span style={{ background: 'var(--color-primary)' }} /> NAMER</span>
+                                <span className="team-dash__energy-legend-item"><span style={{ background: 'var(--color-secondary)' }} /> EMEA</span>
+                                <span className="team-dash__energy-legend-item"><span style={{ background: 'var(--color-tertiary)' }} /> APAC</span>
+                            </div>
+                        </div>
+                        <div className="team-dash__energy-chart">
+                            <ResponsiveContainer width="100%" height={180}>
+                                <BarChart data={teamStats.weeklyEnergy} barSize={18} barGap={2}>
+                                    <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: 'var(--color-text-muted)', fontSize: 11 }} />
+                                    <Tooltip
+                                        cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                        contentStyle={{
+                                            background: 'rgba(13, 17, 23, 0.95)',
+                                            border: '1px solid rgba(0, 229, 255, 0.2)',
+                                            borderRadius: '8px',
+                                            fontSize: '0.8rem'
+                                        }}
+                                    />
+                                    <Bar dataKey="namer" stackId="a" fill="var(--color-primary)" radius={[0, 0, 0, 0]} />
+                                    <Bar dataKey="emea" stackId="a" fill="var(--color-secondary)" radius={[0, 0, 0, 0]} />
+                                    <Bar dataKey="apac" stackId="a" fill="var(--color-tertiary)" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            <svg width="0" height="0" style={{ position: 'absolute' }}>
-                <defs>
-                    <linearGradient id="usageGradient" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#4DA3FF" stopOpacity={0.9} />
-                        <stop offset="100%" stopColor="#6C63FF" stopOpacity={0.6} />
-                    </linearGradient>
-                    <radialGradient id="pieGlow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor="rgba(77, 163, 255, 0.2)" />
-                        <stop offset="100%" stopColor="transparent" />
-                    </radialGradient>
-                </defs>
-            </svg>
         </motion.div>
     );
 };
-
 
 export default TeamDashboard;

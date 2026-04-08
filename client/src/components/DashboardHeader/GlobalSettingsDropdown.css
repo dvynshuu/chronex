@@ -1,0 +1,93 @@
+/* GlobalSettingsDropdown.css */
+
+.global-settings-panel {
+    top: calc(100% + 10px);
+    right: 40px; /* Offset a bit from the edge compared to notifications */
+    width: 280px;
+}
+
+.settings-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.setting-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.setting-group label {
+    font-size: 0.8rem;
+    color: var(--color-text-dim);
+    font-weight: 500;
+}
+
+.toggle-group {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: var(--radius-sm);
+    padding: 4px;
+}
+
+.toggle-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--color-text-dim);
+    padding: 0.4rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    font-family: inherit;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.toggle-btn.active {
+    background: var(--color-primary);
+    color: var(--color-bg-main);
+    font-weight: 600;
+}
+
+.settings-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--color-edge);
+    color: var(--color-text-primary);
+    padding: 0.5rem;
+    border-radius: var(--radius-sm);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.settings-select:focus {
+    border-color: var(--color-primary);
+}
+
+.settings-select option {
+    background: var(--color-bg-panel);
+    color: var(--color-text-primary);
+}
+
+.save-settings-btn {
+    width: 100%;
+    background: rgba(0, 229, 255, 0.1);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    color: var(--color-primary);
+    padding: 0.6rem;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.save-settings-btn:hover {
+    background: rgba(0, 229, 255, 0.2);
+}

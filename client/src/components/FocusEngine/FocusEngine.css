@@ -17,7 +17,7 @@
     inset: -40%;
     opacity: 0;
     pointer-events: none;
-    background: radial-gradient(circle at center, rgba(77, 163, 255, 0.32), transparent 65%);
+    background: radial-gradient(circle at center, rgba(0, 229, 255, 0.32), transparent 65%);
     transition: opacity 220ms ease;
 }
 
@@ -85,7 +85,7 @@
 }
 
 .ce-mode-chip.is-active {
-    background: radial-gradient(circle at top, rgba(77, 163, 255, 0.4), rgba(11, 18, 32, 0.95));
+    background: radial-gradient(circle at top, rgba(0, 229, 255, 0.4), rgba(11, 18, 32, 0.95));
     color: var(--color-text-primary);
     transform: translateY(-0.5px);
 }
@@ -197,13 +197,13 @@
 
 .ce-primary-btn {
     background: var(--gradient-primary);
-    box-shadow: 0 10px 30px rgba(77, 163, 255, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 229, 255, 0.5);
     color: #fff;
 }
 
 .ce-primary-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 16px 40px rgba(77, 163, 255, 0.7);
+    box-shadow: 0 16px 40px rgba(0, 229, 255, 0.7);
 }
 
 .ce-primary-btn-sm {
@@ -329,7 +329,7 @@
     gap: 0.6rem;
     font-size: 0.7rem;
     color: var(--color-text-muted);
-    background: radial-gradient(circle at left, rgba(77, 163, 255, 0.15), transparent);
+    background: radial-gradient(circle at left, rgba(0, 229, 255, 0.15), transparent);
 }
 
 .ce-active-task-title span {
@@ -433,8 +433,8 @@
 }
 
 .ce-task-row.is-linked {
-    border-color: rgba(77, 163, 255, 0.9);
-    box-shadow: 0 0 0 1px rgba(77, 163, 255, 0.45);
+    border-color: rgba(0, 229, 255, 0.9);
+    box-shadow: 0 0 0 1px rgba(0, 229, 255, 0.45);
 }
 
 .ce-task-row.is-done {
@@ -537,7 +537,7 @@
 .ce-task-meta-bar-fill {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #4DA3FF, #22C55E);
+    background: linear-gradient(90deg, #00E5FF, #22C55E);
     transition: width 180ms ease-out;
 }
 
@@ -702,7 +702,7 @@
 }
 
 .ce-heatmap-dot.tier-low {
-    background: rgba(77, 163, 255, 0.8);
+    background: rgba(0, 229, 255, 0.8);
 }
 
 .ce-heatmap-dot.tier-med {

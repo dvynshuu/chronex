@@ -134,7 +134,7 @@ const PomodoroEngine = () => {
                     <svg className="ce-timer-svg" viewBox="0 0 200 200">
                         <defs>
                             <radialGradient id="ceFocusGlow" cx="50%" cy="50%" r="65%">
-                                <stop offset="0%" stopColor="#4DA3FF" stopOpacity="0.7" />
+                                <stop offset="0%" stopColor="#00E5FF" stopOpacity="0.7" />
                                 <stop offset="70%" stopColor="#05070F" stopOpacity="0" />
                             </radialGradient>
                         </defs>

@@ -8,6 +8,7 @@ router.use(protect);
 
 router.get('/team', meetingController.listByOrg);
 router.post('/sync', meetingController.syncParticipants);
+router.post('/schedule', meetingController.scheduleMeeting);
 router.get('/', meetingController.getParticipants);
 
 module.exports = router;

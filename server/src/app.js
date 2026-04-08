@@ -20,6 +20,8 @@ app.use(compression());
 // CORS Configuration
 const allowedOrigins = [
     'http://localhost:3000',
+    'http://localhost:3001',
+    'http://localhost:3002',
     'https://chronexx.netlify.app',
     process.env.FRONTEND_URL
 ].filter(Boolean);
@@ -28,6 +30,12 @@ app.use(cors({
     origin: (origin, callback) => {
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin) return callback(null, true);
+        
+        // Always allow localhost in development
+        if (process.env.NODE_ENV !== 'production' && origin.startsWith('http://localhost:')) {
+            return callback(null, true);
+        }
+
         if (allowedOrigins.indexOf(origin) === -1) {
             const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
             return callback(new Error(msg), false);
@@ -64,6 +72,8 @@ app.use('/api/v1/orgs', require('./routes/orgRoutes'));
 app.use('/api/v1/public', require('./routes/publicRoutes'));
 app.use('/api/v1/meetings', require('./routes/meetingRoutes'));
 app.use('/api/v1/users', require('./routes/userRoutes'));
+app.use('/api/v1/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/v1/locations', require('./routes/locationRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

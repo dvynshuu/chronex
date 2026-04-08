@@ -1,55 +1,140 @@
-.dashboard-header {
+.topbar {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 4rem;
-    padding-bottom: 1rem;
+    padding: 0.75rem 1.5rem;
     border-bottom: 1px solid var(--color-edge);
+    background: var(--color-bg-panel);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    min-height: var(--topbar-height);
+    gap: 1rem;
 }
 
-.dashboard-header__welcome {
-    color: var(--color-text-dim);
-    margin: 0 0 0.5rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 0.75rem;
+/* Left: Search */
+.topbar__left {
+    flex: 1;
+    max-width: 280px;
 }
 
-.dashboard-header__title {
-    margin: 0;
-    font-size: 2.5rem;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    background: linear-gradient(to right, #fff, var(--color-text-dim));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.dashboard-header__status {
-    text-align: right;
-    padding: 1.2rem 2rem !important;
+.topbar__search {
     display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-    border-radius: var(--radius-md) !important;
-    background: rgba(77, 163, 255, 0.05) !important;
-    border-color: var(--color-edge-active) !important;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-edge);
+    border-radius: var(--radius-md);
+    padding: 0.45rem 0.85rem;
+    transition: border-color 0.25s ease;
 }
 
-.dashboard-header__label {
+.topbar__search:focus-within {
+    border-color: var(--color-edge-active);
+}
+
+.topbar__search-icon {
     color: var(--color-text-dim);
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    flex-shrink: 0;
 }
 
-.dashboard-header__time {
-    font-size: 2rem;
-    font-weight: 700;
+.topbar__search-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--color-text-primary);
+    font-family: var(--font-main);
+    font-size: 0.8rem;
+    width: 100%;
+}
+
+.topbar__search-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+/* Center: Local time + Global Sync */
+.topbar__center {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.topbar__local-time {
+    background: rgba(0, 229, 255, 0.12);
     color: var(--color-primary);
-    font-family: 'Inter', sans-serif;
-    font-variant-numeric: tabular-nums;
+    padding: 0.3rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+.topbar__sync-label {
+    color: var(--color-text-dim);
+    font-size: 0.78rem;
+    font-weight: 500;
+}
+
+/* Right: Actions */
+.topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.topbar__icon-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--color-edge);
+    color: var(--color-text-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.topbar__icon-btn:hover {
+    color: var(--color-primary);
+    border-color: var(--color-edge-active);
+    background: rgba(0, 229, 255, 0.06);
+}
+
+.topbar__quick-add {
+    padding: 0.4rem 1rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--color-edge-bright);
+    color: var(--color-text-primary);
+    border-radius: var(--radius-sm);
+    font-size: 0.78rem;
+    font-weight: 600;
+    font-family: var(--font-main);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.topbar__quick-add:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.topbar__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--color-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+}
+
+.topbar__avatar:hover {
+    box-shadow: 0 0 12px var(--color-secondary-glow);
 }

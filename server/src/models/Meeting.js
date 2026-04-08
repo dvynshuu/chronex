@@ -23,6 +23,19 @@ const meetingSchema = new mongoose.Schema({
         type: Object,
         default: null
     },
+    startTime: {
+        type: Date,
+        default: null
+    },
+    duration: {
+        type: Number,
+        default: 45
+    },
+    status: {
+        type: String,
+        enum: ['draft', 'scheduled'],
+        default: 'draft'
+    },
     createdAt: {
         type: Date,
         default: Date.now

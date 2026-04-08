@@ -1,7 +1,7 @@
 /**
  * Standardized fetch wrapper that automatically includes the JWT token from localStorage.
  */
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE_URL = import.meta.env.MODE === 'development' ? '' : (import.meta.env.VITE_API_URL || '');
 
 export const fetchWithAuth = async (url, options = {}) => {
     // ... rest of logic

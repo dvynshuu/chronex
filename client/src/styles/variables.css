@@ -1,80 +1,84 @@
 :root {
-    /* ═══ Brand Core Colors (Identity) ═══ */
-    --color-primary: #4DA3FF;              /* Electric Blue — clean, modern, trust */
-    --color-secondary: #6C63FF;            /* Neon Indigo — memorable depth */
-    --color-accent: #22D3EE;               /* Cyan Glow — "alive / time flowing" */
-    --color-primary-glow: rgba(77, 163, 255, 0.34);
-    --color-secondary-glow: rgba(108, 99, 255, 0.25);
-    --color-accent-glow: rgba(34, 211, 238, 0.15);
+    /* ═══ Brand Core Colors — Chronex Design System v3 ═══ */
+    --color-primary: #00E5FF;              /* Cyan — Primary action & branding */
+    --color-secondary: #7C4DFF;            /* Purple — Secondary accents */
+    --color-tertiary: #00C853;             /* Green — Success & positive */
+    --color-primary-glow: rgba(0, 229, 255, 0.30);
+    --color-secondary-glow: rgba(124, 77, 255, 0.25);
+    --color-tertiary-glow: rgba(0, 200, 83, 0.20);
 
     /* ═══ Background System (Premium Dark) ═══ */
-    --color-bg-deep: #05070F;              /* Base background */
-    --color-bg-panel: #0B1220;             /* Secondary */
-    --color-bg-glass: rgba(17, 24, 39, 0.6);  /* Card surface */
-    --color-bg-elevated: #172036;          /* Elevated cards */
+    --color-bg-deep: #0A0E14;             /* Base background — near-black */
+    --color-bg-panel: #0D1117;            /* Sidebar / panels */
+    --color-bg-glass: rgba(13, 17, 23, 0.70);  /* Card surfaces */
+    --color-bg-elevated: #151B23;         /* Elevated cards */
+    --color-bg-card: #111820;             /* Inner cards */
 
     /* ═══ Time Context Colors ═══ */
     --color-day: #FACC15;
     --color-night: #6366F1;
     --color-sunset: #FB923C;
-    --color-work: #22C55E;
+    --color-work: #00C853;
 
     /* ═══ Text Colors ═══ */
     --color-text-primary: #E5E7EB;
-    --color-text-dim: #9CA3AF;
+    --color-text-dim: #8B949E;
     --color-text-muted: #6B7280;
-    --color-text-vibrant: #4DA3FF;
+    --color-text-vibrant: #00E5FF;
 
     /* ═══ Status Colors (Semantic) ═══ */
-    --color-success: #22C55E;              /* Available — clear + fresh */
-    --color-warning: #FACC15;              /* Partial — attention */
-    --color-danger: #EF4444;               /* No overlap — strong contrast */
+    --color-success: #00C853;
+    --color-warning: #FACC15;
+    --color-danger: #EF4444;
     --color-error: #EF4444;
-    --color-busy: #FB923C;                 /* Busy — warm urgency */
-    --color-sleeping: #6366F1;             /* Sleeping — calm + night */
+    --color-busy: #FB923C;
+    --color-sleeping: #6366F1;
 
     /* ═══ Accent & Interaction Colors ═══ */
-    --color-hover-glow: #3B82F6;
-    --color-active: #2563EB;
-    --color-focus-ring: #22D3EE;
+    --color-hover-glow: #00E5FF;
+    --color-active: #00BCD4;
+    --color-focus-ring: #00E5FF;
 
     /* ═══ Gradients ═══ */
-    --gradient-primary: linear-gradient(135deg, #4DA3FF 0%, #6C63FF 100%);
-    --gradient-accent-glow: rgba(34, 211, 238, 0.15);
-    --gradient-card-glow: 0 0 40px rgba(77, 163, 255, 0.08);
+    --gradient-primary: linear-gradient(135deg, #00E5FF 0%, #7C4DFF 100%);
+    --gradient-accent-glow: rgba(0, 229, 255, 0.15);
+    --gradient-card-glow: 0 0 40px rgba(0, 229, 255, 0.08);
+    --gradient-outer-border: linear-gradient(135deg, rgba(124, 77, 255, 0.4), rgba(0, 229, 255, 0.2), rgba(124, 77, 255, 0.4));
 
     /* ═══ Borders & Edges ═══ */
-    --color-edge: rgba(255, 255, 255, 0.05);
-    --color-edge-bright: rgba(255, 255, 255, 0.15);
-    --color-edge-active: rgba(77, 163, 255, 0.4);
+    --color-edge: rgba(255, 255, 255, 0.06);
+    --color-edge-bright: rgba(255, 255, 255, 0.12);
+    --color-edge-active: rgba(0, 229, 255, 0.35);
 
     /* ═══ Layout ═══ */
-    --sidebar-width: 280px;
-    --sidebar-width-collapsed: 88px;
+    --sidebar-width: 220px;
+    --sidebar-width-collapsed: 72px;
+    --topbar-height: 56px;
 
     /* ═══ Typography ═══ */
-    --font-main: 'Outfit', 'Inter', system-ui, sans-serif;
+    --font-main: 'Inter', 'Outfit', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', monospace;
 
     /* ═══ Effects ═══ */
     --glass-blur: blur(24px);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.08);
-    --radius-xl: 32px;
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --radius-sm: 8px;
-    --shadow-premium: 0 28px 60px -15px rgba(0, 0, 0, 0.55);
-    --shadow-card-glow: 0 0 40px rgba(77, 163, 255, 0.08);
-    --shadow-card-inner: inset 0 1px 0 rgba(255, 255, 255, 0.06);
-    --transition-main: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-    --transition-elastic: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    --glass-border: 1px solid rgba(255, 255, 255, 0.06);
+    --radius-xl: 24px;
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+    --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.55);
+    --shadow-card-glow: 0 0 40px rgba(0, 229, 255, 0.06);
+    --shadow-card-inner: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    --transition-main: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-elastic: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ─── Light Theme ─── */
 [data-theme="light"] {
-    --color-primary: #2563EB;
-    --color-secondary: #6C63FF;
-    --color-accent: #0891B2;
-    --color-primary-glow: rgba(37, 99, 235, 0.2);
+    --color-primary: #0097A7;
+    --color-secondary: #7C4DFF;
+    --color-tertiary: #00C853;
+    --color-primary-glow: rgba(0, 151, 167, 0.2);
     --color-bg-deep: #f8fafc;
     --color-bg-panel: #ffffff;
     --color-bg-glass: rgba(255, 255, 255, 0.75);
@@ -83,14 +87,14 @@
     --color-text-primary: #0f172a;
     --color-text-dim: #64748b;
     --color-text-muted: #94a3b8;
-    --color-text-vibrant: #2563EB;
+    --color-text-vibrant: #0097A7;
 
     --color-edge: rgba(0, 0, 0, 0.06);
     --color-edge-bright: rgba(0, 0, 0, 0.12);
-    --color-edge-active: rgba(37, 99, 235, 0.3);
+    --color-edge-active: rgba(0, 151, 167, 0.3);
 
     --glass-border: 1px solid rgba(0, 0, 0, 0.06);
     --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.12);
-    --shadow-card-glow: 0 0 30px rgba(37, 99, 235, 0.06);
+    --shadow-card-glow: 0 0 30px rgba(0, 151, 167, 0.06);
     --shadow-card-inner: inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }

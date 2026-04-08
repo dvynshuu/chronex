@@ -3,13 +3,32 @@
     display: flex;
     min-height: 100vh;
     transition: var(--transition-main);
+    position: relative;
+    background: var(--color-bg-deep);
+}
+
+/* Outer glow border frame - matches mockup */
+.app-container::before {
+    content: '';
+    position: fixed;
+    inset: 4px;
+    border-radius: 16px;
+    border: 1px solid transparent;
+    background: linear-gradient(transparent, transparent) padding-box,
+                var(--gradient-outer-border) border-box;
+    pointer-events: none;
+    z-index: 9999;
+    animation: borderGlow 4s infinite ease-in-out;
 }
 
 .app-container__content {
     flex: 1;
-    padding: 2.5rem;
+    padding: 0;
     margin-left: var(--sidebar-width);
     transition: var(--transition-main);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .app-container--sidebar-collapsed .app-container__content {
@@ -19,11 +38,14 @@
 @media (max-width: 992px) {
     .app-container__content {
         margin-left: 0 !important;
-        padding: 1.5rem;
+        padding: 0;
     }
 
     .app-container__sidebar-wrapper {
         display: none;
-        /* Mobile nav would be a separate task, keeping it simple for desktop refactor */
+    }
+
+    .app-container::before {
+        display: none;
     }
 }

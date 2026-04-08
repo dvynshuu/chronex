@@ -1,8 +1,10 @@
 import React, { useMemo, memo } from 'react';
 import { DateTime } from 'luxon';
+import { useTimeFormatter } from '../../hooks/useTimeFormatter';
 import './ClockCard.css';
 
 const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isLocal = false, onRemove }) => {
+    const { timeFormat, fmtHr, getLuxonFormat } = useTimeFormatter();
     let localTime;
     let isInvalidZone = false;
     try {
@@ -51,7 +53,8 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
     const dayLabels = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
     // Time parts for separation
-    const timePart = localTime.toFormat('hh:mm');
+    const is24h = timeFormat === '24h';
+    const timePart = localTime.toFormat(is24h ? 'HH:mm' : 'hh:mm');
     const periodPart = localTime.toFormat('a');
     const isDST = localTime.isInDST;
 
@@ -114,9 +117,11 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
                                 </span>
                             ))}
                         </div>
-                        <div className="clock-card__period">
-                            {periodPart}
-                        </div>
+                        {!is24h && (
+                            <div className="clock-card__period">
+                                {periodPart}
+                            </div>
+                        )}
                     </div>
                     <p className="clock-card__date">{localTime.toFormat('EEE, MMM dd')}</p>
                 </div>
@@ -147,8 +152,6 @@ const ClockCard = memo(({ city, zone, baseTime, workStart = 9, workEnd = 17, isL
         </div>
     );
 });
-
-import { fmtHr } from '../../utils/timeUtils';
 
 ClockCard.displayName = 'ClockCard';
 export default ClockCard;

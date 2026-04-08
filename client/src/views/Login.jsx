@@ -86,7 +86,7 @@ const Login = () => {
                                 onClick={() => setShowPassword(!showPassword)}
                                 tabIndex={-1}
                             >
-                                {showPassword ? '🙈' : '👁'}
+                                {showPassword ? ' 🫣 ' : '👁'}
                             </button>
                         </div>
                         {fieldErrors.password && <p className="auth-field-error">{fieldErrors.password}</p>}
