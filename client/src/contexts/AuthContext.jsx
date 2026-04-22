@@ -17,6 +17,9 @@ export const AuthProvider = ({ children }) => {
 
     // Restore session on mount
     useEffect(() => {
+        const handleLogout = () => setUser(null);
+        window.addEventListener('chronex:logout', handleLogout);
+
         const restoreSession = async () => {
             const token = localStorage.getItem('chronex_token');
             if (!token) {
@@ -45,6 +48,7 @@ export const AuthProvider = ({ children }) => {
             }
         };
         restoreSession();
+        return () => window.removeEventListener('chronex:logout', handleLogout);
     }, []);
 
     const login = useCallback(async (email, password) => {

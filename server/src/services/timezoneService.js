@@ -68,15 +68,21 @@ class TimezoneService {
     }
 
     /**
-     * Find optimal meeting times for multiple participants with configurable hours
-     * @param {Array<Object>} participants - [{ zone, workStart, workEnd }]
-     * @param {number} durationHours - Duration of meeting
+     * Find optimal meeting times with Fairness & Team Norms awareness
      */
-    findOverlap(participants, durationHours = 1) {
-        // Normalise: accept array of strings or objects
-        const normalised = participants.map(p =>
-            typeof p === 'string' ? { zone: p, workStart: 9, workEnd: 17 } : p
-        );
+    findOverlap(participants, durationHours = 1, options = {}) {
+        const { norms = null, members = [] } = options;
+        
+        const normalised = participants.map(p => {
+            const member = members.find(m => m.user?._id?.toString() === p.userId || m.user?.toString() === p.userId);
+            return {
+                zone: p.zone || 'UTC',
+                workStart: p.workStart ?? 9,
+                workEnd: p.workEnd ?? 17,
+                userId: p.userId,
+                fairnessBalance: member?.user?.fairnessBalance ?? 0
+            };
+        });
 
         const suggestions = [];
         const start = DateTime.utc().startOf('hour');
@@ -84,20 +90,66 @@ class TimezoneService {
         for (let i = 0; i < 48; i++) {
             const currentUTC = start.plus({ hours: i });
             const comparisons = this.compareTimezones(currentUTC.toISO(), normalised);
+            
+            let score = 0;
+            let fairnessImpact = 0;
+            let policyViolations = [];
 
-            const score = comparisons.reduce((acc, curr) => {
-                if (curr.isWorkHour) return acc + 1;
-                if (curr.isSocialHour) return acc + 0.5;
-                return acc - 2;
-            }, 0);
+            // 1. Check Norms (No-Meeting Days)
+            if (norms?.noMeetingDays?.includes(currentUTC.weekday)) {
+                score -= 5;
+                policyViolations.push('No-Meeting Day');
+            }
 
-            if (score > (normalised.length * 0.5)) {
+            comparisons.forEach((curr, idx) => {
+                const p = normalised[idx];
+                const member = members[idx]?.user;
+                
+                // 2. Base Score
+                if (curr.isWorkHour) {
+                    score += 1;
+                    // Check Focus Window
+                    if (norms?.focusWindow && curr.hour >= norms.focusWindow.start && curr.hour < norms.focusWindow.end) {
+                        score -= 0.8;
+                        policyViolations.push(`${p.zone} Focus Window`);
+                    }
+
+                    // 2.1 Attention Cost (Context Switching)
+                    if (member) {
+                        const coordinationService = require('./coordinationService');
+                        const attentionCost = coordinationService.calculateAttentionCost(currentUTC.toISO(), durationHours * 60, member);
+                        if (attentionCost > 0) {
+                            score -= (attentionCost * 0.2);
+                            policyViolations.push(`${p.zone} Attention Cost`);
+                        }
+                    }
+                } else if (curr.isSocialHour) {
+                    score += 0.3; // Lowered from 0.5 to prioritize work hours more
+                    fairnessImpact += 1; // Alice takes a social hit
+                } else {
+                    score -= 3; // Harsher penalty for sleep hours
+                    fairnessImpact += 5; // Major hit
+                }
+
+                // 3. Fairness Weighting
+                // If a user has a high fairnessBalance (they've taken hits before), 
+                // we penalize this slot MORE if it hits them again.
+                if (!curr.isWorkHour && p.fairnessBalance > 5) {
+                    score -= (p.fairnessBalance / 10);
+                }
+            });
+
+            const maxPotential = normalised.length;
+            if (score > (maxPotential * 0.3)) { // Lowered threshold because of harsher penalties
                 suggestions.push({
                     utcTime: currentUTC.toISO(),
                     hour: currentUTC.hour,
-                    score,
-                    maxScore: normalised.length,
-                    status: score === normalised.length ? 'Perfect' : 'Good',
+                    weekday: currentUTC.weekday,
+                    score: Math.round(score * 10) / 10,
+                    maxScore: maxPotential,
+                    status: score >= maxPotential * 0.8 ? 'Perfect' : (score >= maxPotential * 0.5 ? 'Good' : 'Fair'),
+                    fairnessImpact,
+                    policyViolations: [...new Set(policyViolations)],
                     details: comparisons
                 });
             }

@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchWithAuth } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
 import './Settings.css';
 
 const Settings = () => {
+    const location = useLocation();
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
-    const [activeTab, setActiveTab] = useState('profile');
+    const [activeTab, setActiveTab] = useState(location.state?.tab || 'profile');
     const { logout } = useAuth();
+
+    useEffect(() => {
+        if (location.state?.tab) {
+            setActiveTab(location.state.tab);
+        }
+    }, [location.state?.tab]);
 
     useEffect(() => {
         const fetchUserData = async () => {

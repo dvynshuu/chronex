@@ -74,6 +74,8 @@ app.use('/api/v1/meetings', require('./routes/meetingRoutes'));
 app.use('/api/v1/users', require('./routes/userRoutes'));
 app.use('/api/v1/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/v1/locations', require('./routes/locationRoutes'));
+app.use('/api/v1/availability', require('./routes/availabilityRoutes'));
+app.use('/api/v1/outcomes', require('./routes/outcomeRoutes'));
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

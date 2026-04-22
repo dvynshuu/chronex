@@ -10,11 +10,13 @@ class OrganizationService {
     }
 
     async addMember(orgId, userId, role = 'member') {
-        const org = await Organization.findById(orgId);
+        const org = await Organization.findByIdAndUpdate(
+            orgId,
+            { $addToSet: { members: { user: userId, role } } },
+            { new: true }
+        );
         if (!org) throw new Error('Organization not found');
-
-        org.members.push({ user: userId, role });
-        return await org.save();
+        return org;
     }
 
     async getOrgDashboard(orgId) {

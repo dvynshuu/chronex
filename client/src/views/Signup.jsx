@@ -54,7 +54,7 @@ const Signup = () => {
         setLoading(true);
         try {
             await signup({ name, email, password });
-            navigate('/', { replace: true });
+            navigate('/onboarding', { replace: true });
         } catch (err) {
             setError(err.message || 'Signup failed. Please try again.');
         } finally {

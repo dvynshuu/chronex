@@ -1,4 +1,6 @@
 const User = require('../models/User');
+const Organization = require('../models/Organization');
+const logger = require('../utils/logger');
 
 const userController = {
     /**
@@ -92,24 +94,63 @@ const userController = {
      */
     async searchUsers(req, res, next) {
         try {
-            const { q } = req.query;
-            if (!q || q.length < 2) {
+            let { q } = req.query;
+
+            // Normalize and sanitize query
+            if (!q) return res.status(200).json([]);
+            q = q.trim();
+            
+            // Basic protection against regex-based enumeration if fallback is used
+            const sanitizedQ = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            if (q.length < 2) {
                 return res.status(200).json([]);
             }
 
-            const regex = new RegExp(q, 'i');
+            // Audit Logging
+            logger.info({
+                message: 'User search initiated',
+                userId: req.user.id,
+                query: q
+            });
+
+            // 1. Org Scoping: Find all users who share an organization with the current user
+            const myOrgs = await Organization.find({ 'members.user': req.user.id }).select('members.user');
+            
+            if (!myOrgs || myOrgs.length === 0) {
+                // If user is not in any org, they can't search (High-security default)
+                return res.status(200).json([]);
+            }
+
+            // Extract all member IDs from my organizations
+            const allowedMemberIds = [...new Set(myOrgs.flatMap(org => org.members.map(m => m.user.toString())))];
+
+            // 2. Optimization: Use text index for searching restricted to allowed members
             const users = await User.find({
-                $or: [
-                    { 'profile.name': regex },
-                    { email: regex },
-                    { slug: regex }
-                ],
-                _id: { $ne: req.user.id } // Exclude current user
+                $text: { $search: q },
+                _id: { $in: allowedMemberIds, $ne: req.user.id }
             })
                 .select('profile.name email baseTimezone workSchedule slug')
-                .limit(10);
+                .limit(10)
+                .lean();
 
-            const results = users.map(u => ({
+            // Fallback for partial matches if text search is too restrictive (still scoped)
+            let finalUsers = users;
+            if (users.length === 0) {
+                finalUsers = await User.find({
+                    $or: [
+                        { email: { $regex: `^${sanitizedQ}`, $options: 'i' } },
+                        { slug: { $regex: `^${sanitizedQ}`, $options: 'i' } },
+                        { 'profile.name': { $regex: `^${sanitizedQ}`, $options: 'i' } }
+                    ],
+                    _id: { $in: allowedMemberIds, $ne: req.user.id }
+                })
+                .select('profile.name email baseTimezone workSchedule slug')
+                .limit(10)
+                .lean();
+            }
+
+            const results = finalUsers.map(u => ({
                 id: u._id,
                 name: u.profile?.name || u.slug || u.email,
                 email: u.email,

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const participantSchema = new mongoose.Schema({
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     name: { type: String, required: true },
     zone: { type: String, required: true },
     workStart: { type: Number, default: 9, min: 0, max: 23 },

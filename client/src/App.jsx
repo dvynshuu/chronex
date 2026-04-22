@@ -19,6 +19,8 @@ const PublicProfile = lazy(() => import('./views/PublicProfile'));
 const Login = lazy(() => import('./views/Login'));
 const Signup = lazy(() => import('./views/Signup'));
 const Settings = lazy(() => import('./views/Settings'));
+const Onboarding = lazy(() => import('./views/Onboarding'));
+const GoogleCallback = lazy(() => import('./views/GoogleCallback'));
 
 const AppShell = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -58,6 +60,8 @@ const AppShell = () => {
                             <Route path="/focus" element={<FocusWorkspace />} />
                             <Route path="/timeline" element={<FocusWorkspace />} />
                             <Route path="/settings" element={<Settings />} />
+                            <Route path="/onboarding" element={<Onboarding />} />
+                            <Route path="/auth/callback/google" element={<GoogleCallback />} />
                         </Routes>
                     </Suspense>
                 </AnimatePresence>

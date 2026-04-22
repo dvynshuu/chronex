@@ -354,6 +354,40 @@
     padding: 0;
 }
 
+.planner__intel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.planner__policy-warnings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.planner__policy-badge {
+    padding: 0.25rem 0.5rem;
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.planner__fairness-impact {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
 /* ═══ RIGHT SIDE ═══ */
 .planner__side {
     display: flex;

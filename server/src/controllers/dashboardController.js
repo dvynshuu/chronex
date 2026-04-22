@@ -1,4 +1,7 @@
 const organizationService = require('../services/organizationService');
+const pipelineService = require('../services/pipeline/pipelineService');
+const Meeting = require('../models/Meeting');
+const User = require('../models/User');
 const { DateTime } = require('luxon');
 
 // Static fallback data for map nodes — real geographic coordinates (lon, lat)
@@ -21,53 +24,70 @@ const MAP_NODES = [
     { id: 'la',  lon: -118.24, lat: 34.05,  label: 'Los Angeles' },
 ];
 
-const generateOpsPulse = () => {
-    const now = Date.now();
-    return [
-        { 
-            id: 'sync-1',
-            icon: '✓', 
-            color: 'var(--color-tertiary)', 
-            title: 'Team Sync Completed', 
-            desc: 'San Francisco & London clusters aligned', 
-            time: '2 mins ago',
+const generateOpsPulse = (members = []) => {
+    const pulse = [];
+    if (members.length === 0) {
+        return [
+            { 
+                id: 'init-1',
+                icon: '⚡', 
+                color: 'var(--color-primary)', 
+                title: 'System Initialized', 
+                desc: 'Standing by for team alignment...', 
+                time: 'Now',
+                details: { traceId: 'TR-00001-INIT', status: 'Standby' }
+            }
+        ];
+    }
+
+    const online = members.filter(m => {
+        const tz = m.user?.baseTimezone || 'UTC';
+        const now = DateTime.local().setZone(tz);
+        const hour = now.hour;
+        const workStart = m.user?.workSchedule?.workStart ?? 9;
+        const workEnd = m.user?.workSchedule?.workEnd ?? 17;
+        return hour >= workStart && hour < workEnd;
+    });
+
+    if (online.length > 0) {
+        pulse.push({
+            id: `sync-${Date.now()}`,
+            icon: '✓',
+            color: 'var(--color-tertiary)',
+            title: 'Team Sync Active',
+            desc: `${online.length} nodes currently aligned`,
+            time: 'Just now',
             details: {
-                traceId: 'TR-88219-SYNC',
-                nodes: ['SF-AMER-1', 'LON-EMEA-4'],
-                latency: '42ms',
+                traceId: `TR-${Math.floor(Math.random()*90000)+10000}-SYNC`,
+                nodes: online.slice(0, 3).map(m => (m.user?.baseTimezone || 'UTC').split('/').pop().toUpperCase()),
                 status: 'Success'
             }
-        },
-        { 
-            id: 'shift-1',
-            icon: '→', 
-            color: 'var(--color-primary)', 
-            title: 'New Shift Start', 
-            desc: 'Singapore handover to EMEA node', 
-            time: '14 mins ago',
+        });
+    }
+
+    const sleepers = members.filter(m => {
+        const tz = m.user?.baseTimezone || 'UTC';
+        const now = DateTime.local().setZone(tz);
+        return now.hour >= 22 || now.hour < 5;
+    });
+
+    if (sleepers.length > 0) {
+        pulse.push({
+            id: `drift-${Date.now() + 1}`,
+            icon: '🌙',
+            color: 'var(--color-primary)',
+            title: 'Nocturnal Shift',
+            desc: `${sleepers.length} nodes in rest cycle`,
+            time: 'Active',
             details: {
-                traceId: 'TR-99802-SHIFT',
-                nodes: ['SIN-APAC-2', 'BER-EMEA-1'],
-                handoff: 'Active',
-                status: 'Processing'
+                traceId: `TR-${Math.floor(Math.random()*90000)+10000}-SHIFT`,
+                nodes: sleepers.slice(0, 2).map(m => (m.user?.baseTimezone || 'UTC').split('/').pop().toUpperCase()),
+                status: 'Resting'
             }
-        },
-        { 
-            id: 'drift-1',
-            icon: '▲', 
-            color: 'var(--color-danger)', 
-            title: 'Drift Detected', 
-            desc: 'Berlin cluster reporting 2h sync offset', 
-            time: '32 mins ago',
-            details: {
-                traceId: 'TR-00451-ERR',
-                nodes: ['BER-EMEA-1'],
-                offset: '120 min',
-                severity: 'High',
-                status: 'Warning'
-            }
-        },
-    ];
+        });
+    }
+
+    return pulse;
 };
 
 const _computeStatus = (user) => {
@@ -107,39 +127,65 @@ exports.getDashboardOverview = async (req, res, next) => {
     try {
         const org = await organizationService.getUserOrganization(req.user._id);
         
+        // 1. Run Intelligence Pipeline
+        const userIds = org ? org.members.map(m => m.user?._id || m.user) : [req.user._id];
+        const pipelineResult = await pipelineService.run({
+            teamId: org?._id,
+            userIds,
+            organization: org,
+            timeRange: {
+                start: DateTime.now().startOf('day').toISO(),
+                end: DateTime.now().plus({ days: 7 }).toISO()
+            }
+        });
+
+        const { metrics, data: optimizedData } = pipelineResult;
+
+        // 2. Synchronicity Calculation (Dashboard Visuals)
         let onlineNow = 0, offlineRest = 0;
-        let overlapping = 0; // Simplified
         let regionalDistribution = [];
 
         if (org) {
             await org.populate('members.user', 'baseTimezone workSchedule');
-            const members = org.members;
-            
-            members.forEach(m => {
+            org.members.forEach(m => {
                 const status = _computeStatus(m.user);
                 if (status === 'online') onlineNow++;
                 else offlineRest++;
             });
-            // Fake some overlapping for illustration based on total online
-            overlapping = Math.floor(onlineNow * 0.4);
-            
-            regionalDistribution = computeRegionalDistribution(members);
+            regionalDistribution = computeRegionalDistribution(org.members);
         } else {
-            // Fallbacks for standalone user
             onlineNow = 1; 
-            offlineRest = 0;
-            overlapping = 0;
             regionalDistribution = computeRegionalDistribution([{ user: req.user }]);
         }
 
-        const total = onlineNow + overlapping + offlineRest || 1;
-        const index = Math.round((onlineNow / total) * 100);
+        const totalNodes = onlineNow + offlineRest || 1;
+        const synchronicityIndex = Math.round((onlineNow / totalNodes) * 100);
+
+        // 3. Feedback / Sentiment
+        const feedback = req.user.meetingFeedback || [];
+        const recentFeedback = feedback.filter(f => new Date(f.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+        const syncSentiment = recentFeedback.length > 0 
+            ? Math.round((recentFeedback.filter(f => f.painReduced).length / recentFeedback.length) * 100)
+            : 88;
 
         res.status(200).json({
             mapNodes: MAP_NODES,
-            synchronicity: { index, onlineNow, overlapping, offlineRest },
+            synchronicity: { 
+                index: synchronicityIndex, 
+                onlineNow, 
+                offlineRest, 
+                syncSentiment, 
+                cpi: { index: metrics.teamFairnessIndex, factors: metrics.burdenDistribution } 
+            },
             regionalDistribution,
-            opsPulse: generateOpsPulse()
+            opsPulse: generateOpsPulse(org?.members || []),
+            norms: org?.norms,
+            intelligence: {
+                recoveryPotential: metrics.potentialRecoveredHours,
+                optimizations: optimizedData.recommendations,
+                onboarded: req.user.onboarded,
+                fairnessScore: metrics.teamFairnessIndex
+            }
         });
     } catch (err) {
         next(err);
@@ -148,25 +194,42 @@ exports.getDashboardOverview = async (req, res, next) => {
 
 exports.getTeamStats = async (req, res, next) => {
     try {
-        // Return dummy temporal statistics directly referencing UI expectations.
-        // In a real production system, this would aggregate activity logs or calendar events.
-        const WEEK_ENERGY_DATA = [
-            { day: 'MON', namer: 35, emea: 45, apac: 20 },
-            { day: 'TUE', namer: 40, emea: 38, apac: 30 },
-            { day: 'WED', namer: 50, emea: 42, apac: 25 },
-            { day: 'THU', namer: 45, emea: 50, apac: 35 },
-            { day: 'FRI', namer: 30, emea: 35, apac: 40 },
-            { day: 'SAT', namer: 15, emea: 20, apac: 45 },
-            { day: 'SUN', namer: 10, emea: 15, apac: 35 },
+        const org = await organizationService.getUserOrganization(req.user._id);
+        
+        // In a real system, we'd aggregate historical activity.
+        // Here we simulate it based on the org members' typical work cycles.
+        let weeklyEnergy = [
+            { day: 'MON', namer: 0, emea: 0, apac: 0 },
+            { day: 'TUE', namer: 0, emea: 0, apac: 0 },
+            { day: 'WED', namer: 0, emea: 0, apac: 0 },
+            { day: 'THU', namer: 0, emea: 0, apac: 0 },
+            { day: 'FRI', namer: 0, emea: 0, apac: 0 },
+            { day: 'SAT', namer: 0, emea: 0, apac: 0 },
+            { day: 'SUN', namer: 0, emea: 0, apac: 0 },
         ];
 
-        const temporalPulse = [
-            { day: 'M', val: 60 }, { day: 'T', val: 85 }, { day: 'W', val: 45 },
-            { day: 'T', val: 70 }, { day: 'F', val: 90 }, { day: 'S', val: 30 }, { day: 'S', val: 40 }
-        ];
+        if (org) {
+            await org.populate('members.user', 'baseTimezone');
+            org.members.forEach(m => {
+                const tz = (m.user?.baseTimezone || '').toLowerCase();
+                let region = 'apac';
+                if (tz.includes('america') || tz.includes('us')) region = 'namer';
+                else if (tz.includes('europe') || tz.includes('africa')) region = 'emea';
+
+                weeklyEnergy.forEach(d => {
+                    const base = d.day === 'SAT' || d.day === 'SUN' ? 10 : 40;
+                    d[region] += base + Math.floor(Math.random() * 20);
+                });
+            });
+        }
+
+        const temporalPulse = weeklyEnergy.map(d => ({
+            day: d.day[0],
+            val: Math.min(100, Math.floor((d.namer + d.emea + d.apac) / (org?.members.length || 1) * 1.5))
+        }));
 
         res.status(200).json({
-            weeklyEnergy: WEEK_ENERGY_DATA,
+            weeklyEnergy,
             temporalPulse
         });
 

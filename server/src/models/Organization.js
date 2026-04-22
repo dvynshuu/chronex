@@ -27,6 +27,30 @@ const organizationSchema = new mongoose.Schema({
             city: String,
             timezone: String
         }]
+    },
+    norms: {
+        noMeetingDays: { type: [Number], default: [5] }, // Default: No-Meeting Friday
+        focusWindow: {
+            start: { type: Number, default: 9 }, // 9 AM
+            end: { type: Number, default: 11 }   // 11 AM
+        },
+        asyncHours: {
+            start: { type: Number, default: 13 }, // 1 PM
+            end: { type: Number, default: 15 }    // 3 PM
+        },
+        meetingFreeBlocks: [{
+            day: Number, // 1-7 (Luxon)
+            start: Number,
+            end: Number
+        }],
+        handoffWindows: [{
+            day: Number,
+            start: Number,
+            end: Number
+        }],
+        fairnessEnabled: { type: Boolean, default: true },
+        maxDailyMeetings: { type: Number, default: 4 },
+        enforcementLevel: { type: String, enum: ['strict', 'advisory'], default: 'advisory' }
     }
 }, {
     timestamps: true

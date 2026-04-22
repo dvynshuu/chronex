@@ -34,37 +34,34 @@ const MeetingPlanner = () => {
     const [meetingDuration, setMeetingDuration] = useState(45);
     const [timeFormat, setTimeFormat] = useState('24H');
     const [sendingStatus, setSendingStatus] = useState('idle');
+    const [conflicts, setConflicts] = useState([]);
+    const [intelligentSuggestions, setIntelligentSuggestions] = useState([]);
+    const [isSuggesting, setIsSuggesting] = useState(false);
 
     useEffect(() => {
-        const initData = async () => {
+        const bootstrap = async () => {
             try {
-                const cRes = await fetchWithAuth('/api/v1/locations/cities');
-                if (cRes.ok) {
-                    const cData = await cRes.json();
-                    setCityDatabase(cData);
-                }
-                const pRes = await fetchWithAuth('/api/v1/meetings');
-                const pData = await pRes.json();
-                if (pData.participants && pData.participants.length > 0) {
-                    setParticipants(pData.participants);
-                }
-                if (pData.selectedSlot) {
-                    setSelectedSlot(pData.selectedSlot);
-                }
-
-                const meRes = await fetchWithAuth('/api/v1/users/me');
-                if (meRes.ok) {
+                const res = await fetchWithAuth('/api/v1/meetings/bootstrap');
+                if (res.ok) {
+                    const data = await res.json();
+                    setParticipants(data.participants || []);
+                    setSelectedSlot(data.selectedSlot || null);
+                    setConflicts(data.conflicts || []);
+                    setCityDatabase(data.cities || []);
+                    setMeetingTitle(data.title || 'Global Q3 Planning');
+                    setIntelligentSuggestions(data.suggestions || []);
+                    
+                    // Fetch user info in parallel if not in bootstrap
+                    const meRes = await fetchWithAuth('/api/v1/users/me');
                     const meData = await meRes.json();
                     setCurrentUser(meData);
-                }
 
-                const tRes = await fetchWithAuth('/api/v1/orgs/me');
-                if (tRes.ok) {
+                    const tRes = await fetchWithAuth('/api/v1/orgs/me');
                     const tData = await tRes.json();
-                    if (tData && tData.members) {
-                        setTeam(tData.members);
-                    }
-                    if (userIdToInvite) {
+                    setTeam(tData.members || []);
+
+                    // Handle invite link
+                    if (userIdToInvite && tData.members) {
                         const memberToInvite = tData.members.find(m => m.id === userIdToInvite);
                         if (memberToInvite) {
                             addParticipant({
@@ -73,18 +70,17 @@ const MeetingPlanner = () => {
                                 workStart: memberToInvite.workSchedule?.workStart || 9,
                                 workEnd: memberToInvite.workSchedule?.workEnd || 17
                             });
-                            setUserIdToInvite(null);
                             setSearchParams({});
                         }
                     }
                 }
             } catch (err) {
-                console.error('Failed to fetch data:', err);
+                console.error('Bootstrap failed:', err);
             } finally {
                 setLoading(false);
             }
         };
-        initData();
+        bootstrap();
     }, []);
 
     useEffect(() => {
@@ -132,12 +128,45 @@ const MeetingPlanner = () => {
     }, [team, searchUser]);
 
     const bestSlots = useMemo(() => {
+        if (intelligentSuggestions.length > 0) return intelligentSuggestions;
+        
         const currentHour = DateTime.local().hour;
         return overlapData
             .filter(d => d.utcHour > currentHour && (d.status === 'perfect' || d.status === 'good'))
             .sort((a, b) => b.score - a.score)
             .slice(0, 3);
-    }, [overlapData]);
+    }, [overlapData, intelligentSuggestions]);
+
+    useEffect(() => {
+        if (participants.length < 2) {
+            setIntelligentSuggestions([]);
+            return;
+        }
+        const fetchSuggestions = async () => {
+            setIsSuggesting(true);
+            try {
+                const res = await fetchWithAuth('/api/v1/meetings/suggestions', {
+                    method: 'POST',
+                    body: JSON.stringify({ participants: participants.map(p => ({
+                        zone: p.zone,
+                        userId: p.id, // Ensure we pass userId for fairness
+                        workStart: p.workStart,
+                        workEnd: p.workEnd
+                    })) })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setIntelligentSuggestions(data);
+                }
+            } catch (err) {
+                console.error('Failed to fetch suggestions:', err);
+            } finally {
+                setIsSuggesting(false);
+            }
+        };
+        const timer = setTimeout(fetchSuggestions, 1000);
+        return () => clearTimeout(timer);
+    }, [participants]);
 
     const filteredZones = useMemo(() => {
         if (!searchZone) return [];
@@ -187,6 +216,24 @@ const MeetingPlanner = () => {
         const perfectCount = overlapData.filter(d => d.status === 'perfect').length;
         return Math.round((perfectCount / 24) * 100);
     }, [overlapData, participants]);
+
+    const syncIntelligence = useMemo(() => {
+        if (participants.length < 2) return "Add more participants to calculate sync intelligence.";
+        
+        const currentBest = bestSlots[0];
+        if (!currentBest) return "No optimal window found for current group.";
+
+        // Find if any other slot is better or could improve specific regions
+        const sortedAll = [...overlapData].sort((a, b) => b.score - a.score);
+        const globalBest = sortedAll[0];
+
+        if (globalBest && globalBest.score > currentBest.score) {
+            const diff = Math.round((globalBest.score - currentBest.score) * 10);
+            return `Moving this meeting to ${fmtHr(globalBest.utcHour)} UTC would increase team alignment by ${diff}%.`;
+        }
+
+        return "Current selection is highly optimized for this team distribution.";
+    }, [participants, bestSlots, overlapData]);
 
     const handleSendInvites = async () => {
         if (participants.length === 0) {
@@ -356,20 +403,20 @@ const MeetingPlanner = () => {
                                     Upcoming Conflicts
                                 </h4>
                                 <div className="planner__conflict-list">
-                                    <div className="planner__conflict-item">
-                                        <div>
-                                            <span className="planner__conflict-name">Product Sync</span>
-                                            <span className="planner__conflict-time">Today, 16:00 - 17:00</span>
+                                    {conflicts.map((c, idx) => (
+                                        <div key={idx} className="planner__conflict-item">
+                                            <div>
+                                                <span className="planner__conflict-name">{c.name}</span>
+                                                <span className="planner__conflict-time">
+                                                    {DateTime.fromISO(c.time).toRelative()}
+                                                </span>
+                                            </div>
+                                            <span className={`planner__conflict-badge planner__conflict-badge--${c.status.toLowerCase()}`}>
+                                                {c.status}
+                                            </span>
                                         </div>
-                                        <span className="planner__conflict-badge planner__conflict-badge--conflict">CONFLICT</span>
-                                    </div>
-                                    <div className="planner__conflict-item">
-                                        <div>
-                                            <span className="planner__conflict-name">Design Review</span>
-                                            <span className="planner__conflict-time">Tomorrow, 09:00 - 10:30</span>
-                                        </div>
-                                        <span className="planner__conflict-badge planner__conflict-badge--clear">CLEAR</span>
-                                    </div>
+                                    ))}
+                                    {conflicts.length === 0 && <p className="text-muted">No upcoming conflicts.</p>}
                                 </div>
                             </div>
 
@@ -384,8 +431,28 @@ const MeetingPlanner = () => {
 
                             <div className="planner__sync-intel-card">
                                 <h4 className="planner__card-title-sm">Sync Intelligence</h4>
-                                <p className="planner__intel-text">Moving this meeting 30 minutes earlier would increase overlap with your Tokyo team by 40%.</p>
-                                <button className="planner__apply-opt">Apply Optimization</button>
+                                <div className="planner__intel-content">
+                                    <p className="planner__intel-text">{syncIntelligence}</p>
+                                    {bestSlots[0]?.policyViolations?.length > 0 && (
+                                        <div className="planner__policy-warnings">
+                                            {bestSlots[0].policyViolations.map((v, i) => (
+                                                <span key={i} className="planner__policy-badge">⚠️ {v}</span>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {bestSlots[0]?.fairnessImpact > 0 && (
+                                        <div className="planner__fairness-impact">
+                                            <span className="text-purple">⚖️ Fairness Hit: +{bestSlots[0].fairnessImpact}</span>
+                                        </div>
+                                    )}
+                                </div>
+                                <button 
+                                    className="planner__apply-opt"
+                                    onClick={() => {
+                                        const target = bestSlots[0];
+                                        if (target) setSelectedSlot({ utcHour: target.hour ?? target.utcHour });
+                                    }}
+                                >Apply Optimization</button>
                             </div>
                         </div>
                     </div>

@@ -9,6 +9,10 @@ router.use(protect);
 router.get('/team', meetingController.listByOrg);
 router.post('/sync', meetingController.syncParticipants);
 router.post('/schedule', meetingController.scheduleMeeting);
+router.post('/suggestions', meetingController.getSuggestions);
+router.post('/feedback', meetingController.recordFeedback);
+router.get('/conflicts', meetingController.getConflicts);
 router.get('/', meetingController.getParticipants);
+router.get('/bootstrap', meetingController.getBootstrap);
 
 module.exports = router;

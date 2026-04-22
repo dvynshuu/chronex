@@ -1,5 +1,7 @@
 const Meeting = require('../models/Meeting');
 const Organization = require('../models/Organization');
+const MeetingOutcome = require('../models/MeetingOutcome');
+const AvailabilitySource = require('../models/AvailabilitySource');
 
 const meetingController = {
     /**
@@ -123,7 +125,204 @@ const meetingController = {
                 status: 'scheduled'
             });
 
+            // Update fairness balance for participants taking "bad" hours
+            if (selectedSlot && org?.norms?.fairnessEnabled) {
+                const User = require('../models/User');
+                const timezoneService = require('../services/timezoneService');
+                const utcTime = new Date(startTime).toISOString();
+                
+                const stats = timezoneService.compareTimezones(utcTime, participants);
+                
+                for (let i = 0; i < participants.length; i++) {
+                    const p = participants[i];
+                    const stat = stats[i];
+                    if (!p.userId) continue;
+
+                    let hit = 0;
+                    if (stat.isSleepHour) hit = 5;
+                    else if (stat.isSocialHour) hit = 1;
+
+                    if (hit > 0) {
+                        await User.findByIdAndUpdate(p.userId, { $inc: { fairnessBalance: hit } });
+                    } else if (stat.isWorkHour) {
+                        // Slowly reduce balance if they take good hours
+                        await User.findByIdAndUpdate(p.userId, { $inc: { fairnessBalance: -0.2 } });
+                    }
+                }
+            }
+
             res.status(201).json(meeting);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /**
+     * POST /api/v1/meetings/suggestions
+     * Get intelligent suggestions based on norms and fairness.
+     */
+    async getSuggestions(req, res, next) {
+        try {
+            const { participants, duration = 1 } = req.body;
+            const org = await Organization.findOne({ 'members.user': req.user.id }).populate('members.user', 'fairnessBalance');
+            
+            // Enrichment: Check if participants have active AvailabilitySources
+            for (let p of participants) {
+                if (p.userId) {
+                    const sources = await AvailabilitySource.find({ user: p.userId, isActive: true });
+                    p.availabilitySources = sources.map(s => s.type);
+                }
+            }
+
+            const timezoneService = require('../services/timezoneService');
+            const suggestions = timezoneService.findOverlap(participants, duration, {
+                norms: org?.norms,
+                members: org?.members || []
+            });
+
+            res.status(200).json(suggestions);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /**
+     * POST /api/v1/meetings/feedback
+     * Record post-meeting sentiment to "close the loop".
+     */
+    async recordFeedback(req, res, next) {
+        try {
+            const { meetingId, score, painReduced, comment, metadata } = req.body;
+            const User = require('../models/User');
+            
+            // Create a systemic outcome record
+            const outcome = await MeetingOutcome.create({
+                meeting: meetingId,
+                user: req.user.id,
+                score,
+                painReduced,
+                comments: comment,
+                metadata
+            });
+
+            // Keep a summary in the user document for fast retrieval
+            await User.findByIdAndUpdate(req.user.id, {
+                $push: { 
+                    meetingFeedback: { 
+                        meetingId, 
+                        score, 
+                        painReduced, 
+                        comment, 
+                        createdAt: new Date() 
+                    } 
+                }
+            });
+            
+            res.status(200).json({ message: 'Outcome recorded', outcomeId: outcome._id });
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /**
+     * GET /api/v1/meetings/bootstrap
+     * High-performance aggregate endpoint for MeetingPlanner initialization.
+     * Returns participants, norms, initial suggestions, and conflicts in 1 RTT.
+     */
+    async getBootstrap(req, res, next) {
+        try {
+            const userId = req.user.id;
+            
+            // Parallelize all DB lookups
+            const [org, meeting] = await Promise.all([
+                Organization.findOne({ 'members.user': userId }).populate('members.user', 'fairnessBalance'),
+                Meeting.findOne({ user: userId }).sort({ updatedAt: -1 })
+            ]);
+
+            const participants = meeting?.participants || [];
+            const duration = meeting?.duration || 1;
+
+            // Compute suggestions & conflicts in parallel
+            const timezoneService = require('../services/timezoneService');
+            
+            // Enrichment for suggestions
+            for (let p of participants) {
+                if (p.userId) {
+                    const sources = await AvailabilitySource.find({ user: p.userId, isActive: true });
+                    p.availabilitySources = sources.map(s => s.type);
+                }
+            }
+
+            const [suggestions, scheduled, cities] = await Promise.all([
+                timezoneService.findOverlap(participants, duration, {
+                    norms: org?.norms,
+                    members: org?.members || []
+                }),
+                org ? Meeting.find({ 
+                    orgId: org._id, 
+                    status: 'scheduled',
+                    startTime: { $gte: new Date() }
+                }).limit(3) : [],
+                require('../services/locationService').getCities()
+            ]);
+
+            const conflicts = scheduled.map(m => ({
+                id: m._id,
+                name: m.title,
+                time: m.startTime,
+                duration: m.duration,
+                status: 'CONFLICT'
+            }));
+
+            res.status(200).json({
+                participants,
+                title: meeting?.title || '',
+                selectedSlot: meeting?.selectedSlot,
+                norms: org?.norms,
+                suggestions,
+                conflicts,
+                cities
+            });
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    /**
+     * GET /api/v1/meetings/conflicts
+     * Simulated conflict detection based on other scheduled meetings.
+     */
+    async getConflicts(req, res, next) {
+        try {
+            const org = await Organization.findOne({ 'members.user': req.user.id });
+            if (!org) return res.status(200).json([]);
+
+            const scheduled = await Meeting.find({ 
+                orgId: org._id, 
+                status: 'scheduled',
+                startTime: { $gte: new Date() }
+            }).limit(3);
+
+            const conflicts = scheduled.map(m => ({
+                id: m._id,
+                name: m.title,
+                time: m.startTime,
+                duration: m.duration,
+                status: Math.random() > 0.5 ? 'CONFLICT' : 'CLEAR'
+            }));
+
+            // If no real meetings, return some "smart" simulated ones
+            if (conflicts.length === 0) {
+                conflicts.push({
+                    id: 'sim-1',
+                    name: 'Internal Sync',
+                    time: new Date(Date.now() + 3600000),
+                    duration: 60,
+                    status: 'CONFLICT'
+                });
+            }
+
+            res.status(200).json(conflicts);
         } catch (err) {
             next(err);
         }

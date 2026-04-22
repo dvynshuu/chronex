@@ -55,7 +55,27 @@ const userSchema = new mongoose.Schema({
         workStart: { type: Number, default: 9 },
         workEnd: { type: Number, default: 17 }
     }],
-    refreshToken: String
+    fairnessBalance: { type: Number, default: 0 }, // + for taking "bad" hours, - for "good" hours
+    meetingFeedback: [{
+        meetingId: mongoose.Schema.Types.ObjectId,
+        score: Number, // 1-5
+        painReduced: Boolean,
+        comment: String,
+        createdAt: { type: Date, default: Date.now }
+    }],
+    commitments: [{
+        title: String,
+        startTime: Date,
+        endTime: Date,
+        type: { type: String, enum: ['focus', 'meeting', 'personal'], default: 'meeting' }
+    }],
+    attentionPreferences: {
+        minDeepWorkBlock: { type: Number, default: 2 }, // hours
+        preferredMeetingWindows: [{ start: Number, end: Number }] // local hours
+    },
+    refreshToken: String,
+    onboarded: { type: Boolean, default: false },
+    calendarConnected: { type: Boolean, default: false }
 }, {
     timestamps: true
 });
@@ -71,6 +91,12 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.comparePassword = async function (candidatePassword, userPassword) {
     return await bcrypt.compare(candidatePassword, userPassword);
 };
+
+// Indexes for performance at scale
+userSchema.index({ email: 1 });
+userSchema.index({ 'profile.name': 1 });
+userSchema.index({ slug: 1 });
+userSchema.index({ 'profile.name': 'text', email: 'text', slug: 'text' });
 
 const User = mongoose.model('User', userSchema);
 

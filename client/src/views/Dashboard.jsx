@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { fetchWithAuth } from '../utils/api';
 import useAnimationClock from '../hooks/useAnimationClock';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import AddCityModal from '../components/Dashboard/AddCityModal';
 import LiveWorldMap from './WorldMapBg';
+import TeamNormsCard from '../components/Dashboard/TeamNormsCard';
 import './Dashboard.css';
 
 // Data is now fetched dynamically from the backend
@@ -37,6 +39,7 @@ const getZoneForCity = (city) => {
 };
 
 const Dashboard = () => {
+    const navigate = useNavigate();
     const liveClock = useAnimationClock(1000);
     const [scrubOffset, setScrubOffset] = useState(null);
     const [favoriteZones, setFavoriteZones] = useState([]);
@@ -128,7 +131,7 @@ const Dashboard = () => {
         return <div className="dashboard-loading">Initializing Intel...</div>;
     }
 
-    const { mapNodes = [], synchronicity = {}, regionalDistribution = [], opsPulse = [] } = overviewData;
+    const { mapNodes = [], synchronicity = {}, regionalDistribution = [], opsPulse = [], norms = null, intelligence = {} } = overviewData;
 
 
 
@@ -279,6 +282,46 @@ const Dashboard = () => {
                     })}
                 </div>
 
+                {/* ═══ Intelligence Pulse ═══ */}
+                <div className="dashboard__intelligence-row">
+                    <div className="dashboard__intelligence-card">
+                        <div className="dashboard__intel-header">
+                            <div className="dashboard__intel-title-group">
+                                <span className="dashboard__intel-icon">🧠</span>
+                                <div>
+                                    <h3 className="dashboard__intel-title">Coordination Intelligence</h3>
+                                    <p className="dashboard__intel-sub">Aha! We found optimizations in your team's graph.</p>
+                                </div>
+                            </div>
+                            <div className="dashboard__intel-summary">
+                                <span className="dashboard__intel-val">+{intelligence.recoveryPotential || 0}h</span>
+                                <span className="dashboard__intel-label">FOCUS RECOVERY</span>
+                            </div>
+                        </div>
+                        
+                        <div className="dashboard__intel-actions">
+                            {(intelligence.optimizations || []).slice(0, 2).map((opt, i) => (
+                                <div key={i} className="dashboard__intel-action-item">
+                                    <div className="dashboard__intel-action-info">
+                                        <span className="dashboard__intel-action-msg">{opt.message}</span>
+                                        <span className="dashboard__intel-action-target">Meeting: {opt.title}</span>
+                                    </div>
+                                    <button className="dashboard__intel-apply-btn">Optimize</button>
+                                </div>
+                            ))}
+                            {(!intelligence.optimizations || intelligence.optimizations.length === 0) && (
+                                <p className="dashboard__intel-empty">Your team's coordination is currently optimal. No focus clashes detected.</p>
+                            )}
+                        </div>
+                        
+                        <div className="dashboard__intel-footer">
+                            <button className="dashboard__intel-main-btn" onClick={() => navigate('/meetings')}>
+                                Fix My Meetings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 {/* ═══ Bottom Row: Regional Distribution + Ops Pulse ═══ */}
                 <div className="dashboard__bottom-row">
                     {/* Regional Distribution */}
@@ -342,6 +385,11 @@ const Dashboard = () => {
                                 </motion.div>
                             ))}
                         </div>
+                    </div>
+
+                    {/* Team Norms & Intelligence */}
+                    <div className="dashboard__norms">
+                        <TeamNormsCard norms={norms} syncSentiment={synchronicity.syncSentiment} cpi={synchronicity.cpi} />
                     </div>
                 </div>
             </div>

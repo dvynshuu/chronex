@@ -4,14 +4,17 @@ const logger = require('../utils/logger');
 
 class AuthService {
     generateTokens(userId) {
+        if (!process.env.JWT_SECRET) {
+            throw new Error('JWT_SECRET is not defined in environment variables');
+        }
         const accessToken = jwt.sign(
             { id: userId },
-            process.env.JWT_SECRET || 'chronex-dev-secret-key',
-            { expiresIn: '7d' }
+            process.env.JWT_SECRET,
+            { expiresIn: '15m' }
         );
         const refreshToken = jwt.sign(
             { id: userId },
-            process.env.JWT_REFRESH_SECRET || 'chronex-dev-refresh-secret-key',
+            process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET,
             { expiresIn: '30d' }
         );
         return { accessToken, refreshToken };
@@ -105,7 +108,8 @@ class AuthService {
     }
 
     async refresh(token) {
-        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET || 'chronex-dev-refresh-secret-key');
+        const secret = process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET;
+        const decoded = jwt.verify(token, secret);
         const user = await userRepository.findByRefreshToken(token);
 
         if (!user || user._id.toString() !== decoded.id) {
