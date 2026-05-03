@@ -12,8 +12,19 @@ const PROD_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5001';
 const API_BASE = `${PROD_API_URL}/api/v1/auth`;
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    // Attempt to load initial user synchronously to avoid loading screen flash
+    const getInitialUser = () => {
+        try {
+            const storedUser = localStorage.getItem('chronex_user');
+            return storedUser ? JSON.parse(storedUser) : null;
+        } catch {
+            return null;
+        }
+    };
+
+    const initialUser = getInitialUser();
+    const [user, setUser] = useState(initialUser);
+    const [loading, setLoading] = useState(!initialUser);
 
     // Restore session on mount
     useEffect(() => {
@@ -33,16 +44,21 @@ export const AuthProvider = ({ children }) => {
                 if (res.ok) {
                     const data = await res.json();
                     setUser(data.user);
+                    localStorage.setItem('chronex_user', JSON.stringify(data.user));
                 } else if (res.status === 401) {
                     // Token expired or invalid
                     console.warn('Session restoration failed (401). Clearing stale tokens.');
                     localStorage.removeItem('chronex_token');
                     localStorage.removeItem('chronex_refresh_token');
+                    localStorage.removeItem('chronex_user');
+                    setUser(null);
                 }
             } catch (err) {
                 console.error('Session restoration error:', err);
                 localStorage.removeItem('chronex_token');
                 localStorage.removeItem('chronex_refresh_token');
+                localStorage.removeItem('chronex_user');
+                setUser(null);
             } finally {
                 setLoading(false);
             }
@@ -64,6 +80,7 @@ export const AuthProvider = ({ children }) => {
         }
         localStorage.setItem('chronex_token', data.accessToken);
         localStorage.setItem('chronex_refresh_token', data.refreshToken);
+        localStorage.setItem('chronex_user', JSON.stringify(data.user));
         setUser(data.user);
         return data;
     }, []);
@@ -80,6 +97,7 @@ export const AuthProvider = ({ children }) => {
         }
         localStorage.setItem('chronex_token', data.accessToken);
         localStorage.setItem('chronex_refresh_token', data.refreshToken);
+        localStorage.setItem('chronex_user', JSON.stringify(data.user));
         setUser(data.user);
         return data;
     }, []);
@@ -87,6 +105,7 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         localStorage.removeItem('chronex_token');
         localStorage.removeItem('chronex_refresh_token');
+        localStorage.removeItem('chronex_user');
         setUser(null);
     }, []);
 

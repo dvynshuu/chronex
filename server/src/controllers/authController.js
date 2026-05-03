@@ -24,7 +24,8 @@ class AuthController {
 
     async getMe(req, res, next) {
         try {
-            const result = await authService.getMe(req.user._id || req.user.id);
+            // Pass the full user object (already fetched by protect middleware)
+            const result = await authService.getMe(req.user);
             res.status(200).json(result);
         } catch (err) {
             next(err);

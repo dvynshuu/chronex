@@ -97,8 +97,14 @@ class AuthService {
         return { user: this._formatUser(user), accessToken, refreshToken };
     }
 
-    async getMe(userId) {
-        const user = await userRepository.findById(userId);
+    async getMe(userIdOrUser) {
+        let user;
+        if (userIdOrUser && typeof userIdOrUser === 'object' && userIdOrUser._id) {
+            user = userIdOrUser;
+        } else {
+            user = await userRepository.findById(userIdOrUser);
+        }
+
         if (!user) {
             const error = new Error('User not found');
             error.status = 404;
