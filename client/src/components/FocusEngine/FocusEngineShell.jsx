@@ -1,5 +1,4 @@
 import React from 'react';
-import { FocusProvider } from './FocusContext';
 import PomodoroEngine from './PomodoroEngine';
 import TaskManager from './TaskManager';
 import GlobalAwareness from './GlobalAwareness';

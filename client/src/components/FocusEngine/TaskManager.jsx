@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { useFocusContext } from './FocusContext';
+import { useFocusStore } from '../../store/useStore';
 
 const TaskManager = () => {
-    const { state, dispatch } = useFocusContext();
-    const { tasks, timer } = state;
+    const { 
+        tasks, 
+        timer, 
+        addTask, 
+        updateTask, 
+        deleteTask, 
+        setActiveTask,
+        reorderTasks
+    } = useFocusStore();
 
     const [draft, setDraft] = useState({
         id: null,
@@ -13,6 +20,24 @@ const TaskManager = () => {
     });
 
     const [dragState, setDragState] = useState({ sourceIndex: null });
+
+    const onDragStart = (index, e) => {
+        setDragState({ sourceIndex: index });
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const onDragOver = (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    };
+
+    const onDrop = (destIndex) => {
+        const { sourceIndex } = dragState;
+        if (sourceIndex !== null && sourceIndex !== destIndex) {
+            reorderTasks(sourceIndex, destIndex);
+        }
+        setDragState({ sourceIndex: null });
+    };
 
     const resetDraft = () => {
         setDraft({
@@ -37,80 +62,39 @@ const TaskManager = () => {
         if (!draft.title.trim()) return;
 
         if (draft.id) {
-            dispatch({
-                type: 'UPDATE_TASK',
-                payload: {
-                    id: draft.id,
-                    updates: {
-                        title: draft.title.trim(),
-                        description: draft.description.trim() || undefined,
-                        estimatedPomodoros: draft.estimatedPomodoros || 1
-                    }
-                }
+            updateTask(draft.id, {
+                title: draft.title.trim(),
+                description: draft.description.trim() || undefined,
+                estimatedPomodoros: draft.estimatedPomodoros || 1
             });
         } else {
             const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-            dispatch({
-                type: 'ADD_TASK',
-                payload: {
-                    id,
-                    title: draft.title.trim(),
-                    description: draft.description.trim() || undefined,
-                    estimatedPomodoros: draft.estimatedPomodoros || 1,
-                    completedPomodoros: 0,
-                    status: 'active'
-                }
+            addTask({
+                id,
+                title: draft.title.trim(),
+                description: draft.description.trim() || undefined,
+                estimatedPomodoros: draft.estimatedPomodoros || 1,
+                completedPomodoros: 0,
+                status: 'active'
             });
         }
 
         resetDraft();
     };
 
-    const handleDelete = (id) => {
-        dispatch({ type: 'DELETE_TASK', payload: { id } });
-    };
+    const handleDelete = (id) => deleteTask(id);
 
     const handleToggleDone = (task) => {
-        dispatch({
-            type: 'UPDATE_TASK',
-            payload: {
-                id: task.id,
-                updates: {
-                    status: task.status === 'done' ? 'active' : 'done'
-                }
-            }
+        updateTask(task.id, {
+            status: task.status === 'done' ? 'active' : 'done'
         });
     };
 
-    const handleSetActive = (task) => {
-        dispatch({ type: 'SET_ACTIVE_TASK', payload: { taskId: task.id } });
-    };
+    const handleSetActive = (task) => setActiveTask(task.id);
+    const handleClearActive = () => setActiveTask(null);
 
-    const handleClearActive = () => {
-        dispatch({ type: 'SET_ACTIVE_TASK', payload: { taskId: null } });
-    };
-
-    const onDragStart = (index, e) => {
-        setDragState({ sourceIndex: index });
-        e.dataTransfer.effectAllowed = 'move';
-        e.dataTransfer.setData('text/plain', String(index));
-    };
-
-    const onDragOver = (e) => {
-        e.preventDefault();
-    };
-
-    const onDrop = (index) => {
-        if (dragState.sourceIndex == null) return;
-        dispatch({
-            type: 'REORDER_TASKS',
-            payload: {
-                sourceIndex: dragState.sourceIndex,
-                destIndex: index
-            }
-        });
-        setDragState({ sourceIndex: null });
-    };
+    // Reordering tasks can be handled in a simplified way or kept for now
+    // Since I didn't implement REORDER_TASKS in the store yet, I'll add it.
 
     const activeTaskId = timer.activeTaskId;
 

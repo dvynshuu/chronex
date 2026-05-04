@@ -19,7 +19,8 @@ const userController = {
                 workSchedule: user.workSchedule,
                 favorites: user.favorites,
                 slug: user.slug,
-                publicProfile: user.publicProfile
+                publicProfile: user.publicProfile,
+                baseTimezone: user.baseTimezone
             });
         } catch (err) {
             next(err);
@@ -33,7 +34,7 @@ const userController = {
     async updateProfile(req, res, next) {
         try {
             const updates = {};
-            const allowedFields = ['profile', 'workSchedule', 'slug', 'publicProfile', 'statusOverride'];
+            const allowedFields = ['profile', 'workSchedule', 'slug', 'publicProfile', 'statusOverride', 'baseTimezone'];
 
             allowedFields.forEach(field => {
                 if (req.body[field] !== undefined) {
@@ -59,7 +60,16 @@ const userController = {
                 throw err; // Let the global error handler catch other errors
             }
 
-            res.status(200).json(user);
+            res.status(200).json({
+                id: user._id,
+                email: user.email,
+                profile: user.profile,
+                workSchedule: user.workSchedule,
+                favorites: user.favorites,
+                slug: user.slug,
+                publicProfile: user.publicProfile,
+                baseTimezone: user.baseTimezone
+            });
         } catch (err) {
             next(err);
         }
@@ -154,7 +164,7 @@ const userController = {
                 id: u._id,
                 name: u.profile?.name || u.slug || u.email,
                 email: u.email,
-                timezone: u.baseTimezone,
+                baseTimezone: u.baseTimezone,
                 workSchedule: u.workSchedule,
                 slug: u.slug
             }));

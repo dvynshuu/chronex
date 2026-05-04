@@ -104,6 +104,8 @@ const meetingController = {
             });
 
             // Emit update to all observers of this user's active meeting
+            // Only emit if there's a reason to (though findOneAndUpdate doesn't make it easy to tell if changed,
+            // the client-side check will handle the loop, this is just for optimization)
             socketService.emitToMeeting(req.user.id, 'meeting:updated', {
                 participants: meeting.participants,
                 selectedSlot: meeting.selectedSlot,
@@ -136,29 +138,15 @@ const meetingController = {
                 status: 'scheduled'
             });
 
-            // Update fairness balance for participants taking "bad" hours
-            if (selectedSlot && org?.norms?.fairnessEnabled) {
-                const utcTime = new Date(startTime).toISOString();
-                
-                const stats = timezoneService.compareTimezones(utcTime, participants);
-                
-                for (let i = 0; i < participants.length; i++) {
-                    const p = participants[i];
-                    const stat = stats[i];
-                    if (!p.userId) continue;
-
-                    let hit = 0;
-                    if (stat.isSleepHour) hit = 5;
-                    else if (stat.isSocialHour) hit = 1;
-
-                    if (hit > 0) {
-                        await User.findByIdAndUpdate(p.userId, { $inc: { fairnessBalance: hit } });
-                    } else if (stat.isWorkHour) {
-                        // Slowly reduce balance if they take good hours
-                        await User.findByIdAndUpdate(p.userId, { $inc: { fairnessBalance: -0.2 } });
-                    }
-                }
-            }
+            // Offload heavy processing (fairness engine, notifications) to event queue
+            const eventService = require('../services/eventService');
+            await eventService.dispatchMeetingEvent('MEETING_SCHEDULED', {
+                meetingId: meeting._id,
+                participants,
+                startTime: meeting.startTime,
+                orgId,
+                title: meeting.title
+            });
 
             res.status(201).json(meeting);
         } catch (err) {

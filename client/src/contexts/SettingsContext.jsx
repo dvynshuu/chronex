@@ -1,46 +1,26 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React from 'react';
+import { useSettingsStore } from '../store/useStore';
 
-const SettingsContext = createContext();
+/**
+ * LEGACY BRIDGE: This file allows components still using the legacy useSettings hook
+ * to continue functioning by bridging to the new Zustand useSettingsStore.
+ * 
+ * TODO: Completely remove this file and update all imports to use useSettingsStore directly.
+ */
 
 export const SettingsProvider = ({ children }) => {
-    // Initialize from localStorage or defaults
-    const [timeFormat, setTimeFormat] = useState(() => {
-        return localStorage.getItem('chronex-time-format') || '12h';
-    });
-    
-    const [mapProjection, setMapProjection] = useState(() => {
-        return localStorage.getItem('chronex-map-projection') || 'mercator';
-    });
-
-    // Persist changes to localStorage
-    useEffect(() => {
-        localStorage.setItem('chronex-time-format', timeFormat);
-    }, [timeFormat]);
-
-    useEffect(() => {
-        localStorage.setItem('chronex-map-projection', mapProjection);
-    }, [mapProjection]);
-
-    const value = {
-        timeFormat,
-        setTimeFormat,
-        mapProjection,
-        setMapProjection
-    };
-
-    return (
-        <SettingsContext.Provider value={value}>
-            {children}
-        </SettingsContext.Provider>
-    );
+    return <>{children}</>;
 };
 
 export const useSettings = () => {
-    const context = useContext(SettingsContext);
-    if (!context) {
-        throw new Error('useSettings must be used within a SettingsProvider');
-    }
-    return context;
+    const settings = useSettingsStore();
+    return settings;
+};
+
+// Default export for compatibility
+const SettingsContext = {
+    Provider: SettingsProvider,
+    Consumer: ({ children }) => children(useSettingsStore())
 };
 
 export default SettingsContext;

@@ -4,6 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 
 import useAnimationClock from '../hooks/useAnimationClock';
 import { DateTime } from 'luxon';
 import { useNavigate } from 'react-router-dom';
+import { useSettingsStore } from '../store/useStore';
 import { fetchWithAuth } from '../utils/api';
 import { fmtHr } from '../utils/timeUtils';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
@@ -11,7 +12,8 @@ import './TeamDashboard.css';
 
 // Data is now fetched dynamically from the backend
 const TeamDashboard = () => {
-    const liveClock = useAnimationClock(10000);
+    const { timezone: userTimezone } = useSettingsStore();
+    const liveClock = useAnimationClock(10000, userTimezone || 'local');
     const [org, setOrg] = React.useState(null);
     const [meetings, setMeetings] = React.useState([]);
     const [teamStats, setTeamStats] = React.useState({ weeklyEnergy: [], temporalPulse: [] });

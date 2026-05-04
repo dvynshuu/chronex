@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useQueryClient } from '@tanstack/react-query';
 import { fetchWithAuth } from '../utils/api';
 import { useAuth } from '../contexts/AuthContext';
+import { useSettingsStore } from '../store/useStore';
+import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
+import Toast from '../components/Toast/Toast';
 import './Settings.css';
 
 const Settings = () => {
@@ -11,8 +15,11 @@ const Settings = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
+    const [toast, setToast] = useState(null);
     const [activeTab, setActiveTab] = useState(location.state?.tab || 'profile');
-    const { logout } = useAuth();
+    const { logout, updateUser } = useAuth();
+    const setStoreTimezone = useSettingsStore(state => state.setTimezone);
+    const queryClient = useQueryClient();
 
     useEffect(() => {
         if (location.state?.tab) {
@@ -45,13 +52,35 @@ const Settings = () => {
             });
             const data = await res.json();
             if (res.ok) {
-                alert('Settings saved successfully!');
+                setToast({ message: 'Settings saved successfully!', type: 'success' });
+                
+                // Update local state and invalid queries
+                setUserData(data);
+                queryClient.invalidateQueries({ queryKey: ['me'] });
+                queryClient.invalidateQueries({ queryKey: ['meeting-bootstrap'] });
+                queryClient.invalidateQueries({ queryKey: ['team'] });
+                
+                // Format for AuthContext consistency
+                const formattedUser = {
+                    ...data,
+                    name: data.profile?.name || '',
+                    avatar: data.profile?.avatar || '',
+                    preferences: data.profile?.preferences || {},
+                    baseTimezone: data.baseTimezone
+                };
+                
+                updateUser(formattedUser);
+                if (data.baseTimezone) {
+                    setStoreTimezone(data.baseTimezone);
+                }
             } else {
-                setError(data.message || data.error?.message || 'Failed to save settings');
+                const errMsg = data.message || data.error?.message || 'Failed to save settings';
+                setError(errMsg);
+                setToast({ message: errMsg, type: 'error' });
             }
         } catch (err) {
             console.error('Save failed:', err);
-            alert('Failed to save settings.');
+            setToast({ message: 'Connection error. Please try again.', type: 'error' });
         } finally {
             setSaving(false);
         }
@@ -61,6 +90,23 @@ const Settings = () => {
         setUserData(prev => ({
             ...prev,
             workSchedule: { ...prev.workSchedule, [field]: value }
+        }));
+    };
+
+    const updatePreference = (field, value) => {
+        setUserData(prev => ({
+            ...prev,
+            profile: {
+                ...prev.profile,
+                preferences: { ...prev.profile?.preferences, [field]: value }
+            }
+        }));
+    };
+
+    const updatePublicProfile = (field, value) => {
+        setUserData(prev => ({
+            ...prev,
+            publicProfile: { ...prev.publicProfile, [field]: value }
         }));
     };
 
@@ -83,22 +129,25 @@ const Settings = () => {
 
     return (
         <div className="settings-page">
-            <header className="settings-header">
-                <motion.h1 
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                >
-                    Settings
-                </motion.h1>
-                <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                >
-                    Manage your identity, availability, and preferences.
-                </motion.p>
-            </header>
+            <DashboardHeader title="Settings" />
+            
+            <div className="settings-page__content">
+                <header className="settings-header">
+                    <motion.h1 
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                    >
+                        Settings
+                    </motion.h1>
+                    <motion.p
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
+                        Manage your identity, availability, and preferences.
+                    </motion.p>
+                </header>
 
             <div className="settings-grid">
                 <aside className="settings-nav">
@@ -160,6 +209,50 @@ const Settings = () => {
                                                 />
                                             </div>
                                             <p className="settings-field-hint">Your public booking page will be available at this URL.</p>
+                                        </div>
+                                        <div className="settings-field">
+                                            <label>Public Visibility</label>
+                                            <div className="settings-toggle-group">
+                                                <label className="settings-toggle">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={userData.publicProfile?.enabled || false}
+                                                        onChange={e => updatePublicProfile('enabled', e.target.checked)}
+                                                    />
+                                                    <span className="toggle-slider"></span>
+                                                    <span className="toggle-label">Enable Public Profile</span>
+                                                </label>
+                                                <label className="settings-toggle">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        checked={userData.publicProfile?.showStatus || false}
+                                                        onChange={e => updatePublicProfile('showStatus', e.target.checked)}
+                                                    />
+                                                    <span className="toggle-slider"></span>
+                                                    <span className="toggle-label">Show My Current Status</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div className="settings-field">
+                                            <label>Base Timezone</label>
+                                            <div className="settings-timezone-wrapper">
+                                                <input
+                                                    type="text"
+                                                    className="settings-input"
+                                                    value={userData.baseTimezone || 'UTC'}
+                                                    readOnly
+                                                />
+                                                <button 
+                                                    className="settings-btn-inline"
+                                                    onClick={() => setUserData({
+                                                        ...userData,
+                                                        baseTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                                                    })}
+                                                >
+                                                    📍 Detect My Location
+                                                </button>
+                                            </div>
+                                            <p className="settings-field-hint">Used as the anchor for all coordination analysis.</p>
                                         </div>
                                     </div>
                                 </section>
@@ -227,7 +320,11 @@ const Settings = () => {
                                     <div className="settings-group">
                                         <div className="settings-field">
                                             <label>Theme</label>
-                                            <select className="settings-input">
+                                            <select 
+                                                className="settings-input"
+                                                value={userData.profile?.preferences?.theme || 'dark'}
+                                                onChange={e => updatePreference('theme', e.target.value)}
+                                            >
                                                 <option value="dark">Premium Dark (Recommended)</option>
                                                 <option value="light">Solar Light</option>
                                                 <option value="system">System Default</option>
@@ -247,15 +344,33 @@ const Settings = () => {
 
                     <footer className="settings-footer">
                         <button
-                            className="save-button"
+                            className={`save-button ${saving ? 'save-button--loading' : ''}`}
                             onClick={handleSave}
                             disabled={saving}
                         >
-                            {saving ? 'Saving Changes...' : 'Save All Changes'}
+                            <span className="save-button-content">
+                                {saving ? (
+                                    <>
+                                        <span className="save-spinner"></span>
+                                        Saving Changes...
+                                    </>
+                                ) : 'Save All Changes'}
+                            </span>
                         </button>
                     </footer>
                 </main>
             </div>
+            </div>
+
+            <AnimatePresence>
+                {toast && (
+                    <Toast 
+                        message={toast.message} 
+                        type={toast.type} 
+                        onClose={() => setToast(null)} 
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 };

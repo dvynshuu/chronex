@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useFocusContext } from './FocusContext';
+import { useFocusStore } from '../../store/useStore';
 
 const cities = [
     { id: 'sf', label: 'San Francisco', timeZone: 'America/Los_Angeles', workStartHour: 9, workEndHour: 17 },
@@ -22,8 +22,7 @@ const getHourInZone = (timeZone) => {
 };
 
 const GlobalAwareness = () => {
-    const { state } = useFocusContext();
-    const { timer } = state;
+    const { timer } = useFocusStore();
 
     const enriched = useMemo(() => {
         return cities.map((city) => {

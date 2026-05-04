@@ -1,5 +1,5 @@
 import React, { memo, useState, useMemo } from 'react';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettingsStore } from '../store/useStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ComposableMap,
@@ -64,7 +64,7 @@ const GeoPath = memo(({ geo }) => (
 
 /* ── Main component ────────────────────────────────────────────────── */
 function LiveWorldMap({ nodes = [], selectedId, onSelect, getNodeInfo, searchTerm = '' }) {
-  const { mapProjection } = useSettings();
+  const { mapProjection } = useSettingsStore();
   
   const projectionMap = {
     mercator: 'geoMercator',

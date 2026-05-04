@@ -1,12 +1,15 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSearchParams } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSettingsStore } from '../store/useStore';
+import api from '../services/api';
 import { DateTime } from 'luxon';
-import { fetchWithAuth } from '../utils/api';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import { computeOverlapData } from '../hooks/useAvailability';
 import { fmtHr } from '../utils/timeUtils';
 import { generateICS, downloadICS } from '../utils/icsGenerator';
+import { fetchWithAuth } from '../utils/api';
 import { useSocket } from '../contexts/SocketContext';
 import './MeetingPlanner.css';
 
@@ -14,13 +17,16 @@ import './MeetingPlanner.css';
 
 const MeetingPlanner = () => {
     const { socket, joinMeeting } = useSocket();
-    const [participants, setParticipants] = useState([]);
-    const [team, setTeam] = useState([]);
-    const [cityDatabase, setCityDatabase] = useState([]);
+    const queryClient = useQueryClient();
+    const { theme, timezone: userTimezone } = useSettingsStore();
+    
     const [searchParams, setSearchParams] = useSearchParams();
-    const [userIdToInvite, setUserIdToInvite] = useState(searchParams.get('invite'));
-    const [loading, setLoading] = useState(true);
-
+    const [participants, setParticipants] = useState([]);
+    const [selectedSlot, setSelectedSlot] = useState(null);
+    const [meetingTitle, setMeetingTitle] = useState('Global Q3 Planning');
+    const [meetingDuration, setMeetingDuration] = useState(45);
+    const [timeFormat, setTimeFormat] = useState('24H');
+    
     const [newName, setNewName] = useState('');
     const [newZone, setNewZone] = useState('');
     const [searchZone, setSearchZone] = useState('');
@@ -30,81 +36,83 @@ const MeetingPlanner = () => {
     const [newWorkEnd, setNewWorkEnd] = useState(17);
     const [isSearching, setIsSearching] = useState(false);
     const [isSearchingUser, setIsSearchingUser] = useState(false);
-    const [currentUser, setCurrentUser] = useState(null);
-    const [selectedSlot, setSelectedSlot] = useState(null);
-    const [meetingTitle, setMeetingTitle] = useState('Global Q3 Planning');
-    const [meetingDuration, setMeetingDuration] = useState(45);
-    const [timeFormat, setTimeFormat] = useState('24H');
-    const [sendingStatus, setSendingStatus] = useState('idle');
     const [conflicts, setConflicts] = useState([]);
     const [intelligentSuggestions, setIntelligentSuggestions] = useState([]);
-    const [isSuggesting, setIsSuggesting] = useState(false);
+    const [sendingStatus, setSendingStatus] = useState('idle');
+
+    // 1. Server State: Bootstrap Data
+    const { data: bootstrapData, isLoading: isLoadingBootstrap } = useQuery({
+        queryKey: ['meeting-bootstrap'],
+        queryFn: async () => {
+            const { data } = await api.get('/v1/meetings/bootstrap');
+            return data;
+        }
+    });
+
+    const { data: currentUser } = useQuery({
+        queryKey: ['me'],
+        queryFn: async () => {
+            const { data } = await api.get('/v1/users/me');
+            return data;
+        }
+    });
 
     useEffect(() => {
-        const bootstrap = async () => {
-            try {
-                const res = await fetchWithAuth('/api/v1/meetings/bootstrap');
-                if (res.ok) {
-                    const data = await res.json();
-                    setParticipants(data.participants || []);
-                    setSelectedSlot(data.selectedSlot || null);
-                    setConflicts(data.conflicts || []);
-                    setCityDatabase(data.cities || []);
-                    setMeetingTitle(data.title || 'Global Q3 Planning');
-                    setIntelligentSuggestions(data.suggestions || []);
-                    
-                    // Fetch user info in parallel if not in bootstrap
-                    const meRes = await fetchWithAuth('/api/v1/users/me');
-                    const meData = await meRes.json();
-                    setCurrentUser(meData);
+        if (currentUser?.id && joinMeeting) {
+            joinMeeting(currentUser.id);
+        }
+    }, [currentUser, joinMeeting]);
 
-                    const tRes = await fetchWithAuth('/api/v1/orgs/me');
-                    const tData = await tRes.json();
-                    setTeam(tData.members || []);
+    // 3. Server State: Team Members
+    const { data: teamMembers } = useQuery({
+        queryKey: ['team'],
+        queryFn: async () => {
+            const { data } = await api.get('/v1/orgs/me');
+            return data.members || [];
+        }
+    });
 
-                    // Handle invite link
-                    if (userIdToInvite && tData.members) {
-                        const memberToInvite = tData.members.find(m => m.id === userIdToInvite);
-                        if (memberToInvite) {
-                            addParticipant({
-                                name: memberToInvite.name,
-                                zone: memberToInvite.timezone || 'UTC',
-                                workStart: memberToInvite.workSchedule?.workStart || 9,
-                                workEnd: memberToInvite.workSchedule?.workEnd || 17
-                            });
-                            setSearchParams({});
-                        }
-                    }
+    // Effect to sync bootstrap data to local interactive state
+    useEffect(() => {
+        if (bootstrapData) {
+            setParticipants(bootstrapData.participants || []);
+            setSelectedSlot(bootstrapData.selectedSlot || null);
+            setConflicts(bootstrapData.conflicts || []);
+            setMeetingTitle(bootstrapData.title || 'Global Q3 Planning');
+            setIntelligentSuggestions(bootstrapData.suggestions || []);
+        }
+    }, [bootstrapData]);
 
-                    // Join real-time room for this meeting session
-                    // We use the user's ID as the room ID since the backend uses req.user.id for 'active' sync
-                    joinMeeting(meData.id);
-                }
-            } catch (err) {
-                console.error('Bootstrap failed:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        bootstrap();
-    }, []);
+    const cityDatabase = bootstrapData?.cities || [];
+    const team = teamMembers || [];
+    const loading = isLoadingBootstrap;
+
+    const handleMeetingUpdate = useCallback((updatedMeeting) => {
+        if (updatedMeeting.participants) {
+            setParticipants(prev => {
+                const isSame = JSON.stringify(prev) === JSON.stringify(updatedMeeting.participants);
+                return isSame ? prev : updatedMeeting.participants;
+            });
+        }
+        if (updatedMeeting.selectedSlot) {
+            setSelectedSlot(prev => {
+                const isSame = JSON.stringify(prev) === JSON.stringify(updatedMeeting.selectedSlot);
+                return isSame ? prev : updatedMeeting.selectedSlot;
+            });
+        }
+        if (updatedMeeting.title) {
+            setMeetingTitle(updatedMeeting.title);
+        }
+    }, [setParticipants, setSelectedSlot, setMeetingTitle]);
 
     useEffect(() => {
         if (!socket) return;
-
-        const handleMeetingUpdate = (data) => {
-            console.log('[SOCKET] Meeting update received:', data);
-            if (data.participants) setParticipants(data.participants);
-            if (data.selectedSlot !== undefined) setSelectedSlot(data.selectedSlot);
-            if (data.title) setMeetingTitle(data.title);
-        };
-
         socket.on('meeting:updated', handleMeetingUpdate);
 
         return () => {
             socket.off('meeting:updated', handleMeetingUpdate);
         };
-    }, [socket]);
+    }, [socket, handleMeetingUpdate]);
 
     useEffect(() => {
         if (!searchUser || searchUser.length < 2) {
@@ -153,43 +161,35 @@ const MeetingPlanner = () => {
     const bestSlots = useMemo(() => {
         if (intelligentSuggestions.length > 0) return intelligentSuggestions;
         
-        const currentHour = DateTime.local().hour;
         return overlapData
-            .filter(d => d.utcHour > currentHour && (d.status === 'perfect' || d.status === 'good'))
+            .filter(d => d.status === 'perfect' || d.status === 'good')
             .sort((a, b) => b.score - a.score)
             .slice(0, 3);
     }, [overlapData, intelligentSuggestions]);
 
+    // 4. Server State: Intelligent Suggestions (Query with debouncing)
+    const { data: suggestionsData, isFetching: isFetchingSuggestions } = useQuery({
+        queryKey: ['suggestions', participants.map(p => p.id || p.name).join(',')],
+        queryFn: async () => {
+            const { data } = await api.post('/v1/meetings/suggestions', {
+                participants: participants.map(p => ({
+                    zone: p.zone,
+                    userId: p.id,
+                    workStart: p.workStart,
+                    workEnd: p.workEnd
+                }))
+            });
+            return data;
+        },
+        enabled: participants.length >= 2,
+        staleTime: 2000 // Cache for 2 seconds to allow debouncing in effect
+    });
+
     useEffect(() => {
-        if (participants.length < 2) {
-            setIntelligentSuggestions([]);
-            return;
+        if (suggestionsData) {
+            setIntelligentSuggestions(suggestionsData);
         }
-        const fetchSuggestions = async () => {
-            setIsSuggesting(true);
-            try {
-                const res = await fetchWithAuth('/api/v1/meetings/suggestions', {
-                    method: 'POST',
-                    body: JSON.stringify({ participants: participants.map(p => ({
-                        zone: p.zone,
-                        userId: p.id, // Ensure we pass userId for fairness
-                        workStart: p.workStart,
-                        workEnd: p.workEnd
-                    })) })
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setIntelligentSuggestions(data);
-                }
-            } catch (err) {
-                console.error('Failed to fetch suggestions:', err);
-            } finally {
-                setIsSuggesting(false);
-            }
-        };
-        const timer = setTimeout(fetchSuggestions, 1000);
-        return () => clearTimeout(timer);
-    }, [participants]);
+    }, [suggestionsData]);
 
     const filteredZones = useMemo(() => {
         if (!searchZone) return [];
@@ -220,10 +220,10 @@ const MeetingPlanner = () => {
     };
 
     const addMe = () => {
-        if (currentUser && !participants.some(p => p.name === currentUser.profile?.name)) {
+        if (currentUser && !participants.some(p => p.name === (currentUser.profile?.name || currentUser.name))) {
             addParticipant({
-                name: currentUser.profile?.name || currentUser.email,
-                zone: currentUser.baseTimezone || 'UTC',
+                name: currentUser.profile?.name || currentUser.name || currentUser.email,
+                zone: userTimezone || currentUser.baseTimezone || 'UTC',
                 workStart: currentUser.workSchedule?.workStart || 9,
                 workEnd: currentUser.workSchedule?.workEnd || 17
             });
@@ -231,7 +231,28 @@ const MeetingPlanner = () => {
     };
 
     // Suggested start time (best slot or 14:30)
-    const suggestedStart = bestSlots.length > 0 ? fmtHr(bestSlots[0].utcHour) : '14:30';
+    const suggestedStart = useMemo(() => {
+        if (bestSlots.length === 0) return '14:30 (UTC)';
+        
+        const best = bestSlots[0];
+        let dt;
+        if (best.utcTime) {
+            dt = DateTime.fromISO(best.utcTime);
+        } else {
+            const utcHour = best.hour ?? best.utcHour;
+            dt = DateTime.utc().set({ hour: utcHour, minute: 0, second: 0 });
+            if (dt < DateTime.utc()) dt = dt.plus({ days: 1 });
+        }
+        
+        const localDt = dt.setZone(userTimezone || 'local');
+        const nowLocal = DateTime.local().setZone(userTimezone || 'local');
+        const isTomorrow = localDt.hasSame(nowLocal.plus({ days: 1 }), 'day');
+        
+        const timeStr = localDt.toFormat('h:mm a');
+        const zoneStr = localDt.offsetNameShort || localDt.zoneName || '';
+        
+        return `${timeStr} ${zoneStr}${isTomorrow ? ' (Tmrw)' : ''}`.trim();
+    }, [bestSlots, userTimezone]);
 
     // Cohesion score
     const cohesionScore = useMemo(() => {
@@ -258,7 +279,36 @@ const MeetingPlanner = () => {
         return "Current selection is highly optimized for this team distribution.";
     }, [participants, bestSlots, overlapData]);
 
-    const handleSendInvites = async () => {
+    // 5. Mutation: Schedule Meeting
+    const scheduleMutation = useMutation({
+        mutationFn: async (payload) => {
+            const { data } = await api.post('/v1/meetings/schedule', payload);
+            return data;
+        },
+        onSuccess: (meeting) => {
+            setSendingStatus('sent');
+            // Generate and download ICS
+            const icsContent = generateICS({
+                title: meeting.title,
+                description: `Automated Synchronization Meeting\nParticipants: ${participants.map(p => p.name).join(', ')}`,
+                start: new Date(meeting.startTime),
+                duration: meeting.duration
+            });
+            downloadICS(meeting.title, icsContent);
+            
+            // Invalidate bootstrap to refresh state
+            queryClient.invalidateQueries({ queryKey: ['meeting-bootstrap'] });
+            
+            setTimeout(() => setSendingStatus('idle'), 3000);
+        },
+        onError: (err) => {
+            setSendingStatus('idle');
+            console.error('Scheduling failed:', err);
+            alert('Failed to schedule meeting. Please try again.');
+        }
+    });
+
+    const handleSendInvites = () => {
         if (participants.length === 0) {
             alert("Please add participants before sending invites.");
             return;
@@ -266,60 +316,32 @@ const MeetingPlanner = () => {
 
         setSendingStatus('sending');
 
-        try {
-            // Determine start hour (UTC)
-            let startHour;
-            if (selectedSlot) {
-                startHour = selectedSlot.utcHour;
-            } else if (bestSlots.length > 0) {
-                startHour = bestSlots[0].utcHour;
+        // Determine start time
+        let adjustedStart;
+        if (selectedSlot) {
+            const startTime = DateTime.utc().set({ hour: selectedSlot.utcHour, minute: 0, second: 0 });
+            adjustedStart = startTime < DateTime.utc() ? startTime.plus({ days: 1 }) : startTime;
+        } else if (bestSlots[0]) {
+            const best = bestSlots[0];
+            if (best.utcTime) {
+                adjustedStart = DateTime.fromISO(best.utcTime);
             } else {
-                startHour = 14; // Fallback to 14:00 (2 PM)
+                const utcHour = best.hour ?? best.utcHour;
+                const startTime = DateTime.utc().set({ hour: parseInt(utcHour), minute: 0, second: 0 });
+                adjustedStart = startTime < DateTime.utc() ? startTime.plus({ days: 1 }) : startTime;
             }
-
-            const startTime = DateTime.utc().set({ 
-                hour: parseInt(startHour), 
-                minute: 0, 
-                second: 0 
-            });
-
-            // Adjust to tomorrow if time has passed
-            const adjustedStart = startTime < DateTime.utc() ? startTime.plus({ days: 1 }) : startTime;
-
-            const res = await fetchWithAuth('/api/v1/meetings/schedule', {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: meetingTitle,
-                    participants,
-                    selectedSlot,
-                    duration: meetingDuration,
-                    startTime: adjustedStart.toJSDate()
-                })
-            });
-
-            if (res.ok) {
-                const meeting = await res.json();
-                
-                // Generate and download ICS
-                const icsContent = generateICS({
-                    title: meeting.title,
-                    description: `Automated Synchronization Meeting\nParticipants: ${participants.map(p => p.name).join(', ')}`,
-                    start: new Date(meeting.startTime),
-                    duration: meeting.duration
-                });
-                
-                downloadICS(meeting.title, icsContent);
-
-                setSendingStatus('sent');
-                setTimeout(() => setSendingStatus('idle'), 3000);
-            } else {
-                throw new Error('Failed to schedule');
-            }
-        } catch (err) {
-            console.error('Schedule failed:', err);
-            setSendingStatus('idle');
-            alert('Scheduling failed. Please try again.');
+        } else {
+            adjustedStart = DateTime.utc().set({ hour: 14, minute: 30, second: 0 });
+            if (adjustedStart < DateTime.utc()) adjustedStart = adjustedStart.plus({ days: 1 });
         }
+
+        scheduleMutation.mutate({
+            title: meetingTitle,
+            participants,
+            selectedSlot,
+            duration: meetingDuration,
+            startTime: adjustedStart.toJSDate()
+        });
     };
 
     return (
@@ -330,7 +352,7 @@ const MeetingPlanner = () => {
         >
             <DashboardHeader
                 title="Meeting Synchronizer"
-                timeDisplay={DateTime.local().toFormat('hh:mm a')}
+                timeDisplay={DateTime.local().setZone(userTimezone || 'local').toFormat('hh:mm a')}
             />
 
             <div className="planner__content">
@@ -590,7 +612,7 @@ const MeetingPlanner = () => {
                                                 onClick={() => {
                                                     addParticipant({
                                                         name: user.name,
-                                                        zone: user.timezone || 'UTC',
+                                                        zone: user.baseTimezone || 'UTC',
                                                         workStart: user.workSchedule?.workStart || 9,
                                                         workEnd: user.workSchedule?.workEnd || 17
                                                     });
@@ -612,7 +634,7 @@ const MeetingPlanner = () => {
                                                 onClick={() => {
                                                     addParticipant({
                                                         name: user.name,
-                                                        zone: user.timezone || 'UTC',
+                                                        zone: user.baseTimezone || 'UTC',
                                                         workStart: user.workSchedule?.workStart || 9,
                                                         workEnd: user.workSchedule?.workEnd || 17
                                                     });

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useFocusContext } from './FocusContext';
+import { useFocusStore } from '../../store/useStore';
 
 const getRecentDates = (days) => {
     const dates = [];
@@ -16,8 +16,7 @@ const getRecentDates = (days) => {
 };
 
 const FocusStats = () => {
-    const { state } = useFocusContext();
-    const { stats } = state;
+    const { stats } = useFocusStore();
 
     const recent = useMemo(() => {
         const keys = getRecentDates(14);

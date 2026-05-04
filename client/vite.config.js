@@ -9,9 +9,24 @@ export default defineConfig({
         host: true,
         proxy: {
             '/api': {
-                target: 'http://127.0.0.1:5001',
+                target: 'http://localhost:5001',
                 changeOrigin: true,
-                secure: false
+                secure: false,
+                timeout: 30000,
+                proxyTimeout: 30000
+            },
+            '/socket.io': {
+                target: 'http://localhost:5001',
+                ws: true,
+                changeOrigin: true,
+                secure: false,
+                timeout: 30000,
+                proxyTimeout: 30000,
+                configure: (proxy, _options) => {
+                    proxy.on('error', (err, _req, _res) => {
+                        console.error('[Vite Proxy] Socket error:', err.message);
+                    });
+                }
             }
         }
     }

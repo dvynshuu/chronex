@@ -86,10 +86,13 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const signup = useCallback(async ({ name, email, password }) => {
+        // Automatically detect user's timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
         const res = await fetch(`${API_BASE}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password }),
+            body: JSON.stringify({ name, email, password, timezone }),
         });
         const data = await res.json();
         if (!res.ok) {
@@ -109,6 +112,11 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     }, []);
 
+    const updateUser = useCallback((updatedUser) => {
+        setUser(updatedUser);
+        localStorage.setItem('chronex_user', JSON.stringify(updatedUser));
+    }, []);
+
     const value = {
         user,
         loading,
@@ -116,6 +124,7 @@ export const AuthProvider = ({ children }) => {
         login,
         signup,
         logout,
+        updateUser
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

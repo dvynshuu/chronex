@@ -93,9 +93,7 @@ userSchema.methods.comparePassword = async function (candidatePassword, userPass
 };
 
 // Indexes for performance at scale
-userSchema.index({ email: 1 });
 userSchema.index({ 'profile.name': 1 });
-userSchema.index({ slug: 1 });
 userSchema.index({ 'profile.name': 'text', email: 'text', slug: 'text' });
 
 const User = mongoose.model('User', userSchema);

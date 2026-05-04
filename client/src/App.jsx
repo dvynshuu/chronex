@@ -5,11 +5,21 @@ import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider } from './contexts/AuthContext';
 import useKeyboardShortcuts from './hooks/useKeyboardShortcuts';
-import { FocusProvider } from './components/FocusEngine/FocusContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Sidebar from './components/Sidebar/Sidebar';
-import { SettingsProvider } from './contexts/SettingsContext';
 import { SocketProvider } from './contexts/SocketContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useSettingsStore } from './store/useStore';
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+            retry: 1,
+            staleTime: 5 * 60 * 1000, // 5 minutes
+        },
+    },
+});
 
 // Lazy loaded views for performance
 const Dashboard = lazy(() => import('./views/Dashboard'));
@@ -73,8 +83,8 @@ const AppShell = () => {
 
 function App() {
     return (
-        <HelmetProvider>
-            <SettingsProvider>
+        <QueryClientProvider client={queryClient}>
+            <HelmetProvider>
                 <ThemeProvider>
                     <AuthProvider>
                         <SocketProvider>
@@ -101,9 +111,7 @@ function App() {
                                         {/* Protected app with sidebar */}
                                         <Route path="/*" element={
                                             <ProtectedRoute>
-                                                <FocusProvider>
-                                                    <AppShell />
-                                                </FocusProvider>
+                                                <AppShell />
                                             </ProtectedRoute>
                                         } />
                                     </Routes>
@@ -112,8 +120,8 @@ function App() {
                         </SocketProvider>
                     </AuthProvider>
                 </ThemeProvider>
-            </SettingsProvider>
-        </HelmetProvider>
+            </HelmetProvider>
+        </QueryClientProvider>
     );
 }
 

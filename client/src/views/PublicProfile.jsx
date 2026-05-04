@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { motion } from 'framer-motion';
 import useAnimationClock from '../hooks/useAnimationClock';
+import { fmtHr } from '../utils/timeUtils';
 import './PublicProfile.css';
 
 const PublicProfile = () => {
@@ -141,7 +142,5 @@ const PublicProfile = () => {
         </motion.div>
     );
 };
-
-import { fmtHr } from '../utils/timeUtils';
 
 export default PublicProfile;

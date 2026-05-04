@@ -9,9 +9,9 @@ export const SocketProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        // Connect to the backend server
-        const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-        const newSocket = io(backendUrl, {
+        // Connect via the proxy (same origin)
+        console.log('[SOCKET] Attempting connection to:', window.location.origin);
+        const newSocket = io(window.location.origin, {
             withCredentials: true,
             transports: ['websocket', 'polling']
         });

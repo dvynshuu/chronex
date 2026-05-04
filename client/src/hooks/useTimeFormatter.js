@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { useSettings } from '../contexts/SettingsContext';
+import { useSettingsStore } from '../store/useStore';
 import * as timeUtils from '../utils/timeUtils';
 
 /**
  * Hook that provides time formatting functions pre-configured with the current global format.
  */
 export const useTimeFormatter = () => {
-    const { timeFormat } = useSettings();
+    const { timeFormat } = useSettingsStore();
 
     const fmtHr = useCallback((h) => {
         return timeUtils.fmtHr(h, timeFormat);

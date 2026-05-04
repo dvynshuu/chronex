@@ -1,10 +1,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useSettings } from '../../contexts/SettingsContext';
+import { useSettingsStore } from '../../store/useStore';
 import './GlobalSettingsDropdown.css';
 
 const GlobalSettingsDropdown = ({ isOpen }) => {
-    const { timeFormat, setTimeFormat, mapProjection, setMapProjection } = useSettings();
+    const { timeFormat, setTimeFormat, mapProjection, setMapProjection } = useSettingsStore();
 
     return (
         <AnimatePresence>
@@ -25,13 +25,13 @@ const GlobalSettingsDropdown = ({ isOpen }) => {
                             <label>Time Format</label>
                             <div className="toggle-group">
                                 <button 
-                                    className={`toggle-btn ${timeFormat === '12h' ? 'active' : ''}`}
-                                    onClick={() => setTimeFormat('12h')}
-                                >12h</button>
+                                    className={`toggle-btn ${timeFormat === '12H' ? 'active' : ''}`}
+                                    onClick={() => setTimeFormat('12H')}
+                                >12H</button>
                                 <button 
-                                    className={`toggle-btn ${timeFormat === '24h' ? 'active' : ''}`}
-                                    onClick={() => setTimeFormat('24h')}
-                                >24h</button>
+                                    className={`toggle-btn ${timeFormat === '24H' ? 'active' : ''}`}
+                                    onClick={() => setTimeFormat('24H')}
+                                >24H</button>
                             </div>
                         </div>
 

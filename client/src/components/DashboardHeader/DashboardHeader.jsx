@@ -5,10 +5,17 @@ import NotificationDropdown from './NotificationDropdown';
 import GlobalSettingsDropdown from './GlobalSettingsDropdown';
 import UserProfileDropdown from './UserProfileDropdown';
 import { useTimeFormatter } from '../../hooks/useTimeFormatter';
+import { useAuth } from '../../contexts/AuthContext';
+import { useSettingsStore } from '../../store/useStore';
 
 const DashboardHeader = ({ title, welcomeMessage, timeDisplay, searchTerm, onSearchChange, onQuickAdd }) => {
     const { formatShortTime } = useTimeFormatter();
-    const localTime = DateTime.local();
+    const { user } = useAuth();
+    const { timezone: storeTimezone } = useSettingsStore();
+    
+    // Priority: Prop > Store > User Profile > System
+    const activeTimezone = storeTimezone || user?.baseTimezone || 'local';
+    const localTime = DateTime.local().setZone(activeTimezone);
     const [activeDropdown, setActiveDropdown] = useState(null);
     const rightContainerRef = useRef(null);
 
@@ -46,7 +53,7 @@ const DashboardHeader = ({ title, welcomeMessage, timeDisplay, searchTerm, onSea
 
             <div className="topbar__center">
                 <span className="topbar__local-time">
-                    Local {formatShortTime(localTime)}
+                    {timeDisplay ? timeDisplay : `Local ${formatShortTime(localTime)}`}
                 </span>
                 <span className="topbar__sync-label">Global Sync</span>
             </div>

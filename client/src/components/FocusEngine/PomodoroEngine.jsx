@@ -1,5 +1,19 @@
 import React, { useMemo, useRef, useEffect } from 'react';
-import { useFocusContext, useRafNow, isOffHoursNow } from './FocusContext';
+import { useFocusStore } from '../../store/useStore';
+
+const useRafNow = () => {
+    const [now, setNow] = React.useState(() => Date.now());
+    const frameRef = useRef(null);
+    const loop = React.useCallback(() => {
+        setNow(Date.now());
+        frameRef.current = window.requestAnimationFrame(loop);
+    }, []);
+    useEffect(() => {
+        frameRef.current = window.requestAnimationFrame(loop);
+        return () => window.cancelAnimationFrame(frameRef.current);
+    }, [loop]);
+    return now;
+};
 
 const formatTime = (ms) => {
     const totalSeconds = Math.max(0, Math.floor(ms / 1000));
@@ -9,10 +23,19 @@ const formatTime = (ms) => {
 };
 
 const PomodoroEngine = () => {
-    const { state, dispatch } = useFocusContext();
+    const { 
+        timer, 
+        config, 
+        tasks, 
+        startTimer, 
+        pauseTimer, 
+        resetTimer, 
+        completePhase,
+        setConfig,
+        ui 
+    } = useFocusStore();
+    
     const now = useRafNow();
-
-    const { timer, config, tasks } = state;
 
     const remainingMs = useMemo(() => {
         if (timer.phaseEndTimestamp && timer.isRunning) {
@@ -37,33 +60,24 @@ const PomodoroEngine = () => {
         return Math.min(1, Math.max(0, done / totalMs));
     }, [totalMs, remainingMs]);
 
-    // Local-only sync for UI state (e.g. updating lastKnownRemainingMs during active session)
+    // Timer completion check
     useEffect(() => {
-        if (timer.isRunning && timer.phaseEndTimestamp) {
-            dispatch({ type: 'TIMER_TICK', payload: { now } });
+        if (timer.isRunning && timer.phaseEndTimestamp && now >= timer.phaseEndTimestamp) {
+            completePhase();
         }
-    }, [now, timer.isRunning, timer.phaseEndTimestamp, dispatch]);
+    }, [now, timer.isRunning, timer.phaseEndTimestamp, completePhase]);
 
     const handleStartPause = () => {
-        const currentNow = Date.now();
         if (timer.isRunning) {
-            dispatch({ type: 'TIMER_PAUSE', payload: { now: currentNow } });
+            pauseTimer();
         } else {
-            if (isOffHoursNow()) {
-                // kept subtle; surfaced via GlobalAwareness banner
-            }
-            dispatch({ type: 'TIMER_START', payload: { now: currentNow } });
+            startTimer(timer.mode === 'idle' ? 'focus' : timer.mode);
         }
     };
 
-    const handleReset = () => {
-        dispatch({ type: 'TIMER_RESET' });
-    };
+    const handleReset = () => resetTimer();
 
-    const handleModeChange = (mode) => {
-        const nowTs = Date.now();
-        dispatch({ type: 'TIMER_START', payload: { mode, now: nowTs } });
-    };
+    const handleModeChange = (mode) => startTimer(mode);
 
     const activeTask =
         timer.activeTaskId != null
@@ -76,7 +90,7 @@ const PomodoroEngine = () => {
     return (
         <div
             className={`ce-panel ce-timer-panel ${
-                state.ui.isInFocusVisual && timer.mode === 'focus'
+                ui.isInFocusVisual && timer.mode === 'focus'
                     ? 'ce-focus-mode'
                     : timer.mode === 'shortBreak' || timer.mode === 'longBreak'
                     ? 'ce-break-mode'
@@ -180,10 +194,7 @@ const PomodoroEngine = () => {
                             min={1}
                             value={Math.round(config.focusDurationMs / 60000)}
                             onChange={(e) =>
-                                dispatch({
-                                    type: 'SET_CONFIG',
-                                    payload: { focusDurationMs: Number(e.target.value) * 60000 }
-                                })
+                                setConfig({ focusDurationMs: Number(e.target.value) * 60000 })
                             }
                         />
                     </div>
@@ -195,10 +206,7 @@ const PomodoroEngine = () => {
                             min={1}
                             value={Math.round(config.shortBreakDurationMs / 60000)}
                             onChange={(e) =>
-                                dispatch({
-                                    type: 'SET_CONFIG',
-                                    payload: { shortBreakDurationMs: Number(e.target.value) * 60000 }
-                                })
+                                setConfig({ shortBreakDurationMs: Number(e.target.value) * 60000 })
                             }
                         />
                     </div>
@@ -210,10 +218,7 @@ const PomodoroEngine = () => {
                             min={1}
                             value={Math.round(config.longBreakDurationMs / 60000)}
                             onChange={(e) =>
-                                dispatch({
-                                    type: 'SET_CONFIG',
-                                    payload: { longBreakDurationMs: Number(e.target.value) * 60000 }
-                                })
+                                setConfig({ longBreakDurationMs: Number(e.target.value) * 60000 })
                             }
                         />
                     </div>
@@ -226,10 +231,7 @@ const PomodoroEngine = () => {
                             max={8}
                             value={config.longBreakEvery}
                             onChange={(e) =>
-                                dispatch({
-                                    type: 'SET_CONFIG',
-                                    payload: { longBreakEvery: Number(e.target.value) || 4 }
-                                })
+                                setConfig({ longBreakEvery: Number(e.target.value) || 4 })
                             }
                         />
                     </div>
@@ -252,10 +254,7 @@ const PomodoroEngine = () => {
                                 type="checkbox"
                                 checked={config.autoStartNextSession}
                                 onChange={(e) =>
-                                    dispatch({
-                                        type: 'SET_CONFIG',
-                                        payload: { autoStartNextSession: e.target.checked }
-                                    })
+                                    setConfig({ autoStartNextSession: e.target.checked })
                                 }
                             />
                             Auto-start next focus
@@ -269,10 +268,7 @@ const PomodoroEngine = () => {
                             type="checkbox"
                             checked={config.soundEnabled}
                             onChange={(e) =>
-                                dispatch({
-                                    type: 'SET_CONFIG',
-                                    payload: { soundEnabled: e.target.checked }
-                                })
+                                setConfig({ soundEnabled: e.target.checked })
                             }
                         />
                         Soft bell at session end
@@ -284,10 +280,7 @@ const PomodoroEngine = () => {
                         step={0.05}
                         value={config.soundVolume}
                         onChange={(e) =>
-                            dispatch({
-                                type: 'SET_CONFIG',
-                                payload: { soundVolume: Number(e.target.value) }
-                            })
+                            setConfig({ soundVolume: Number(e.target.value) })
                         }
                     />
                 </div>

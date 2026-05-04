@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
 import { fetchWithAuth } from '../utils/api';
 import useAnimationClock from '../hooks/useAnimationClock';
+import { useSettingsStore } from '../store/useStore';
 import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import AddCityModal from '../components/Dashboard/AddCityModal';
 import LiveWorldMap from './WorldMapBg';
@@ -40,7 +41,8 @@ const getZoneForCity = (city) => {
 
 const Dashboard = () => {
     const navigate = useNavigate();
-    const liveClock = useAnimationClock(1000);
+    const { timezone: userTimezone } = useSettingsStore();
+    const liveClock = useAnimationClock(1000, userTimezone || 'local');
     const [scrubOffset, setScrubOffset] = useState(null);
     const [favoriteZones, setFavoriteZones] = useState([]);
     const [overviewData, setOverviewData] = useState(null);
