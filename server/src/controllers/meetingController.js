@@ -5,6 +5,7 @@ const MeetingOutcome = require('../models/MeetingOutcome');
 const AvailabilitySource = require('../models/AvailabilitySource');
 const locationService = require('../services/locationService');
 const timezoneService = require('../services/timezoneService');
+const socketService = require('../services/socketService');
 
 const meetingController = {
     /**
@@ -100,6 +101,13 @@ const meetingController = {
                 selectedSlot: meeting.selectedSlot,
                 title: meeting.title,
                 orgId: meeting.orgId
+            });
+
+            // Emit update to all observers of this user's active meeting
+            socketService.emitToMeeting(req.user.id, 'meeting:updated', {
+                participants: meeting.participants,
+                selectedSlot: meeting.selectedSlot,
+                title: meeting.title
             });
         } catch (err) {
             next(err);

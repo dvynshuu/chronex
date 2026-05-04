@@ -7,11 +7,13 @@ import DashboardHeader from '../components/DashboardHeader/DashboardHeader';
 import { computeOverlapData } from '../hooks/useAvailability';
 import { fmtHr } from '../utils/timeUtils';
 import { generateICS, downloadICS } from '../utils/icsGenerator';
+import { useSocket } from '../contexts/SocketContext';
 import './MeetingPlanner.css';
 
 // Location data is now fetched from the backend
 
 const MeetingPlanner = () => {
+    const { socket, joinMeeting } = useSocket();
     const [participants, setParticipants] = useState([]);
     const [team, setTeam] = useState([]);
     const [cityDatabase, setCityDatabase] = useState([]);
@@ -73,6 +75,10 @@ const MeetingPlanner = () => {
                             setSearchParams({});
                         }
                     }
+
+                    // Join real-time room for this meeting session
+                    // We use the user's ID as the room ID since the backend uses req.user.id for 'active' sync
+                    joinMeeting(meData.id);
                 }
             } catch (err) {
                 console.error('Bootstrap failed:', err);
@@ -82,6 +88,23 @@ const MeetingPlanner = () => {
         };
         bootstrap();
     }, []);
+
+    useEffect(() => {
+        if (!socket) return;
+
+        const handleMeetingUpdate = (data) => {
+            console.log('[SOCKET] Meeting update received:', data);
+            if (data.participants) setParticipants(data.participants);
+            if (data.selectedSlot !== undefined) setSelectedSlot(data.selectedSlot);
+            if (data.title) setMeetingTitle(data.title);
+        };
+
+        socket.on('meeting:updated', handleMeetingUpdate);
+
+        return () => {
+            socket.off('meeting:updated', handleMeetingUpdate);
+        };
+    }, [socket]);
 
     useEffect(() => {
         if (!searchUser || searchUser.length < 2) {
