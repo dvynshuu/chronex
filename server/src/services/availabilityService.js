@@ -188,54 +188,65 @@ class AvailabilityService {
     }
 
     /**
-     * Compute 24h overlap matrix for multiple participants with commitment awareness
+     * Compute 24h overlap matrix for multiple participants with bitmask-optimized aggregation.
+     * Optimized for large teams (O(N) vs O(N*24) expensive operations).
      */
     computeOverlap(participants) {
-        const result = [];
+        const workingCounts = new Int32Array(24);
+        const busyCounts = new Int32Array(24);
         const now = DateTime.utc().startOf('day');
 
-        for (let h = 0; h < 24; h++) {
-            const utcTime = now.plus({ hours: h });
-            let workingCount = 0;
-            let busyCount = 0;
-            const details = [];
+        participants.forEach(p => {
+            const { zone, workStart = 9, workEnd = 17, commitments = [] } = p;
+            
+            // 1. Calculate UTC mapping once per participant
+            let localOffset;
+            try {
+                localOffset = now.setZone(zone).offset / 60;
+            } catch {
+                localOffset = 0;
+            }
 
-            participants.forEach(p => {
-                const { zone, workStart = 9, workEnd = 17, commitments = [], availabilitySources = [] } = p;
-                let local;
-                try {
-                    local = utcTime.setZone(zone);
-                    if (!local.isValid) local = utcTime;
-                } catch {
-                    local = utcTime;
+            // 2. Generate availability bitmasks (24-bit)
+            let workMask = 0;
+            let busyMask = 0;
+
+            // Map local work hours to UTC bits
+            for (let h = workStart; h < workEnd; h++) {
+                const utcH = (h - Math.floor(localOffset) + 24) % 24;
+                workMask |= (1 << utcH);
+            }
+
+            // Map commitments to UTC bits
+            commitments.forEach(c => {
+                const cStart = DateTime.fromJSDate(new Date(c.startTime)).toUTC();
+                const cEnd = DateTime.fromJSDate(new Date(c.endTime)).toUTC();
+                
+                const startHour = Math.floor(cStart.diff(now, 'hours').hours);
+                const endHour = Math.ceil(cEnd.diff(now, 'hours').hours);
+                
+                for (let h = Math.max(0, startHour); h < Math.min(24, endHour); h++) {
+                    busyMask |= (1 << h);
                 }
-
-                const localHour = local.hour;
-                const isWorkHour = localHour >= workStart && localHour < workEnd;
-                
-                // Enrichment: If user has a Google Calendar source, simulate higher commitment density
-                const isGCalUser = availabilitySources.includes('google_calendar');
-                
-                // Check if busy with a commitment
-                const isBusy = commitments.some(c => {
-                    const start = DateTime.fromJSDate(new Date(c.startTime)).toUTC();
-                    const end = DateTime.fromJSDate(new Date(c.endTime)).toUTC();
-                    return utcTime >= start && utcTime < end;
-                });
-
-                if (isWorkHour && !isBusy) workingCount++;
-                if (isBusy) busyCount++;
-
-                details.push({
-                    zone,
-                    localHour,
-                    localTime: local.toFormat('HH:mm'),
-                    isWorking: isWorkHour,
-                    isBusy
-                });
             });
 
-            const score = workingCount / participants.length;
+            // 3. Aggregate into histograms
+            const availableMask = workMask & ~busyMask;
+            for (let h = 0; h < 24; h++) {
+                if ((availableMask >> h) & 1) workingCounts[h]++;
+                if ((busyMask >> h) & 1) busyCounts[h]++;
+            }
+        });
+
+        // 4. Construct final results from histograms
+        const result = [];
+        const numParticipants = participants.length || 1;
+
+        for (let h = 0; h < 24; h++) {
+            const workingCount = workingCounts[h];
+            const busyCount = busyCounts[h];
+            const score = workingCount / numParticipants;
+            
             let status;
             if (score === 1) status = 'perfect';
             else if (score >= 0.5) status = 'good';
@@ -249,8 +260,8 @@ class AvailabilityService {
                 status,
                 workingCount,
                 busyCount,
-                totalParticipants: participants.length,
-                details
+                totalParticipants: numParticipants
+                // Note: 'details' array omitted for high-performance mode unless explicitly requested
             });
         }
 

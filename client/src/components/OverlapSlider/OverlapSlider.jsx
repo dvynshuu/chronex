@@ -6,38 +6,65 @@ const OverlapSlider = ({ participants = [] }) => {
     const [selectedHour, setSelectedHour] = useState(null);
 
     const overlapData = useMemo(() => {
+        const numParticipants = participants.length;
+        if (numParticipants === 0) return Array.from({ length: 24 }, (_, h) => ({ hour: h, score: 0, status: 'avoid', workingCount: 0, details: [] }));
+
+        const workingCounts = new Int32Array(24);
         const now = DateTime.local().startOf('day');
+
+        // 1. O(N) pass to build the histogram
+        participants.forEach(p => {
+            const { zone, workStart = 9, workEnd = 17 } = p;
+            let offset;
+            try {
+                offset = now.setZone(zone).offset / 60;
+            } catch {
+                offset = 0;
+            }
+
+            // Map local hours to UTC/Base hours
+            for (let h = workStart; h < workEnd; h++) {
+                const baseH = (h - Math.floor(offset) + 24) % 24;
+                workingCounts[baseH]++;
+            }
+        });
+
+        // 2. Build the lightweight matrix (no details yet)
         return Array.from({ length: 24 }, (_, h) => {
-            const utcHour = now.plus({ hours: h });
-            let workingCount = 0;
-            const details = [];
-
-            participants.forEach(p => {
-                const { zone, workStart = 9, workEnd = 17, name } = p;
-                let local;
-                try {
-                    local = utcHour.setZone(zone);
-                    if (!local.isValid) local = utcHour;
-                } catch { local = utcHour; }
-
-                const localHour = local.hour;
-                const isWorking = localHour >= workStart && localHour < workEnd;
-                if (isWorking) workingCount++;
-                details.push({ name: name || zone, localTime: local.toFormat('hh:mm a'), isWorking });
-            });
-
-            const score = participants.length > 0 ? workingCount / participants.length : 0;
+            const count = workingCounts[h];
+            const score = count / numParticipants;
             let status;
             if (score === 1) status = 'perfect';
             else if (score >= 0.5) status = 'good';
             else if (score > 0) status = 'partial';
             else status = 'avoid';
 
-            return { hour: h, score, status, workingCount, details };
+            return { hour: h, score, status, workingCount: count };
         });
     }, [participants]);
 
-    const selected = selectedHour !== null ? overlapData[selectedHour] : null;
+    // 3. Lazy calculation of details for the selected hour only
+    const selectedDetails = useMemo(() => {
+        if (selectedHour === null || participants.length === 0) return [];
+        
+        const now = DateTime.local().startOf('day').plus({ hours: selectedHour });
+        // For large teams, we might want to limit this to the first 50 or so
+        const limit = 50; 
+        
+        return participants.slice(0, 100).map(p => {
+            const { zone, workStart = 9, workEnd = 17, name } = p;
+            let local;
+            try {
+                local = now.setZone(zone);
+                if (!local.isValid) local = now;
+            } catch { local = now; }
+
+            const isWorking = local.hour >= workStart && local.hour < workEnd;
+            return { name: name || zone, localTime: local.toFormat('hh:mm a'), isWorking };
+        });
+    }, [selectedHour, participants]);
+
+    const selected = selectedHour !== null ? { ...overlapData[selectedHour], details: selectedDetails } : null;
 
     return (
         <div className="overlap-slider">

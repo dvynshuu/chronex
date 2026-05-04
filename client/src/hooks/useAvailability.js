@@ -37,43 +37,50 @@ export const useAvailability = (timezone, workStart = 9, workEnd = 17, workDays 
 
 /**
  * Compute 24h overlap data for multiple participants (client-side)
+ * Optimized for high performance (O(N) vs O(N*24)).
  */
 export const computeOverlapData = (participants) => {
+    const numParticipants = participants.length;
+    if (numParticipants === 0) return [];
+
+    const workingCounts = new Int32Array(24);
     const now = DateTime.local().startOf('day');
-    const result = [];
 
-    for (let h = 0; h < 24; h++) {
-        const utcHour = now.plus({ hours: h });
-        let workingCount = 0;
-        const details = [];
+    // 1. Single pass to build histogram
+    participants.forEach(p => {
+        const { zone, workStart = 9, workEnd = 17 } = p;
+        let offset;
+        try {
+            offset = now.setZone(zone).offset / 60;
+        } catch {
+            offset = 0;
+        }
 
-        participants.forEach(p => {
-            const { zone, workStart = 9, workEnd = 17 } = p;
-            let local;
-            try {
-                local = utcHour.setZone(zone);
-                if (!local.isValid) local = utcHour;
-            } catch {
-                local = utcHour;
-            }
+        for (let h = workStart; h < workEnd; h++) {
+            const baseH = (h - Math.floor(offset) + 24) % 24;
+            workingCounts[baseH]++;
+        }
+    });
 
-            const localHour = local.hour;
-            const isWorking = localHour >= workStart && localHour < workEnd;
-            if (isWorking) workingCount++;
-
-            details.push({ zone, localHour, localTime: local.toFormat('hh:mm a'), isWorking, name: p.name || zone });
-        });
-
-        const score = participants.length > 0 ? workingCount / participants.length : 0;
+    // 2. Generate result array
+    return Array.from({ length: 24 }, (_, h) => {
+        const count = workingCounts[h];
+        const score = count / numParticipants;
         let status;
         if (score === 1) status = 'perfect';
         else if (score >= 0.5) status = 'good';
         else if (score > 0) status = 'partial';
         else status = 'avoid';
 
-        result.push({ utcHour: h, score, maxScore: 1, status, workingCount, totalParticipants: participants.length, details });
-    }
-    return result;
+        return { 
+            utcHour: h, 
+            score, 
+            maxScore: 1, 
+            status, 
+            workingCount: count, 
+            totalParticipants: numParticipants 
+        };
+    });
 };
 
 function fmtHour(h) {

@@ -12,8 +12,13 @@ const protect = async (req, res, next) => {
 
         // 1. Attempt to verify token if present
         if (token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await userRepository.findById(decoded.id);
+            try {
+                const decoded = jwt.verify(token, process.env.JWT_SECRET);
+                req.user = await userRepository.findById(decoded.id);
+            } catch (jwtError) {
+                console.error('JWT Verification Error:', jwtError.message);
+                return res.status(401).json({ message: 'Not authorized, token invalid or expired' });
+            }
         }
 
         // 2. Final check

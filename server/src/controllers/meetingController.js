@@ -1,7 +1,10 @@
 const Meeting = require('../models/Meeting');
 const Organization = require('../models/Organization');
+const User = require('../models/User');
 const MeetingOutcome = require('../models/MeetingOutcome');
 const AvailabilitySource = require('../models/AvailabilitySource');
+const locationService = require('../services/locationService');
+const timezoneService = require('../services/timezoneService');
 
 const meetingController = {
     /**
@@ -127,8 +130,6 @@ const meetingController = {
 
             // Update fairness balance for participants taking "bad" hours
             if (selectedSlot && org?.norms?.fairnessEnabled) {
-                const User = require('../models/User');
-                const timezoneService = require('../services/timezoneService');
                 const utcTime = new Date(startTime).toISOString();
                 
                 const stats = timezoneService.compareTimezones(utcTime, participants);
@@ -174,7 +175,6 @@ const meetingController = {
                 }
             }
 
-            const timezoneService = require('../services/timezoneService');
             const suggestions = timezoneService.findOverlap(participants, duration, {
                 norms: org?.norms,
                 members: org?.members || []
@@ -193,8 +193,6 @@ const meetingController = {
     async recordFeedback(req, res, next) {
         try {
             const { meetingId, score, painReduced, comment, metadata } = req.body;
-            const User = require('../models/User');
-            
             // Create a systemic outcome record
             const outcome = await MeetingOutcome.create({
                 meeting: meetingId,
@@ -243,7 +241,6 @@ const meetingController = {
             const duration = meeting?.duration || 1;
 
             // Compute suggestions & conflicts in parallel
-            const timezoneService = require('../services/timezoneService');
             
             // Enrichment for suggestions
             for (let p of participants) {
@@ -263,7 +260,7 @@ const meetingController = {
                     status: 'scheduled',
                     startTime: { $gte: new Date() }
                 }).limit(3) : [],
-                require('../services/locationService').getCities()
+                locationService.getCities()
             ]);
 
             const conflicts = scheduled.map(m => ({
